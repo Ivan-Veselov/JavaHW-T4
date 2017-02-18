@@ -3,6 +3,7 @@ package ru.spbau.bachelor2015.veselov.hw01;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 /**
@@ -34,8 +35,17 @@ public final class LazyFactory {
         return new ConcurrentLazy<>(supplier);
     }
 
+    /**
+     * Creates lock-free version of multithreading lazy object for given supplier. If multiple threads will call get
+     * method of such lazy object in parallel then there is a chance that get method of the underlying supplier will be
+     * called more than once. In the end one single result will be chosen and other will be discarded.
+     *
+     * @param supplier an object which evaluates resulting value.
+     * @param <T> a resulting value type.
+     * @return new lock-free lazy object.
+     */
     public static <T> @NotNull Lazy<T> createLockFreeLazy(@NotNull Supplier<T> supplier) {
-        throw new UnsupportedOperationException();
+        return new LockFreeLazy<>(supplier);
     }
 
     private LazyFactory() {
@@ -91,6 +101,29 @@ public final class LazyFactory {
             }
 
             return (T) value;
+        }
+    }
+
+    private static final class LockFreeLazy<T> implements Lazy<T> {
+        // An object which denotes that value has not been received from supplier yet.
+        private static final Object emptinessMarker = new Object();
+
+        private Supplier<T> supplier;
+
+        private AtomicReference<Object> value = new AtomicReference<>(emptinessMarker);
+
+        public LockFreeLazy(@NotNull Supplier<T> supplier) {
+            this.supplier = supplier;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public @Nullable T get() {
+            if (value.get() == emptinessMarker) {
+                value.compareAndSet(emptinessMarker, supplier.get());
+            }
+
+            return (T) value.get();
         }
     }
 }
