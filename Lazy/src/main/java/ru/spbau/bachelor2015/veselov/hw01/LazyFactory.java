@@ -92,7 +92,8 @@ public final class LazyFactory {
         @SuppressWarnings("unchecked")
         public @Nullable T get() {
             if (value == emptinessMarker) {
-                synchronized (value) {
+                // emptinessMarker final object is a thread guard for value reference
+                synchronized (emptinessMarker) {
                     if (value == emptinessMarker) {
                         value = supplier.get();
                         supplier = null;
