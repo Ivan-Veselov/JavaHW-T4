@@ -10,7 +10,10 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface Lazy<T> {
     /**
-     * A method which returns result of evaluation.
+     * A method which returns result of evaluation. At some point result will be calculated and memorized. After that
+     * this method will simply return this saved value on every call.
+     *
+     * @return result of evaluation.
      */
     @Nullable T get();
 }

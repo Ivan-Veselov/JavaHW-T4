@@ -38,7 +38,11 @@ public final class LazyFactoryTest {
                 }
             };
 
-    private final List<Integer> numbers = Stream.iterate(0, n -> n + 1).limit(10).collect(Collectors.toList());
+    private final int amountOfNumbers = 10;
+
+    private final List<Integer> numbers = Stream.iterate(0, n -> n + 1)
+                                                .limit(amountOfNumbers)
+                                                .collect(Collectors.toList());
 
     private final Supplier<Supplier<Integer>> numbersSuppliersFactory =
             () -> new Supplier<Integer>() {
@@ -67,7 +71,7 @@ public final class LazyFactoryTest {
         supplierMultipleEvaluationTest(numbersSuppliersFactory, numbers);
     }
 
-    private <T> void basicTest(@NotNull Lazy<T> lazy, @Nullable T expectedValue) throws Exception {
+    private <T> void basicTest(@NotNull final Lazy<T> lazy, @Nullable final T expectedValue) throws Exception {
         T actualValue = lazy.get();
         assertThat(actualValue, is(equalTo(expectedValue)));
 
@@ -77,24 +81,25 @@ public final class LazyFactoryTest {
         }
     }
 
-    private <T> void supplierTest(@NotNull Supplier<Supplier<T>> suppliersFactory, @Nullable T expectedValue)
-            throws Exception {
+    private <T> void supplierTest(@NotNull final Supplier<Supplier<T>> suppliersFactory,
+                                  @Nullable final T expectedValue) throws Exception {
         basicTest(LazyFactory.createLazy(suppliersFactory.get()), expectedValue);
         basicTest(LazyFactory.createConcurrentLazy(suppliersFactory.get()), expectedValue);
         basicTest(LazyFactory.createLockFreeLazy(suppliersFactory.get()), expectedValue);
     }
 
-    private <T> void concurrentOneEvaluationTest(@NotNull Lazy<T> lazy, @Nullable T expectedValue) throws Exception {
+    private <T> void concurrentOneEvaluationTest(@NotNull final Lazy<T> lazy,
+                                                 @Nullable final T expectedValue) throws Exception {
         concurrentMultipleEvaluationsTest(lazy, Collections.singletonList(expectedValue));
     }
 
-    private <T> void supplierOneEvaluationTest(@NotNull Supplier<Supplier<T>> suppliersFactory,
-                                               @Nullable T expectedValue) throws Exception {
+    private <T> void supplierOneEvaluationTest(@NotNull final Supplier<Supplier<T>> suppliersFactory,
+                                               @Nullable final T expectedValue) throws Exception {
         concurrentOneEvaluationTest(LazyFactory.createConcurrentLazy(suppliersFactory.get()), expectedValue);
     }
 
-    private <T> void concurrentMultipleEvaluationsTest(@NotNull Lazy<T> lazy, @NotNull List<T> possibleValues)
-            throws Exception {
+    private <T> void concurrentMultipleEvaluationsTest(@NotNull final Lazy<T> lazy,
+                                                       @NotNull final List<T> possibleValues) throws Exception {
         ArrayList<Thread> threadList = new ArrayList<>();
         final ArrayList<T> resultingList = new ArrayList<>();
 
@@ -122,8 +127,8 @@ public final class LazyFactoryTest {
         assertThat(resultingList, contains(Collections.nCopies(numberOfThreads, sameInstance(actualValue))));
     }
 
-    private <T> void supplierMultipleEvaluationTest(@NotNull Supplier<Supplier<T>> suppliersFactory,
-                                                    @NotNull List<T> possibleValues) throws Exception {
+    private <T> void supplierMultipleEvaluationTest(@NotNull final Supplier<Supplier<T>> suppliersFactory,
+                                                    @NotNull final List<T> possibleValues) throws Exception {
         concurrentMultipleEvaluationsTest(LazyFactory.createLockFreeLazy(suppliersFactory.get()), possibleValues);
     }
 }

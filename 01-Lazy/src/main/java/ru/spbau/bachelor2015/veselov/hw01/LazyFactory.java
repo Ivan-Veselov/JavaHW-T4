@@ -19,7 +19,7 @@ public final class LazyFactory {
      * @param <T> a resulting value type.
      * @return new simple lazy object.
      */
-    public static <T> @NotNull Lazy<T> createLazy(@NotNull Supplier<T> supplier) {
+    public static <T> @NotNull Lazy<T> createLazy(@NotNull final Supplier<T> supplier) {
         return new SimpleLazy<>(supplier);
     }
 
@@ -31,7 +31,7 @@ public final class LazyFactory {
      * @param <T> a resulting value type.
      * @return new concurrent lazy object.
      */
-    public static <T> @NotNull Lazy<T> createConcurrentLazy(@NotNull Supplier<T> supplier) {
+    public static <T> @NotNull Lazy<T> createConcurrentLazy(@NotNull final Supplier<T> supplier) {
         return new ConcurrentLazy<>(supplier);
     }
 
@@ -44,7 +44,7 @@ public final class LazyFactory {
      * @param <T> a resulting value type.
      * @return new lock-free lazy object.
      */
-    public static <T> @NotNull Lazy<T> createLockFreeLazy(@NotNull Supplier<T> supplier) {
+    public static <T> @NotNull Lazy<T> createLockFreeLazy(@NotNull final Supplier<T> supplier) {
         return new LockFreeLazy<>(supplier);
     }
 
@@ -60,7 +60,7 @@ public final class LazyFactory {
 
         private Object value = emptinessMarker;
 
-        public SimpleLazy(@NotNull Supplier<T> supplier) {
+        public SimpleLazy(@NotNull final Supplier<T> supplier) {
             this.supplier = supplier;
         }
 
@@ -84,7 +84,7 @@ public final class LazyFactory {
 
         private volatile Object value = emptinessMarker;
 
-        public ConcurrentLazy(@NotNull Supplier<T> supplier) {
+        public ConcurrentLazy(@NotNull final Supplier<T> supplier) {
             this.supplier = supplier;
         }
 
@@ -113,7 +113,7 @@ public final class LazyFactory {
 
         private AtomicReference<Object> value = new AtomicReference<>(emptinessMarker);
 
-        public LockFreeLazy(@NotNull Supplier<T> supplier) {
+        public LockFreeLazy(@NotNull final Supplier<T> supplier) {
             this.supplier = supplier;
         }
 
