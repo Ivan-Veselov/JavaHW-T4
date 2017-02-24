@@ -9,5 +9,8 @@ import org.jetbrains.annotations.Nullable;
  * @param <T> type of evaluation result.
  */
 public interface Lazy<T> {
+    /**
+     * A method which returns result of evaluation.
+     */
     @Nullable T get();
 }
