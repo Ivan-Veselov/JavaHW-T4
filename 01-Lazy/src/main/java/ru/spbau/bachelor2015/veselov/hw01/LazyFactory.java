@@ -3,7 +3,7 @@ package ru.spbau.bachelor2015.veselov.hw01;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import java.util.function.Supplier;
 
 /**
@@ -111,9 +111,12 @@ public final class LazyFactory {
         // An object which denotes that value has not been received from supplier yet.
         private static final Object emptinessMarker = new Object();
 
+        private static final AtomicReferenceFieldUpdater<LockFreeLazy, Object> fieldUpdater =
+                AtomicReferenceFieldUpdater.newUpdater(LockFreeLazy.class, Object.class, "value");
+
         private Supplier<T> supplier;
 
-        private AtomicReference<Object> value = new AtomicReference<>(emptinessMarker);
+        private volatile Object value = emptinessMarker;
 
         public LockFreeLazy(@NotNull final Supplier<T> supplier) {
             this.supplier = supplier;
@@ -122,11 +125,11 @@ public final class LazyFactory {
         @Override
         @SuppressWarnings("unchecked")
         public @Nullable T get() {
-            if (value.get() == emptinessMarker) {
-                value.compareAndSet(emptinessMarker, supplier.get());
+            if (value == emptinessMarker) {
+                fieldUpdater.compareAndSet(this, emptinessMarker, supplier.get());
             }
 
-            return (T) value.get();
+            return (T) value;
         }
     }
 }
