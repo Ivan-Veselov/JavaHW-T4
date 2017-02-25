@@ -126,7 +126,11 @@ public final class LazyFactory {
         @SuppressWarnings("unchecked")
         public @Nullable T get() {
             if (value == emptinessMarker) {
-                fieldUpdater.compareAndSet(this, emptinessMarker, supplier.get());
+                Supplier<T> localSupplier = supplier;
+                if (localSupplier != null) {
+                    fieldUpdater.compareAndSet(this, emptinessMarker, localSupplier.get());
+                    supplier = null;
+                }
             }
 
             return (T) value;
