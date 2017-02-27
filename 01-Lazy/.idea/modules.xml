@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Lazy.iml" filepath="$PROJECT_DIR$/.idea/modules/Lazy.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Lazy_main.iml" filepath="$PROJECT_DIR$/.idea/modules/Lazy_main.iml" group="Lazy" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Lazy_test.iml" filepath="$PROJECT_DIR$/.idea/modules/Lazy_test.iml" group="Lazy" />
+    </modules>
+  </component>
+</project>
