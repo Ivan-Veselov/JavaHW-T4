@@ -1,6 +1,5 @@
 package ru.spbau.bachelor2015.veselov.hw02;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
@@ -28,22 +27,19 @@ public class RepositoryTest {
     }
 
     @Test
-    public void testAdditionOfFileInStorage() throws Exception {
+    public void blobConstruction() throws Exception {
         Path pathToFile = rootDirectory.newFile().toPath();
         Files.write(pathToFile, new byte[] {1, 2, 3});
 
-        repository.addFileToStorage(pathToFile);
+        VCSManager.Repository.Blob blob = repository.new Blob(pathToFile);
 
-        String sha1HexString = DigestUtils.sha1Hex(Files.readAllBytes(pathToFile));
         // TODO: Find or write matcher
-        assertThat(FileUtils.contentEquals(pathToFile.toFile(),
-                                           repository.getObjectsDirectory().resolve(sha1HexString).toFile()),
-                   is(true));
+        assertThat(FileUtils.contentEquals(pathToFile.toFile(), blob.getPathToData().toFile()), is(true));
     }
 
     @Test(expected = RegularFileExpected.class)
-    public void addFolderToStorage() throws Exception {
+    public void blobConstructionFromFolder() throws Exception {
         File folder = rootDirectory.newFolder();
-        repository.addFileToStorage(folder.toPath());
+        repository.new Blob(folder.toPath());
     }
 }

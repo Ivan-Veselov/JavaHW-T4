@@ -108,20 +108,41 @@ public final class VCSManager {
         }
 
         /**
-         * Copies given file into VCS inner storage.
-         *
-         * @param path a path to a file which should be copied.
-         * @return a path to a copy of a given file in VCS's storage.
-         * @throws RegularFileExpected if given path does not represent a regular file.
-         * @throws IOException if any IO exception occurs during process of copying.
+         * Blob object represents a copy of real file. Each blob object associated with such copy which is stored in a
+         * VCS inner storage.
          */
-        public @NotNull Path addFileToStorage(final @NotNull Path path) throws RegularFileExpected, IOException {
-            if (!Files.isRegularFile(path)) {
-                throw new RegularFileExpected();
+        public final class Blob {
+            private final @NotNull String contentSha1Hash;
+
+            /**
+             * Creates Blob object. Given file will be copied into VCS inner storage.
+             *
+             * @param path a path to a file which should be copied.
+             * @throws RegularFileExpected if given path does not represent a regular file.
+             * @throws IOException if any IO exception occurs during process of copying.
+             */
+            public Blob(final @NotNull Path path) throws RegularFileExpected, IOException {
+                if (!Files.isRegularFile(path)) {
+                    throw new RegularFileExpected();
+                }
+
+                contentSha1Hash = DigestUtils.sha1Hex(Files.readAllBytes(path));
+                Files.copy(path, getPathToData(), REPLACE_EXISTING, NOFOLLOW_LINKS);
             }
 
-            String sha1HexString = DigestUtils.sha1Hex(Files.readAllBytes(path));
-            return Files.copy(path, getObjectsDirectory().resolve(sha1HexString), REPLACE_EXISTING, NOFOLLOW_LINKS);
+            /**
+             * Returns SHA1 hash of data represented by this blob.
+             */
+            public @NotNull String getContentSha1Hash() {
+                return contentSha1Hash;
+            }
+
+            /**
+             * Returns a path to data represented by this blob.
+             */
+            public @NotNull Path getPathToData() {
+                return getObjectsDirectory().resolve(contentSha1Hash);
+            }
         }
     }
 }
