@@ -17,6 +17,7 @@ public class VCSManagerTest {
     @Rule
     public final @NotNull TemporaryFolder rootDirectory = new TemporaryFolder();
 
+    // TODO: Maybe add some kind of a special rule
     private Path rootDirectoryPath;
 
     @Before
@@ -27,10 +28,7 @@ public class VCSManagerTest {
     @Test
     public void simpleInitialization() throws Exception {
         VCSManager.Repository repository = VCSManager.initializeVCS(rootDirectoryPath);
-
-        // TODO: Find or write matchers
-        assertThat(Files.exists(rootDirectoryPath.resolve(VCSManager.vcsDirectoryName)), is(true));
-        assertThat(Files.isSameFile(repository.getRootDirectory(), rootDirectoryPath), is(true));
+        checkRepositoryStructure(repository);
     }
 
     @Test(expected = VCSIsAlreadyInitialized.class)
@@ -51,8 +49,7 @@ public class VCSManagerTest {
         VCSManager.initializeVCS(rootDirectoryPath);
         VCSManager.Repository repository = VCSManager.getRepository(rootDirectoryPath);
 
-        // TODO: Find or write matcher
-        assertThat(Files.isSameFile(repository.getRootDirectory(), rootDirectoryPath), is(true));
+        checkRepositoryStructure(repository);
     }
 
     @Test(expected = DirectoryExpected.class)
@@ -64,5 +61,21 @@ public class VCSManagerTest {
     @Test(expected = VCSWasNotInitialized.class)
     public void getNonExistingRepository() throws Exception {
         VCSManager.getRepository(rootDirectoryPath);
+    }
+
+    private void checkRepositoryStructure(VCSManager.Repository repository) throws Exception {
+        // TODO: Find or write matchers
+        assertThat(Files.isSameFile(repository.getRootDirectory(), rootDirectoryPath), is(true));
+        assertThat(Files.isSameFile(repository.getVCSDirectory(),
+                                    rootDirectoryPath.resolve(VCSManager.vcsDirectoryName)),
+                   is(true));
+
+        assertThat(Files.isSameFile(repository.getObjectsDirectory(),
+                                    rootDirectoryPath.resolve(VCSManager.vcsDirectoryName)
+                                                     .resolve(VCSManager.objectsDirectoryName)),
+                   is(true));
+
+        assertThat(Files.exists(repository.getVCSDirectory()), is(true));
+        assertThat(Files.exists(repository.getObjectsDirectory()), is(true));
     }
 }
