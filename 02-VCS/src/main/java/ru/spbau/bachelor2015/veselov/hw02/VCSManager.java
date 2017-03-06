@@ -3,10 +3,16 @@ package ru.spbau.bachelor2015.veselov.hw02;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
@@ -107,11 +113,25 @@ public final class VCSManager {
             return getVCSDirectory().resolve(objectsDirectoryName);
         }
 
+        private abstract class StoredObject {
+            /**
+             * Returns SHA1 hash of data represented by this object.
+             */
+            public abstract @NotNull String getSha1Hash();
+
+            /**
+             * Returns a path to data represented by this object.
+             */
+            public @NotNull Path getPathInStorage() {
+                return getObjectsDirectory().resolve(getSha1Hash());
+            }
+        }
+
         /**
          * Blob object represents a copy of real file. Each blob object associated with such copy which is stored in a
          * VCS inner storage.
          */
-        public final class Blob {
+        public final class Blob extends StoredObject {
             private final @NotNull String contentSha1Hash;
 
             /**
@@ -127,21 +147,69 @@ public final class VCSManager {
                 }
 
                 contentSha1Hash = DigestUtils.sha1Hex(Files.readAllBytes(path));
-                Files.copy(path, getPathToData(), REPLACE_EXISTING, NOFOLLOW_LINKS);
+                Files.copy(path, getPathInStorage(), REPLACE_EXISTING, NOFOLLOW_LINKS);
             }
 
             /**
              * Returns SHA1 hash of data represented by this blob.
              */
-            public @NotNull String getContentSha1Hash() {
+            public @NotNull String getSha1Hash() {
                 return contentSha1Hash;
+            }
+        }
+
+        /**
+         * Tree object represent a node in a folder structure. Objects of this type contain references for other Tree
+         * objects and Blob objects. Each reference supplied with a name of a referenced object.
+         *
+         * TODO: add sorting of child nodes
+         */
+        public final class Tree extends StoredObject {
+            private final @NotNull String sha1Hash;
+
+            private final @NotNull List<Named<Tree>> treeChildren;
+
+            private final @NotNull List<Named<Blob>> blobChildren;
+
+            /**
+             * Constructs a Tree object. A file for this object in VCS inner storage will be created.
+             *
+             * @param treeList a list of named child trees.
+             * @param blobList a list of named child blobs.
+             * @throws IOException if any IO exception occurs during a creation of file for this object in storage.
+             */
+            public Tree(final @NotNull List<Named<Tree>> treeList,
+                        final @NotNull List<Named<Blob>> blobList) throws IOException {
+                treeChildren = new ArrayList<>(treeList);
+                blobChildren = new ArrayList<>(blobList);
+
+                byte[] data;
+                try (ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+                     ObjectOutputStream objectStream = new ObjectOutputStream(byteStream)) {
+
+                    Function<Named<? extends StoredObject>, Named<String>> mapper =
+                            namedObject -> new Named<>(namedObject.getObject().getSha1Hash(), namedObject.getName());
+
+                    objectStream.writeObject(treeChildren.stream()
+                                                         .map(mapper)
+                                                         .collect(Collectors.toList()));
+                    objectStream.writeObject(blobChildren.stream()
+                                                         .map(mapper)
+                                                         .collect(Collectors.toList()));
+                    objectStream.flush();
+
+                    data = byteStream.toByteArray();
+                }
+
+                sha1Hash = DigestUtils.sha1Hex(data);
+                Files.write(getPathInStorage(), data);
             }
 
             /**
-             * Returns a path to data represented by this blob.
+             * Returns SHA1 hash of data represented by this tree.
              */
-            public @NotNull Path getPathToData() {
-                return getObjectsDirectory().resolve(contentSha1Hash);
+            public @NotNull String getSha1Hash() {
+                return sha1Hash;
             }
         }
     }
