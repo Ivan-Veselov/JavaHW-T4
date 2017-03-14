@@ -9,9 +9,7 @@ import java.io.ObjectOutputStream;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -178,7 +176,11 @@ public final class VCSManager {
              * @throws IOException if any IO exception occurs during a creation of file for this object in storage.
              */
             public Tree(final @NotNull List<Named<Tree>> treeList,
-                        final @NotNull List<Named<Blob>> blobList) throws IOException {
+                        final @NotNull List<Named<Blob>> blobList) throws IOException, NamesContainsDuplicates {
+                if (namesContainsDuplicates(treeList, blobList)) {
+                    throw new NamesContainsDuplicates();
+                }
+
                 treeChildren = new ArrayList<>(treeList);
                 blobChildren = new ArrayList<>(blobList);
 
@@ -212,6 +214,16 @@ public final class VCSManager {
              */
             public @NotNull String getSha1Hash() {
                 return sha1Hash;
+            }
+
+            private boolean namesContainsDuplicates(final @NotNull List<Named<Tree>> treeList,
+                                                    final @NotNull List<Named<Blob>> blobList) {
+                Set<String> namesSet = new HashSet<>();
+
+                namesSet.addAll(treeList.stream().map(Named::getName).collect(Collectors.toList()));
+                namesSet.addAll(blobList.stream().map(Named::getName).collect(Collectors.toList()));
+
+                return namesSet.size() < treeList.size() + blobList.size();
             }
         }
     }

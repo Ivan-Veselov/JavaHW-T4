@@ -10,6 +10,7 @@ import org.junit.rules.TemporaryFolder;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Collections;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -81,6 +82,19 @@ public class RepositoryTest {
         repository.new Tree(Collections.emptyList(), Collections.emptyList());
 
         assertFilesInFolder(repository.getObjectsDirectory(), 1);
+    }
+
+    @Test(expected = NamesContainsDuplicates.class)
+    public void testTreeConstructionWithNameDuplicates() throws Exception {
+        final String fileName = "file";
+
+        Path pathToFolder = rootDirectory.newFolder().toPath();
+        Path pathToFile = Files.createFile(pathToFolder.resolve(fileName));
+
+        VCSManager.Repository.Blob blob = repository.new Blob(pathToFile);
+
+        repository.new Tree(Collections.emptyList(),
+                Arrays.asList(new Named<>(blob, fileName), new Named<>(blob, fileName)));
     }
 
     private void assertFilesInFolder(final @NotNull Path pathToFolder, final int expected) {
