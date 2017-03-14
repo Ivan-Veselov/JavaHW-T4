@@ -164,9 +164,9 @@ public final class VCSManager {
         public final class Tree extends StoredObject {
             private final @NotNull String sha1Hash;
 
-            private final @NotNull List<Named<String>> treeChildren;
+            private final @NotNull List<Named<String>> treeChildrenHashes;
 
-            private final @NotNull List<Named<String>> blobChildren;
+            private final @NotNull List<Named<String>> blobChildrenHashes;
 
             /**
              * Constructs a Tree object. A file for this object in VCS inner storage will be created.
@@ -185,21 +185,21 @@ public final class VCSManager {
                 Function<Named<? extends StoredObject>, Named<String>> mapper =
                         namedObject -> new Named<>(namedObject.getObject().getSha1Hash(), namedObject.getName());
 
-                treeChildren = new ArrayList<>(treeList.stream()
+                treeChildrenHashes = new ArrayList<>(treeList.stream()
                                                        .map(mapper)
                                                        .collect(Collectors.toList()));
-                blobChildren = new ArrayList<>(blobList.stream()
+                blobChildrenHashes = new ArrayList<>(blobList.stream()
                                                        .map(mapper)
                                                        .collect(Collectors.toList()));
 
-                Collections.sort(treeChildren);
-                Collections.sort(blobChildren);
+                Collections.sort(treeChildrenHashes);
+                Collections.sort(blobChildrenHashes);
 
                 byte[] data;
                 try (ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
                      ObjectOutputStream objectStream = new ObjectOutputStream(byteStream)) {
-                    objectStream.writeObject(treeChildren);
-                    objectStream.writeObject(blobChildren);
+                    objectStream.writeObject(treeChildrenHashes);
+                    objectStream.writeObject(blobChildrenHashes);
 
                     objectStream.flush();
 
@@ -213,6 +213,7 @@ public final class VCSManager {
             /**
              * Returns SHA1 hash of data represented by this tree.
              */
+            @Override
             public @NotNull String getSha1Hash() {
                 return sha1Hash;
             }
@@ -225,6 +226,77 @@ public final class VCSManager {
                 namesSet.addAll(blobList.stream().map(Named::getName).collect(Collectors.toList()));
 
                 return namesSet.size() < treeList.size() + blobList.size();
+            }
+        }
+
+        /**
+         * Commit object represents a meta information associated with a Tree structure. Commit consist of
+         * author name, message, date of creation which initialized automatically and list of parent commits
+         * that produced this one.
+         *
+         * TODO: add tests.
+         */
+        public final class Commit extends StoredObject {
+            private final @NotNull String sha1Hash;
+
+            private final @NotNull String author;
+
+            private final @NotNull String message;
+
+            private final @NotNull Date date;
+
+            private final @NotNull String underlyingTreeHash;
+
+            private final @NotNull List<String> parentCommitsHashes;
+
+            /**
+             * Constructs a Commit object. A file for this object in VCS inner storage will be created.
+             *
+             * @param author a name of an author of this commit.
+             * @param message a message of this commit.
+             * @param parentCommits a list of parent commits.
+             * @param tree a file structure which is referenced by this commit.
+             * @throws IOException if any IO exception occurs during a creation of file for this object in storage.
+             */
+            public Commit(final @NotNull String author,
+                          final @NotNull String message,
+                          final @NotNull List<Commit> parentCommits,
+                          final @NotNull Tree tree) throws IOException {
+                this.author = author;
+                this.message = message;
+
+                date = new Date();
+
+                parentCommitsHashes = new ArrayList<>(parentCommits.stream()
+                                                                   .map(Commit::getSha1Hash)
+                                                                   .collect(Collectors.toList()));
+
+                underlyingTreeHash = tree.getSha1Hash();
+
+                byte[] data;
+                try (ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+                     ObjectOutputStream objectStream = new ObjectOutputStream(byteStream)) {
+                    objectStream.writeObject(this.author);
+                    objectStream.writeObject(this.message);
+                    objectStream.writeObject(date);
+                    objectStream.writeObject(parentCommitsHashes);
+                    objectStream.writeObject(underlyingTreeHash);
+
+                    objectStream.flush();
+
+                    data = byteStream.toByteArray();
+                }
+
+                sha1Hash = DigestUtils.sha1Hex(data);
+                Files.write(getPathInStorage(), data);
+            }
+
+            /**
+             * Returns SHA1 hash of data represented by this commit.
+             */
+            @Override
+            public @NotNull String getSha1Hash() {
+                return sha1Hash;
             }
         }
     }

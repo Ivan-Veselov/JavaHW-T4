@@ -14,9 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 
 public class RepositoryTest {
     @Rule
@@ -95,6 +93,14 @@ public class RepositoryTest {
 
         repository.new Tree(Collections.emptyList(),
                 Arrays.asList(new Named<>(blob, fileName), new Named<>(blob, fileName)));
+    }
+
+    @Test
+    public void commitConstruction() throws Exception {
+        VCSManager.Repository.Tree tree = repository.new Tree(Collections.emptyList(), Collections.emptyList());
+        repository.new Commit("author", "message", Collections.emptyList(), tree);
+
+        assertFilesInFolder(repository.getObjectsDirectory(), 2);
     }
 
     private void assertFilesInFolder(final @NotNull Path pathToFolder, final int expected) {
