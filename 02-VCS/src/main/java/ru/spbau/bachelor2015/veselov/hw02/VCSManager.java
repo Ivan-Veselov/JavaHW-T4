@@ -11,6 +11,7 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -154,6 +155,46 @@ public final class VCSManager {
              */
             public @NotNull Path getPathInStorage() {
                 return getObjectsDirectory().resolve(getSha1Hash());
+            }
+        }
+
+        private interface StoredObjectLoader<T extends StoredObject> {
+            @NotNull T load(final @NotNull String hash) throws NoSuchObject;
+        }
+
+        private final static class StoredObjectIterator<I, E, T extends StoredObject> implements Iterator<E> {
+            private final @NotNull Iterator<I> iterator;
+
+            private final @NotNull StoredObjectLoader<T> loader;
+
+            private final @NotNull Function<? super I, ? extends String> innerConverter;
+
+            private final @NotNull BiFunction<? super I, ? super T, ? extends E> outerConverter;
+
+            public StoredObjectIterator(final @NotNull Iterator<I> iterator,
+                                        final @NotNull StoredObjectLoader<T> loader,
+                                        final @NotNull Function<? super I, ? extends String> innerConverter,
+                                        final @NotNull BiFunction<? super I, ? super T, ? extends E> outerConverter) {
+                this.iterator = iterator;
+                this.loader = loader;
+                this.innerConverter = innerConverter;
+                this.outerConverter = outerConverter;
+            }
+
+            @Override
+            public boolean hasNext() {
+                return iterator.hasNext();
+            }
+
+            @Override
+            public E next() {
+                I element = iterator.next();
+
+                try {
+                    return outerConverter.apply(element, loader.load(innerConverter.apply(element)));
+                } catch (NoSuchObject e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
 
