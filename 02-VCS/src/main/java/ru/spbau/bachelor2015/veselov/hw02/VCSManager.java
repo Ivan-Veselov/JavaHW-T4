@@ -173,10 +173,11 @@ public final class VCSManager {
              *
              * @param treeList a list of named child trees.
              * @param blobList a list of named child blobs.
+             * @throws NamesContainsDuplicates if there are two equal names among given objects.
              * @throws IOException if any IO exception occurs during a creation of file for this object in storage.
              */
             public Tree(final @NotNull List<Named<Tree>> treeList,
-                        final @NotNull List<Named<Blob>> blobList) throws IOException, NamesContainsDuplicates {
+                        final @NotNull List<Named<Blob>> blobList) throws NamesContainsDuplicates, IOException {
                 if (namesContainsDuplicates(treeList, blobList)) {
                     throw new NamesContainsDuplicates();
                 }
