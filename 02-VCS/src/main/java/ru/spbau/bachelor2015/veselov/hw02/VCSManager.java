@@ -164,9 +164,9 @@ public final class VCSManager {
         public final class Tree extends StoredObject {
             private final @NotNull String sha1Hash;
 
-            private final @NotNull List<Named<Tree>> treeChildren;
+            private final @NotNull List<Named<String>> treeChildren;
 
-            private final @NotNull List<Named<Blob>> blobChildren;
+            private final @NotNull List<Named<String>> blobChildren;
 
             /**
              * Constructs a Tree object. A file for this object in VCS inner storage will be created.
@@ -181,8 +181,15 @@ public final class VCSManager {
                     throw new NamesContainsDuplicates();
                 }
 
-                treeChildren = new ArrayList<>(treeList);
-                blobChildren = new ArrayList<>(blobList);
+                Function<Named<? extends StoredObject>, Named<String>> mapper =
+                        namedObject -> new Named<>(namedObject.getObject().getSha1Hash(), namedObject.getName());
+
+                treeChildren = new ArrayList<>(treeList.stream()
+                                                       .map(mapper)
+                                                       .collect(Collectors.toList()));
+                blobChildren = new ArrayList<>(blobList.stream()
+                                                       .map(mapper)
+                                                       .collect(Collectors.toList()));
 
                 Collections.sort(treeChildren);
                 Collections.sort(blobChildren);
@@ -190,16 +197,9 @@ public final class VCSManager {
                 byte[] data;
                 try (ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
                      ObjectOutputStream objectStream = new ObjectOutputStream(byteStream)) {
+                    objectStream.writeObject(treeChildren);
+                    objectStream.writeObject(blobChildren);
 
-                    Function<Named<? extends StoredObject>, Named<String>> mapper =
-                            namedObject -> new Named<>(namedObject.getObject().getSha1Hash(), namedObject.getName());
-
-                    objectStream.writeObject(treeChildren.stream()
-                                                         .map(mapper)
-                                                         .collect(Collectors.toList()));
-                    objectStream.writeObject(blobChildren.stream()
-                                                         .map(mapper)
-                                                         .collect(Collectors.toList()));
                     objectStream.flush();
 
                     data = byteStream.toByteArray();
