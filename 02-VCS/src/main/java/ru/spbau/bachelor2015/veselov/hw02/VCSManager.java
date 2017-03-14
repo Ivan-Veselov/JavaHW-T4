@@ -139,11 +139,11 @@ public final class VCSManager {
             return getReferencesDirectory().resolve(headsDirectoryName);
         }
 
-        private interface StoredObject {
+        private interface VCSElement {
             @NotNull Path getPathInStorage();
         }
 
-        private abstract class StoredHashedObject implements StoredObject {
+        private abstract class StoredObject implements VCSElement {
             /**
              * Returns SHA1 hash of data represented by this object.
              */
@@ -161,7 +161,7 @@ public final class VCSManager {
          * Blob object represents a copy of real file. Each blob object associated with such copy which is stored in a
          * VCS inner storage.
          */
-        public final class Blob extends StoredHashedObject {
+        public final class Blob extends StoredObject {
             private final @NotNull String contentSha1Hash;
 
             /**
@@ -192,7 +192,7 @@ public final class VCSManager {
          * Tree object represent a node in a folder structure. Objects of this type contain references for other Tree
          * objects and Blob objects. Each reference supplied with a name of a referenced object.
          */
-        public final class Tree extends StoredHashedObject {
+        public final class Tree extends StoredObject {
             private final @NotNull String sha1Hash;
 
             private final @NotNull List<Named<String>> treeChildrenHashes;
@@ -213,7 +213,7 @@ public final class VCSManager {
                     throw new NamesContainsDuplicates();
                 }
 
-                Function<Named<? extends StoredHashedObject>, Named<String>> mapper =
+                Function<Named<? extends StoredObject>, Named<String>> mapper =
                         namedObject -> new Named<>(namedObject.getObject().getSha1Hash(), namedObject.getName());
 
                 treeChildrenHashes = new ArrayList<>(treeList.stream()
@@ -265,7 +265,7 @@ public final class VCSManager {
          * author name, message, date of creation which initialized automatically and list of parent commits
          * that produced this one.
          */
-        public final class Commit extends StoredHashedObject {
+        public final class Commit extends StoredObject {
             private final @NotNull String sha1Hash;
 
             private final @NotNull String author;
@@ -332,7 +332,7 @@ public final class VCSManager {
         /**
          * Reference is a named object which references some commit.
          */
-        public final class Reference implements StoredObject {
+        public final class Reference implements VCSElement {
             private final @NotNull String name;
 
             private final @NotNull String commitHash;
