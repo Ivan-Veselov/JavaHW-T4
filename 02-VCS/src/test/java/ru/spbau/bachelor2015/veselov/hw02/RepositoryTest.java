@@ -103,6 +103,18 @@ public class RepositoryTest {
         assertFilesInFolder(repository.getObjectsDirectory(), 2);
     }
 
+    @Test
+    public void referenceConstruction() throws Exception {
+        VCSManager.Repository.Tree tree = repository.new Tree(Collections.emptyList(), Collections.emptyList());
+        VCSManager.Repository.Commit commit = repository.new Commit("author",
+                                                                    "message",
+                                                                    Collections.emptyList(), tree);
+        repository.new Reference("reference", commit);
+
+        assertFilesInFolder(repository.getObjectsDirectory(), 2);
+        assertFilesInFolder(repository.getHeadsDirectory(), 1);
+    }
+
     private void assertFilesInFolder(final @NotNull Path pathToFolder, final int expected) {
         File[] filesInFolder = pathToFolder.toFile().listFiles();
         assertThat(filesInFolder, notNullValue());

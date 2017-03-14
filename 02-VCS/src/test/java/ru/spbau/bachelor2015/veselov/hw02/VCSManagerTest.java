@@ -75,7 +75,20 @@ public class VCSManagerTest {
                                                      .resolve(VCSManager.objectsDirectoryName)),
                    is(true));
 
+        assertThat(Files.isSameFile(repository.getReferencesDirectory(),
+                                    rootDirectoryPath.resolve(VCSManager.vcsDirectoryName)
+                                                     .resolve(VCSManager.referencesDirectoryName)),
+                   is(true));
+
+        assertThat(Files.isSameFile(repository.getHeadsDirectory(),
+                                    rootDirectoryPath.resolve(VCSManager.vcsDirectoryName)
+                                                     .resolve(VCSManager.referencesDirectoryName)
+                                                     .resolve(VCSManager.headsDirectoryName)),
+                   is(true));
+
         assertThat(Files.exists(repository.getVCSDirectory()), is(true));
         assertThat(Files.exists(repository.getObjectsDirectory()), is(true));
+        assertThat(Files.exists(repository.getReferencesDirectory()), is(true));
+        assertThat(Files.exists(repository.getHeadsDirectory()), is(true));
     }
 }

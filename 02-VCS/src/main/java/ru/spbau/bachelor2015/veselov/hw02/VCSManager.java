@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,9 +28,19 @@ public final class VCSManager {
     public static final @NotNull String vcsDirectoryName = ".vcs";
 
     /**
-     * Name of directory in which VCS's objects namely, blobs, trees and commits, will be stored.
+     * Name of a directory in which VCS's objects namely, blobs, trees and commits, will be stored.
      */
     public static final @NotNull String objectsDirectoryName = "objects";
+
+    /**
+     * Name of a directory in which VCS's references will be stored.
+     */
+    public static final @NotNull String referencesDirectoryName = "refs";
+
+    /**
+     * Name of a directory in which VCS's head references will be stored.
+     */
+    public static final @NotNull String headsDirectoryName = "heads";
 
     /**
      * Initializes new VCS in a given folder.
@@ -51,6 +62,8 @@ public final class VCSManager {
         try {
             Files.createDirectory(vcsDirectoryPath);
             Files.createDirectory(vcsDirectoryPath.resolve(objectsDirectoryName));
+            Files.createDirectory(vcsDirectoryPath.resolve(referencesDirectoryName));
+            Files.createDirectory(vcsDirectoryPath.resolve(referencesDirectoryName).resolve(headsDirectoryName));
         } catch (FileAlreadyExistsException caught) {
             throw new VCSIsAlreadyInitialized(caught);
         }
@@ -112,7 +125,25 @@ public final class VCSManager {
             return getVCSDirectory().resolve(objectsDirectoryName);
         }
 
-        private abstract class StoredObject {
+        /**
+         * Returns a path to the VCS's references directory.
+         */
+        public @NotNull Path getReferencesDirectory() {
+            return getVCSDirectory().resolve(referencesDirectoryName);
+        }
+
+        /**
+         * Returns a path to the VCS's head references directory.
+         */
+        public @NotNull Path getHeadsDirectory() {
+            return getReferencesDirectory().resolve(headsDirectoryName);
+        }
+
+        private interface StoredObject {
+            @NotNull Path getPathInStorage();
+        }
+
+        private abstract class StoredHashedObject implements StoredObject {
             /**
              * Returns SHA1 hash of data represented by this object.
              */
@@ -130,7 +161,7 @@ public final class VCSManager {
          * Blob object represents a copy of real file. Each blob object associated with such copy which is stored in a
          * VCS inner storage.
          */
-        public final class Blob extends StoredObject {
+        public final class Blob extends StoredHashedObject {
             private final @NotNull String contentSha1Hash;
 
             /**
@@ -161,7 +192,7 @@ public final class VCSManager {
          * Tree object represent a node in a folder structure. Objects of this type contain references for other Tree
          * objects and Blob objects. Each reference supplied with a name of a referenced object.
          */
-        public final class Tree extends StoredObject {
+        public final class Tree extends StoredHashedObject {
             private final @NotNull String sha1Hash;
 
             private final @NotNull List<Named<String>> treeChildrenHashes;
@@ -182,7 +213,7 @@ public final class VCSManager {
                     throw new NamesContainsDuplicates();
                 }
 
-                Function<Named<? extends StoredObject>, Named<String>> mapper =
+                Function<Named<? extends StoredHashedObject>, Named<String>> mapper =
                         namedObject -> new Named<>(namedObject.getObject().getSha1Hash(), namedObject.getName());
 
                 treeChildrenHashes = new ArrayList<>(treeList.stream()
@@ -233,10 +264,8 @@ public final class VCSManager {
          * Commit object represents a meta information associated with a Tree structure. Commit consist of
          * author name, message, date of creation which initialized automatically and list of parent commits
          * that produced this one.
-         *
-         * TODO: add tests.
          */
-        public final class Commit extends StoredObject {
+        public final class Commit extends StoredHashedObject {
             private final @NotNull String sha1Hash;
 
             private final @NotNull String author;
@@ -297,6 +326,40 @@ public final class VCSManager {
             @Override
             public @NotNull String getSha1Hash() {
                 return sha1Hash;
+            }
+        }
+
+        /**
+         * Reference is a named object which references some commit.
+         */
+        public final class Reference implements StoredObject {
+            private final @NotNull String name;
+
+            private final @NotNull String commitHash;
+
+            /**
+             * Creates a reference object. A file for this object in VCS inner storage will be created.
+             *
+             * @param name a name of new reference
+             * @param commit a commit which will be referenced
+             * @throws IOException if any IO exception occurs during a creation of file for this object in storage.
+             */
+            public Reference(final @NotNull String name, final @NotNull Commit commit) throws IOException {
+                this.name = name;
+                commitHash = commit.getSha1Hash();
+
+                try (OutputStream fileStream = Files.newOutputStream(getPathInStorage());
+                     ObjectOutputStream objectStream = new ObjectOutputStream(fileStream)) {
+                    objectStream.writeObject(commitHash);
+                }
+            }
+
+            /**
+             * Returns a path to data represented by this object.
+             */
+            @Override
+            public @NotNull Path getPathInStorage() {
+                return getHeadsDirectory().resolve(name);
             }
         }
     }
