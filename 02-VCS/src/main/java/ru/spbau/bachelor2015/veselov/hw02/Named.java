@@ -9,7 +9,7 @@ import java.io.Serializable;
  *
  * @param <T> an arbitrary class.
  */
-public final class Named<T> implements Serializable {
+public final class Named<T> implements Serializable, Comparable<Named<?>> {
     private final @NotNull T object;
 
     private final @NotNull String name;
@@ -37,5 +37,10 @@ public final class Named<T> implements Serializable {
      */
     public @NotNull String getName() {
         return name;
+    }
+
+    @Override
+    public int compareTo(Named<?> o) {
+        return name.compareTo(o.getName());
     }
 }

@@ -10,6 +10,7 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -161,8 +162,6 @@ public final class VCSManager {
         /**
          * Tree object represent a node in a folder structure. Objects of this type contain references for other Tree
          * objects and Blob objects. Each reference supplied with a name of a referenced object.
-         *
-         * TODO: add sorting of child nodes
          */
         public final class Tree extends StoredObject {
             private final @NotNull String sha1Hash;
@@ -182,6 +181,9 @@ public final class VCSManager {
                         final @NotNull List<Named<Blob>> blobList) throws IOException {
                 treeChildren = new ArrayList<>(treeList);
                 blobChildren = new ArrayList<>(blobList);
+
+                Collections.sort(treeChildren);
+                Collections.sort(blobChildren);
 
                 byte[] data;
                 try (ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
