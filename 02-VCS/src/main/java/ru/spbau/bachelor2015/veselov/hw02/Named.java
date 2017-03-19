@@ -15,6 +15,18 @@ public final class Named<T> implements Serializable, Comparable<Named<?>> {
     private final @NotNull String name;
 
     /**
+     * Replaces object with a given name on another object. A resulting named object is returned.
+     *
+     * @param namedObject named object.
+     * @param object unnamed object.
+     * @param <U> type of unnamed object.
+     * @return a resulting named object.
+     */
+    public static <U> @NotNull Named<U> replace(final @NotNull Named<?> namedObject, final @NotNull U object) {
+        return new Named<>(object, namedObject.getName());
+    }
+
+    /**
      * Constructs a named version of given object.
      *
      * @param object an object of type T.

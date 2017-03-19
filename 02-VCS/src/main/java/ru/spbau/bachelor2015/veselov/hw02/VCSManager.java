@@ -3,10 +3,7 @@ package ru.spbau.bachelor2015.veselov.hw02;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -159,7 +156,7 @@ public final class VCSManager {
         }
 
         private interface StoredObjectLoader<T extends StoredObject> {
-            @NotNull T load(final @NotNull String hash) throws NoSuchObject;
+            @NotNull T load(final @NotNull String hash) throws NoSuchElement, InvalidDataInStorage, IOException;
         }
 
         private final static class StoredObjectIterator<I, E, T extends StoredObject> implements Iterator<E> {
@@ -170,6 +167,12 @@ public final class VCSManager {
             private final @NotNull Function<? super I, ? extends String> innerConverter;
 
             private final @NotNull BiFunction<? super I, ? super T, ? extends E> outerConverter;
+
+            public static <U extends StoredObject> StoredObjectIterator<String, U, U> fromHashIterator(
+                                                                        final @NotNull Iterator<String> iterator,
+                                                                        final @NotNull StoredObjectLoader<U> loader) {
+                return new StoredObjectIterator<>(iterator, loader, Function.identity(), (x, y) -> y);
+            }
 
             public StoredObjectIterator(final @NotNull Iterator<I> iterator,
                                         final @NotNull StoredObjectLoader<T> loader,
@@ -192,7 +195,7 @@ public final class VCSManager {
 
                 try {
                     return outerConverter.apply(element, loader.load(innerConverter.apply(element)));
-                } catch (NoSuchObject e) {
+                } catch (NoSuchElement | InvalidDataInStorage | IOException e) {
                     throw new RuntimeException(e);
                 }
             }
@@ -206,6 +209,7 @@ public final class VCSManager {
             private final @NotNull String contentSha1Hash;
 
             /**
+             * TODO: check that file is inside repository and not inside hidden folder
              * Creates Blob object. Given file will be copied into VCS inner storage.
              *
              * @param path a path to a file which should be copied.
@@ -219,6 +223,20 @@ public final class VCSManager {
 
                 contentSha1Hash = DigestUtils.sha1Hex(Files.readAllBytes(path));
                 Files.copy(path, getPathInStorage(), REPLACE_EXISTING, NOFOLLOW_LINKS);
+            }
+
+            /**
+             * Creates Blob object for previously existed data by its hash.
+             *
+             * @param hash hash of data.
+             * @throws NoSuchElement if there is no data with a given hash.
+             */
+            public Blob(final @NotNull String hash) throws NoSuchElement {
+                contentSha1Hash = hash;
+
+                if (!Files.exists(getPathInStorage())) {
+                    throw new NoSuchElement();
+                }
             }
 
             /**
@@ -283,11 +301,56 @@ public final class VCSManager {
             }
 
             /**
+             * Creates Tree object for previously existed data by its hash.
+             *
+             * @param hash hash of data.
+             * @throws NoSuchElement if there is no data with a given hash.
+             * @throws InvalidDataInStorage if it is an attempt to read an invalid data from storage.
+             * @throws IOException if any IO error occurs during data reading.
+             */
+            @SuppressWarnings("unchecked")
+            public Tree(final @NotNull String hash) throws NoSuchElement, InvalidDataInStorage, IOException {
+                sha1Hash = hash;
+
+                if (!Files.exists(getPathInStorage())) {
+                    throw new NoSuchElement();
+                }
+
+                try (InputStream inputStream = Files.newInputStream(getPathInStorage());
+                     ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
+                    treeChildrenHashes = (List<Named<String>>) objectInputStream.readObject();
+                    blobChildrenHashes = (List<Named<String>>) objectInputStream.readObject();
+                } catch (ClassNotFoundException | ClassCastException e ) {
+                    throw new InvalidDataInStorage(e);
+                }
+            }
+
+            /**
              * Returns SHA1 hash of data represented by this tree.
              */
             @Override
             public @NotNull String getSha1Hash() {
                 return sha1Hash;
+            }
+
+            /**
+             * Returns an iterator on named Tree children of this Tree.
+             */
+            public @NotNull Iterator<Named<Tree>> treeChildrenIterator() {
+                return new StoredObjectIterator<>(treeChildrenHashes.iterator(),
+                                                  Tree::new,
+                                                  Named::getObject,
+                                                  Named::replace);
+            }
+
+            /**
+             * Returns an iterator on named Blob children of this Tree.
+             */
+            public @NotNull Iterator<Named<Blob>> blobChildrenIterator() {
+                return new StoredObjectIterator<>(blobChildrenHashes.iterator(),
+                                                  Blob::new,
+                                                  Named::getObject,
+                                                  Named::replace);
             }
 
             private boolean namesContainsDuplicates(final @NotNull List<Named<Tree>> treeList,
@@ -349,8 +412,8 @@ public final class VCSManager {
                     objectStream.writeObject(this.author);
                     objectStream.writeObject(this.message);
                     objectStream.writeObject(date);
-                    objectStream.writeObject(parentCommitsHashes);
                     objectStream.writeObject(underlyingTreeHash);
+                    objectStream.writeObject(parentCommitsHashes);
 
                     objectStream.flush();
 
@@ -362,11 +425,78 @@ public final class VCSManager {
             }
 
             /**
+             * Creates Commit object for previously existed data by its hash.
+             *
+             * @param hash hash of data.
+             * @throws NoSuchElement if there is no data with a given hash.
+             * @throws InvalidDataInStorage if it is an attempt to read an invalid data from storage.
+             * @throws IOException if any IO error occurs during data reading.
+             */
+            @SuppressWarnings("unchecked")
+            public Commit(final @NotNull String hash) throws NoSuchElement, InvalidDataInStorage, IOException {
+                sha1Hash = hash;
+
+                if (!Files.exists(getPathInStorage())) {
+                    throw new NoSuchElement();
+                }
+
+                try (InputStream inputStream = Files.newInputStream(getPathInStorage());
+                     ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
+                    author = (String) objectInputStream.readObject();
+                    message = (String) objectInputStream.readObject();
+                    date = (Date) objectInputStream.readObject();
+                    underlyingTreeHash = (String) objectInputStream.readObject();
+                    parentCommitsHashes = (List<String>) objectInputStream.readObject();
+                } catch (ClassNotFoundException | ClassCastException e ) {
+                    throw new InvalidDataInStorage(e);
+                }
+            }
+
+            /**
              * Returns SHA1 hash of data represented by this commit.
              */
             @Override
             public @NotNull String getSha1Hash() {
                 return sha1Hash;
+            }
+
+            /**
+             * Returns an author of this commit.
+             */
+            public @NotNull String getAuthor() {
+                return author;
+            }
+
+            /**
+             * Returns this commit's message.
+             */
+            public @NotNull String getMessage() {
+                return message;
+            }
+
+            /**
+             * Returns creation date of this commit.
+             */
+            public @NotNull Date getDate() {
+                return date;
+            }
+
+            /**
+             * Returns a Tree object which is referenced by this commit.
+             *
+             * @throws InvalidDataInStorage if this commit referencing an invalid Tree or data was corrupted.
+             * @throws IOException if any IO exception occurs during reading data for referenced Tree.
+             * @throws NoSuchElement if there is no Tree with a hash that this commit stores.
+             */
+            public @NotNull Tree getTree() throws InvalidDataInStorage, IOException, NoSuchElement {
+                return new Tree(underlyingTreeHash);
+            }
+
+            /**
+             * Returns an iterator on parent commits.
+             */
+            public @NotNull Iterator<Commit> parentCommitsIterator() {
+                return StoredObjectIterator.fromHashIterator(parentCommitsHashes.iterator(), Commit::new);
             }
         }
 
@@ -396,11 +526,53 @@ public final class VCSManager {
             }
 
             /**
+             * Creates Reference element for previously existed data by its name.
+             *
+             * @param name name of reference.
+             * @throws NoSuchElement if there is no reference with a given name.
+             * @throws InvalidDataInStorage if it is an attempt to read an invalid data from storage.
+             * @throws IOException if any IO error occurs during data reading.
+             */
+            @SuppressWarnings("unchecked")
+            public Reference(final @NotNull String name) throws NoSuchElement, IOException, InvalidDataInStorage {
+                this.name = name;
+
+                if (!Files.exists(getPathInStorage())) {
+                    throw new NoSuchElement();
+                }
+
+                try (InputStream inputStream = Files.newInputStream(getPathInStorage());
+                     ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
+                    commitHash = (String) objectInputStream.readObject();
+                } catch (ClassNotFoundException | ClassCastException e ) {
+                    throw new InvalidDataInStorage(e);
+                }
+            }
+
+            /**
              * Returns a path to data represented by this object.
              */
             @Override
             public @NotNull Path getPathInStorage() {
                 return getHeadsDirectory().resolve(name);
+            }
+
+            /**
+             * Returns a name of this reference.
+             */
+            public @NotNull String getName() {
+                return name;
+            }
+
+            /**
+             * Returns a commit which is referenced.
+             *
+             * @throws InvalidDataInStorage if referenced commit is invalid or data was corrupted.
+             * @throws IOException if any IO exception occurs during reading data for referenced commit.
+             * @throws NoSuchElement if there is no commit with a hash that this reference stores.
+             */
+            public @NotNull Commit getCommit() throws InvalidDataInStorage, IOException, NoSuchElement {
+                return new Commit(commitHash);
             }
         }
     }

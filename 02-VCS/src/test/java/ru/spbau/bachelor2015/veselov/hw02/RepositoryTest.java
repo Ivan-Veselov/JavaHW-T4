@@ -58,6 +58,19 @@ public class RepositoryTest {
     }
 
     @Test
+    public void blobConstructionFromHash() throws Exception {
+        Path pathToFile = rootDirectory.newFile().toPath();
+        Files.write(pathToFile, new byte[] {1, 2, 3});
+
+        VCSManager.Repository.Blob blob1 = repository.new Blob(pathToFile);
+        VCSManager.Repository.Blob blob2 = repository.new Blob(blob1.getSha1Hash());
+
+        assertThat(blob1.getSha1Hash(), is(equalTo(blob2.getSha1Hash())));
+        assertThat(blob1.getPathInStorage(), is(equalTo(blob2.getPathInStorage())));
+        assertFilesInFolder(repository.getObjectsDirectory(), 1);
+    }
+
+    @Test
     public void treeConstruction() throws Exception {
         final String fileName = "file";
 
@@ -74,8 +87,6 @@ public class RepositoryTest {
 
     @Test
     public void multipleTreesForSingleFolder() throws Exception {
-        Path pathToFolder = rootDirectory.newFolder().toPath();
-
         repository.new Tree(Collections.emptyList(), Collections.emptyList());
         repository.new Tree(Collections.emptyList(), Collections.emptyList());
 
@@ -96,10 +107,39 @@ public class RepositoryTest {
     }
 
     @Test
+    public void treeConstructionFromHash() throws Exception {
+        VCSManager.Repository.Tree tree1 = repository.new Tree(Collections.emptyList(), Collections.emptyList());
+        VCSManager.Repository.Tree tree2 = repository.new Tree(tree1.getSha1Hash());
+
+        assertThat(tree1.getSha1Hash(), is(equalTo(tree2.getSha1Hash())));
+        assertThat(tree1.getPathInStorage(), is(equalTo(tree2.getPathInStorage())));
+        assertFilesInFolder(repository.getObjectsDirectory(), 1);
+    }
+
+    @Test
     public void commitConstruction() throws Exception {
         VCSManager.Repository.Tree tree = repository.new Tree(Collections.emptyList(), Collections.emptyList());
         repository.new Commit("author", "message", Collections.emptyList(), tree);
 
+        assertFilesInFolder(repository.getObjectsDirectory(), 2);
+    }
+
+    @Test
+    public void commitConstructionFromHash() throws Exception {
+        final String author = "author";
+        final String message = "message";
+
+        VCSManager.Repository.Tree tree = repository.new Tree(Collections.emptyList(), Collections.emptyList());
+        VCSManager.Repository.Commit commit1 = repository.new Commit(author, message, Collections.emptyList(), tree);
+        VCSManager.Repository.Commit commit2 = repository.new Commit(commit1.getSha1Hash());
+
+        assertThat(commit1.getSha1Hash(), is(equalTo(commit2.getSha1Hash())));
+        assertThat(commit1.getPathInStorage(), is(equalTo(commit2.getPathInStorage())));
+        assertThat(commit1.getAuthor(), is(equalTo(commit2.getAuthor())));
+        assertThat(commit1.getMessage(), is(equalTo(commit2.getMessage())));
+        assertThat(commit1.getDate(), is(equalTo(commit2.getDate())));
+
+        // one for Tree and another for commit
         assertFilesInFolder(repository.getObjectsDirectory(), 2);
     }
 
@@ -113,6 +153,21 @@ public class RepositoryTest {
 
         assertFilesInFolder(repository.getObjectsDirectory(), 2);
         assertFilesInFolder(repository.getHeadsDirectory(), 1);
+    }
+
+    @Test
+    public void referenceConstructionFromName() throws Exception {
+        final String referenceName = "reference";
+
+        VCSManager.Repository.Tree tree = repository.new Tree(Collections.emptyList(), Collections.emptyList());
+        VCSManager.Repository.Commit commit = repository.new Commit("author",
+                "message",
+                Collections.emptyList(), tree);
+        VCSManager.Repository.Reference reference1 = repository.new Reference(referenceName, commit);
+        VCSManager.Repository.Reference reference2 = repository.new Reference(referenceName);
+
+        assertThat(reference1.getPathInStorage(), is(equalTo(reference2.getPathInStorage())));
+        assertThat(reference1.getName(), is(equalTo(reference2.getName())));
     }
 
     private void assertFilesInFolder(final @NotNull Path pathToFolder, final int expected) {
