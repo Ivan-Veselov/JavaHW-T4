@@ -526,7 +526,10 @@ public final class VCSManager {
             }
 
             /**
-             * Creates Reference element for previously existed data by its name.
+             * Creates Reference element for previously existed data by its name. As reference isn't bound to its hash,
+             * object of this class represents a view on real reference at the moment of this object creation. Therefore
+             * it is recommended to store name of a reference and every time some additional information about this
+             * reference is needed create object of this type.
              *
              * @param name name of reference.
              * @throws NoSuchElement if there is no reference with a given name.
