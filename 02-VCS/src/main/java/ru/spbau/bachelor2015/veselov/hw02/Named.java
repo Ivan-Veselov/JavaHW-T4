@@ -9,7 +9,7 @@ import java.io.Serializable;
  *
  * @param <T> an arbitrary class.
  */
-public final class Named<T> implements Serializable, Comparable<Named<?>> {
+public class Named<T> implements Serializable, Comparable<Named<?>> {
     private final @NotNull T object;
 
     private final @NotNull String name;

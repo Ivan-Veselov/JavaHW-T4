@@ -137,11 +137,22 @@ public final class VCSManager {
             return getReferencesDirectory().resolve(headsDirectoryName);
         }
 
-        private interface VCSElement {
+
+        /**
+         * An interface which all vcs elements are implement.
+         */
+        public interface VCSElement {
+            /**
+             * Returns a path to this element in storage.
+             */
             @NotNull Path getPathInStorage();
         }
 
-        private abstract class StoredObject implements VCSElement {
+        /**
+         * An abstract class which represents an arbitrary vcs object that stored in an 'objects' folder of vcs storage
+         * and has a SHA1 hash.
+         */
+        public abstract class StoredObject implements VCSElement {
             /**
              * Returns SHA1 hash of data represented by this object.
              */
@@ -205,7 +216,7 @@ public final class VCSManager {
          * Blob object represents a copy of real file. Each blob object associated with such copy which is stored in a
          * VCS inner storage.
          */
-        public final class Blob extends StoredObject {
+        public class Blob extends StoredObject {
             private final @NotNull String contentSha1Hash;
 
             /**
@@ -251,7 +262,7 @@ public final class VCSManager {
          * Tree object represent a node in a folder structure. Objects of this type contain references for other Tree
          * objects and Blob objects. Each reference supplied with a name of a referenced object.
          */
-        public final class Tree extends StoredObject {
+        public class Tree extends StoredObject {
             private final @NotNull String sha1Hash;
 
             private final @NotNull List<Named<String>> treeChildrenHashes;
@@ -334,23 +345,23 @@ public final class VCSManager {
             }
 
             /**
-             * Returns an iterator on named Tree children of this Tree.
+             * Returns an iterable over named Tree children of this Tree.
              */
-            public @NotNull Iterator<Named<Tree>> treeChildrenIterator() {
-                return new StoredObjectIterator<>(treeChildrenHashes.iterator(),
-                                                  Tree::new,
-                                                  Named::getObject,
-                                                  Named::replace);
+            public @NotNull Iterable<Named<Tree>> treeChildren() {
+                return () -> new StoredObjectIterator<>(treeChildrenHashes.iterator(),
+                                                        Tree::new,
+                                                        Named::getObject,
+                                                        Named::replace);
             }
 
             /**
-             * Returns an iterator on named Blob children of this Tree.
+             * Returns an iterable over named Blob children of this Tree.
              */
-            public @NotNull Iterator<Named<Blob>> blobChildrenIterator() {
-                return new StoredObjectIterator<>(blobChildrenHashes.iterator(),
-                                                  Blob::new,
-                                                  Named::getObject,
-                                                  Named::replace);
+            public @NotNull Iterable<Named<Blob>> blobChildren() {
+                return () -> new StoredObjectIterator<>(blobChildrenHashes.iterator(),
+                                                        Blob::new,
+                                                        Named::getObject,
+                                                        Named::replace);
             }
 
             private boolean namesContainsDuplicates(final @NotNull List<Named<Tree>> treeList,
@@ -369,7 +380,7 @@ public final class VCSManager {
          * author name, message, date of creation which initialized automatically and list of parent commits
          * that produced this one.
          */
-        public final class Commit extends StoredObject {
+        public class Commit extends StoredObject {
             private final @NotNull String sha1Hash;
 
             private final @NotNull String author;
@@ -493,17 +504,20 @@ public final class VCSManager {
             }
 
             /**
-             * Returns an iterator on parent commits.
+             * Returns an iterable over parent commits.
              */
-            public @NotNull Iterator<Commit> parentCommitsIterator() {
-                return StoredObjectIterator.fromHashIterator(parentCommitsHashes.iterator(), Commit::new);
+            public @NotNull Iterable<Commit> parentCommits() {
+                return () -> StoredObjectIterator.fromHashIterator(parentCommitsHashes.iterator(), Commit::new);
             }
         }
 
         /**
-         * Reference is a named object which references some commit.
+         * Reference is a named object which references some commit. As reference isn't bound to its hash, object of
+         * this class represents a view on real reference at the moment of this object creation. Therefore it is
+         * recommended to store name of a reference and every time some additional information about this reference is
+         * needed create object of this type.
          */
-        public final class Reference implements VCSElement {
+        public class Reference implements VCSElement {
             private final @NotNull String name;
 
             private final @NotNull String commitHash;
@@ -526,10 +540,7 @@ public final class VCSManager {
             }
 
             /**
-             * Creates Reference element for previously existed data by its name. As reference isn't bound to its hash,
-             * object of this class represents a view on real reference at the moment of this object creation. Therefore
-             * it is recommended to store name of a reference and every time some additional information about this
-             * reference is needed create object of this type.
+             * Creates Reference element for previously existed data by its name.
              *
              * @param name name of reference.
              * @throws NoSuchElement if there is no reference with a given name.
