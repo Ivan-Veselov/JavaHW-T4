@@ -72,7 +72,6 @@ public class RepositoryObjectsTest {
         assertThat(blob2, is(similarTo(blob1)));
         // TODO: Find or write matcher
         assertThat(FileUtils.contentEquals(pathToFile.toFile(), blob2.getPathInStorage().toFile()), is(true));
-        assertFilesInFolder(repository.getObjectsDirectory(), 1);
     }
 
     @Test
@@ -83,7 +82,6 @@ public class RepositoryObjectsTest {
         Repository.Blob blob2 = repository.new Blob(blob1.getVCSHash());
 
         assertThat(blob2, is(similarTo(blob1)));
-        assertFilesInFolder(repository.getObjectsDirectory(), 1);
     }
 
     @Test(expected = NoSuchElement.class)
@@ -103,16 +101,12 @@ public class RepositoryObjectsTest {
     public void treeConstruction() throws Exception {
         repository.new Tree(Collections.emptyList(),
                             Collections.singletonList(mockedNamed(mockedBlob("hash"), "name")));
-
-        assertFilesInFolder(repository.getObjectsDirectory(), 1);
     }
 
     @Test
     public void multipleTreesForSingleFolder() throws Exception {
         repository.new Tree(Collections.emptyList(), Collections.emptyList());
         repository.new Tree(Collections.emptyList(), Collections.emptyList());
-
-        assertFilesInFolder(repository.getObjectsDirectory(), 1);
     }
 
     @Test(expected = NamesContainsDuplicates.class)
@@ -129,7 +123,6 @@ public class RepositoryObjectsTest {
         Repository.Tree tree2 = repository.new Tree(tree1.getVCSHash());
 
         assertThat(tree2, is(similarTo(tree1)));
-        assertFilesInFolder(repository.getObjectsDirectory(), 1);
     }
 
     @Test(expected = NoSuchElement.class)
@@ -165,29 +158,24 @@ public class RepositoryObjectsTest {
 
     @Test
     public void commitConstruction() throws Exception {
-        repository.new Commit("author", "message", Collections.emptyList(), mockedTree("hash"));
-
-        assertFilesInFolder(repository.getObjectsDirectory(), 1);
+        repository.new Commit("message", Collections.emptyList(), mockedTree("hash"));
     }
 
     @Test
     public void commitConstructionFromHash() throws Exception {
-        Repository.Commit commit1 = repository.new Commit("author",
-                                                          "message",
+        Repository.Commit commit1 = repository.new Commit("message",
                                                            Collections.emptyList(),
                                                            mockedTree("hash"));
 
         Repository.Commit commit2 = repository.new Commit(commit1.getVCSHash());
 
         assertThat(commit2, is(similarTo(commit1)));
-        assertFilesInFolder(repository.getObjectsDirectory(), 1);
     }
 
     @Test
     public void commitGetTree() throws Exception {
         Repository.Tree tree = repository.new Tree(Collections.emptyList(), Collections.emptyList());
-        Repository.Commit commit = repository.new Commit("author",
-                                                         "message",
+        Repository.Commit commit = repository.new Commit("message",
                                                           Collections.emptyList(),
                                                           tree);
 
@@ -196,15 +184,13 @@ public class RepositoryObjectsTest {
 
     @Test
     public void commitParentCommits() throws Exception {
-        Repository.Commit parentCommit = repository.new Commit("author1",
-                                                               "message1",
+        Repository.Commit parentCommit = repository.new Commit("message1",
                                                                 Collections.emptyList(),
                                                                 mockedTree("hash1"));
 
-        Repository.Commit commit = repository.new Commit("author2",
-                                                                    "message2",
-                                                                     Collections.singletonList(parentCommit),
-                                                                     mockedTree("hash2"));
+        Repository.Commit commit = repository.new Commit("message2",
+                                                          Collections.singletonList(parentCommit),
+                                                          mockedTree("hash2"));
 
         assertThat(commit.parentCommits(), contains(similarTo(parentCommit)));
     }
@@ -212,14 +198,11 @@ public class RepositoryObjectsTest {
     @Test
     public void referenceConstruction() throws Exception {
         repository.createReference("reference", mockedCommit("hash"));
-
-        assertFilesInFolder(repository.getHeadsDirectory(), 1);
     }
 
     @Test
     public void referenceGetCommit() throws Exception {
-        Repository.Commit commit = repository.new Commit("author",
-                                                         "message",
+        Repository.Commit commit = repository.new Commit("message",
                                                           Collections.emptyList(),
                                                           mockedTree("hash"));
 
@@ -233,14 +216,6 @@ public class RepositoryObjectsTest {
     public void updateFileState() throws Exception {
         Path pathToFile = rootDirectory.newFile().toPath();
         repository.updateFileStateInIndex(pathToFile);
-    }
-
-    private void assertFilesInFolder(final @NotNull Path pathToFolder, final int expected) {
-        File[] filesInFolder = pathToFolder.toFile().listFiles();
-        assertThat(filesInFolder, notNullValue());
-
-        // NPE is checked on a previous line
-        assertThat(filesInFolder.length, is(equalTo(expected)));
     }
 
     private @NotNull SHA1Hash mockedHash(final @NotNull String hashHex) {

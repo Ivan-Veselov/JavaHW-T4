@@ -49,6 +49,15 @@ public final class Repository {
      */
     public static final @NotNull String indexFileName = "index";
 
+    /**
+     * Name of a HEAD file which stores current commit.
+     */
+    public static final @NotNull String headFileName = "HEAD";
+
+    private static final @NotNull String initialCommitMessage = "Initial commit";
+
+    private static final @NotNull String masterBranchName = "master";
+
     private final @NotNull Path rootDirectory;
 
     private Repository(final @NotNull Path rootDirectory) {
@@ -78,13 +87,20 @@ public final class Repository {
             Files.createDirectory(repository.getReferencesDirectory());
             Files.createDirectory(repository.getHeadsDirectory());
             Files.createFile(repository.getIndexFile());
+            Files.createFile(repository.getHeadFile());
         } catch (FileAlreadyExistsException caught) {
             throw new VCSIsAlreadyInitialized(caught);
         }
 
         try {
+            Tree emptyTree = repository.new Tree(Collections.emptyList(), Collections.emptyList());
+            Commit initialCommit = repository.new Commit(initialCommitMessage, Collections.emptyList(), emptyTree);
+
+            repository.createReference(masterBranchName, initialCommit);
+            repository.writeToHead(masterBranchName);
+
             repository.writeToIndex(new ArrayList<>());
-        } catch (FileFromWorkingDirectoryExpected e) {
+        } catch (NamesContainsDuplicates | AlreadyExists | FileFromWorkingDirectoryExpected | NoSuchElement e) {
             throw new RuntimeException(e);
         }
 
@@ -154,6 +170,13 @@ public final class Repository {
      */
     public @NotNull Path getIndexFile() {
         return getVCSDirectory().resolve(indexFileName);
+    }
+
+    /**
+     * Returns a path to the vcs index file.
+     */
+    public @NotNull Path getHeadFile() {
+        return getVCSDirectory().resolve(headFileName);
     }
 
     /**
@@ -323,6 +346,24 @@ public final class Repository {
         }
 
         return entities;
+    }
+
+    private void writeToHead(final @NotNull String referenceName) throws NoSuchElement, IOException {
+        if (!Files.exists(getReferencePath(referenceName))) {
+            throw new NoSuchElement();
+        }
+
+        try (OutputStream outputStream = Files.newOutputStream(getHeadFile());
+             ObjectOutputStream objectStream = new ObjectOutputStream(outputStream)) {
+            objectStream.writeObject(referenceName);
+        }
+    }
+
+    private void writeToHead(final @NotNull Commit commit) throws NoSuchElement, IOException {
+        try (OutputStream outputStream = Files.newOutputStream(getHeadFile());
+             ObjectOutputStream objectStream = new ObjectOutputStream(outputStream)) {
+            objectStream.writeObject(commit.getVCSHash());
+        }
     }
 
     /**
@@ -578,17 +619,15 @@ public final class Repository {
         /**
          * Constructs a Commit object. A file for this object in VCS inner storage will be created.
          *
-         * @param author a name of an author of this commit.
          * @param message a message of this commit.
          * @param parentCommits a list of parent commits.
          * @param tree a file structure which is referenced by this commit.
          * @throws IOException if any IO exception occurs during a creation of file for this object in storage.
          */
-        public Commit(final @NotNull String author,
-                      final @NotNull String message,
+        public Commit(final @NotNull String message,
                       final @NotNull List<Commit> parentCommits,
                       final @NotNull Tree tree) throws IOException {
-            this.author = author;
+            this.author = System.getProperty("user.name");
             this.message = message;
 
             date = new Date();
