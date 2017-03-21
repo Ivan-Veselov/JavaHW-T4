@@ -20,6 +20,7 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
  * TODO: javadocs for exceptions
  * TODO: javadocs for SHA1Hash
  * TODO: javadocs for FileEntity
+ * TODO: javadocs for NormalRelativePath
  *
  * An interface which allows modify and inspect files inside VCS.
  */
@@ -27,41 +28,41 @@ public final class Repository {
     /**
      * Name of a VCS directory which will be created in folder where VCS is initialized.
      */
-    public static final @NotNull String vcsDirectoryName = ".vcs";
+    private static final @NotNull String vcsDirectoryName = ".vcs";
 
     /**
      * Name of a directory in which VCS's objects namely, blobs, trees and commits, will be stored.
      */
-    public static final @NotNull String objectsDirectoryName = "objects";
+    private static final @NotNull String objectsDirectoryName = "objects";
 
     /**
      * Name of a directory in which VCS's references will be stored.
      */
-    public static final @NotNull String referencesDirectoryName = "refs";
+    private static final @NotNull String referencesDirectoryName = "refs";
 
     /**
      * Name of a directory in which VCS's head references will be stored.
      */
-    public static final @NotNull String headsDirectoryName = "heads";
+    private static final @NotNull String headsDirectoryName = "heads";
 
     /**
      * Name of an index file which stores information about a commit that is created.
      */
-    public static final @NotNull String indexFileName = "index";
+    private static final @NotNull String indexFileName = "index";
 
     /**
      * Name of a HEAD file which stores current commit.
      */
-    public static final @NotNull String headFileName = "HEAD";
+    private static final @NotNull String headFileName = "HEAD";
 
     private static final @NotNull String initialCommitMessage = "Initial commit";
 
     private static final @NotNull String masterBranchName = "master";
 
-    private final @NotNull Path rootDirectory;
+    private final @NotNull NormalRelativePath rootDirectory;
 
     private Repository(final @NotNull Path rootDirectory) {
-        this.rootDirectory = rootDirectory;
+        this.rootDirectory = new NormalRelativePath(rootDirectory);
     }
 
     /**
@@ -81,13 +82,16 @@ public final class Repository {
 
         Repository repository = new Repository(path);
 
+        // System.out.println(path);
+        // System.out.println(repository.getVCSDirectory().toPath());
+
         try {
-            Files.createDirectory(repository.getVCSDirectory());
-            Files.createDirectory(repository.getObjectsDirectory());
-            Files.createDirectory(repository.getReferencesDirectory());
-            Files.createDirectory(repository.getHeadsDirectory());
-            Files.createFile(repository.getIndexFile());
-            Files.createFile(repository.getHeadFile());
+            Files.createDirectory(repository.getVCSDirectory().toPath());
+            Files.createDirectory(repository.getObjectsDirectory().toPath());
+            Files.createDirectory(repository.getReferencesDirectory().toPath());
+            Files.createDirectory(repository.getHeadsDirectory().toPath());
+            Files.createFile(repository.getIndexFile().toPath());
+            Files.createFile(repository.getHeadFile().toPath());
         } catch (FileAlreadyExistsException caught) {
             throw new VCSIsAlreadyInitialized(caught);
         }
@@ -131,62 +135,13 @@ public final class Repository {
     }
 
     /**
-     * Returns a path to root directory of this repository.
-     */
-    public @NotNull Path getRootDirectory() {
-        return rootDirectory;
-    }
-
-    /**
-     * Returns a path to the VCS directory inside root directory of the repository.
-     */
-    public @NotNull Path getVCSDirectory() {
-        return getRootDirectory().resolve(vcsDirectoryName);
-    }
-
-    /**
-     * Returns a path to the VCS's objects directory.
-     */
-    public @NotNull Path getObjectsDirectory() {
-        return getVCSDirectory().resolve(objectsDirectoryName);
-    }
-
-    /**
-     * Returns a path to the VCS's references directory.
-     */
-    public @NotNull Path getReferencesDirectory() {
-        return getVCSDirectory().resolve(referencesDirectoryName);
-    }
-
-    /**
-     * Returns a path to the VCS's head references directory.
-     */
-    public @NotNull Path getHeadsDirectory() {
-        return getReferencesDirectory().resolve(headsDirectoryName);
-    }
-
-    /**
-     * Returns a path to the vcs index file.
-     */
-    public @NotNull Path getIndexFile() {
-        return getVCSDirectory().resolve(indexFileName);
-    }
-
-    /**
-     * Returns a path to the vcs index file.
-     */
-    public @NotNull Path getHeadFile() {
-        return getVCSDirectory().resolve(headFileName);
-    }
-
-    /**
      * Checks whether or not given path lies inside repository root folder.
      *
      * @param path a path to check.
      * @return true if path lies inside repository folder, false otherwise.
      */
     public boolean isInsideRepository(final @NotNull Path path) {
-        return isInside(path, getRootDirectory());
+        return getRootDirectory().relativePath(path).isInner();
     }
 
     /**
@@ -196,7 +151,7 @@ public final class Repository {
      * @return true if path lies inside repository inner storage, false otherwise.
      */
     public boolean isInsideStorage(final @NotNull Path path) {
-        return isInside(path, getVCSDirectory());
+        return getVCSDirectory().relativePath(path).isInner();
     }
 
     /**
@@ -219,13 +174,13 @@ public final class Repository {
      */
     public void createReference(final @NotNull String name, final @NotNull Commit commit)
             throws AlreadyExists, IOException {
-        Path pathToReference = getReferencePath(name);
+        NormalRelativePath pathToReference = getReferencePath(name);
 
-        if (Files.exists(pathToReference)) {
+        if (Files.exists(pathToReference.toPath())) {
             throw new AlreadyExists();
         }
 
-        try (OutputStream fileStream = Files.newOutputStream(pathToReference);
+        try (OutputStream fileStream = Files.newOutputStream(pathToReference.toPath());
              ObjectOutputStream objectStream = new ObjectOutputStream(fileStream)) {
             objectStream.writeObject(commit.getVCSHash());
         }
@@ -243,14 +198,14 @@ public final class Repository {
     @SuppressWarnings("unchecked")
     public Commit getCommitByReference(final @NotNull String name)
             throws NoSuchElement, IOException, InvalidDataInStorage {
-        Path pathToReference = getReferencePath(name);
+        NormalRelativePath pathToReference = getReferencePath(name);
 
-        if (!Files.exists(pathToReference)) {
+        if (!Files.exists(pathToReference.toPath())) {
             throw new NoSuchElement();
         }
 
         SHA1Hash commitHash;
-        try (InputStream inputStream = Files.newInputStream(pathToReference);
+        try (InputStream inputStream = Files.newInputStream(pathToReference.toPath());
              ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
             commitHash = (SHA1Hash) objectInputStream.readObject();
         } catch (ClassNotFoundException | ClassCastException e ) {
@@ -263,7 +218,7 @@ public final class Repository {
     /**
      * Updates an entry for a given file in an index of this repository.
      *
-     * @param path path to file fr which entry will be updated.
+     * @param path path to file which entry will be updated.
      * @throws RegularFileExpected if given path doesn't lead to a regular file.
      * @throws FileFromWorkingDirectoryExpected if given path doesn't lead to file which lies in a working directory of
      *                                          this repository.
@@ -283,9 +238,9 @@ public final class Repository {
         List<FileEntity> entities = readFromIndex();
         for (int i = 0; i < entities.size(); i++) {
             FileEntity entity = entities.get(i);
-            if (Files.isSameFile(path, entity.getPathToFile())) {
+            if (Files.isSameFile(path, entity.getPathToFile().toPath())) {
                 if (Files.exists(path)) {
-                    entities.set(i, new FileEntity(path));
+                    entities.set(i, new FileEntity(getRootDirectory().relativePath(path)));
                 } else {
                     entities.remove(i);
                 }
@@ -296,33 +251,81 @@ public final class Repository {
         }
 
         if (Files.exists(path)) {
-            entities.add(new FileEntity(path));
+            entities.add(new FileEntity(getRootDirectory().relativePath(path)));
         }
 
         writeToIndex(entities);
     }
 
-    private static @NotNull Path normalized(final @NotNull Path path) {
-        return path.toAbsolutePath().normalize();
+    // TODO: implementation
+    // TODO: javadocs
+    // TODO: add check for nothing to commit
+    public @NotNull Commit newCommitFromIndex(final @NotNull String message) {
+        throw new UnsupportedOperationException();
     }
 
-    private boolean isInside(final @NotNull Path innerPath, final @NotNull Path outerPath) {
-        return normalized(innerPath).startsWith(normalized(outerPath));
+    /**
+     * Returns a path to root directory of this repository.
+     */
+    private @NotNull NormalRelativePath getRootDirectory() {
+        return rootDirectory;
     }
 
-    private @NotNull Path getReferencePath(final @NotNull String name) {
+    /**
+     * Returns a path to the VCS directory inside root directory of the repository.
+     */
+    private @NotNull NormalRelativePath getVCSDirectory() {
+        return getRootDirectory().resolve(vcsDirectoryName);
+    }
+
+    /**
+     * Returns a path to the VCS's objects directory.
+     */
+    private @NotNull NormalRelativePath getObjectsDirectory() {
+        return getVCSDirectory().resolve(objectsDirectoryName);
+    }
+
+    /**
+     * Returns a path to the VCS's references directory.
+     */
+    private @NotNull NormalRelativePath getReferencesDirectory() {
+        return getVCSDirectory().resolve(referencesDirectoryName);
+    }
+
+    /**
+     * Returns a path to the VCS's head references directory.
+     */
+    private @NotNull NormalRelativePath getHeadsDirectory() {
+        return getReferencesDirectory().resolve(headsDirectoryName);
+    }
+
+    /**
+     * Returns a path to the vcs index file.
+     */
+    private @NotNull NormalRelativePath getIndexFile() {
+        return getVCSDirectory().resolve(indexFileName);
+    }
+
+    /**
+     * Returns a path to the vcs index file.
+     */
+    private @NotNull NormalRelativePath getHeadFile() {
+        return getVCSDirectory().resolve(headFileName);
+    }
+
+    private @NotNull NormalRelativePath getReferencePath(final @NotNull String name) {
         return getHeadsDirectory().resolve(name);
     }
 
     private void writeToIndex(final @NotNull List<FileEntity> fileEntities)
             throws FileFromWorkingDirectoryExpected, IOException {
         for (FileEntity entity : fileEntities) {
-            if (!isInsideWorkingDirectory(entity.getPathToFile())) {
+            if (!isInsideWorkingDirectory(entity.getPathToFile().toPath())) {
                 throw new FileFromWorkingDirectoryExpected();
             }
         }
 
-        try (OutputStream outputStream = Files.newOutputStream(getIndexFile());
+        try (OutputStream outputStream = Files.newOutputStream(getIndexFile().toPath());
              ObjectOutputStream objectStream = new ObjectOutputStream(outputStream)) {
             objectStream.writeObject(fileEntities);
         }
@@ -332,7 +335,7 @@ public final class Repository {
     private List<FileEntity> readFromIndex() throws IOException, InvalidDataInStorage {
         List<FileEntity> entities;
 
-        try (InputStream inputStream = Files.newInputStream(getIndexFile());
+        try (InputStream inputStream = Files.newInputStream(getIndexFile().toPath());
              ObjectInputStream objectStream = new ObjectInputStream(inputStream)) {
             entities = (List<FileEntity>) objectStream.readObject();
         } catch (ClassNotFoundException e) {
@@ -340,7 +343,7 @@ public final class Repository {
         }
 
         for (FileEntity entity : entities) {
-            if (!isInsideWorkingDirectory(entity.getPathToFile())) {
+            if (!isInsideWorkingDirectory(entity.getPathToFile().toPath())) {
                 throw new InvalidDataInStorage();
             }
         }
@@ -349,21 +352,27 @@ public final class Repository {
     }
 
     private void writeToHead(final @NotNull String referenceName) throws NoSuchElement, IOException {
-        if (!Files.exists(getReferencePath(referenceName))) {
+        if (!Files.exists(getReferencePath(referenceName).toPath())) {
             throw new NoSuchElement();
         }
 
-        try (OutputStream outputStream = Files.newOutputStream(getHeadFile());
+        try (OutputStream outputStream = Files.newOutputStream(getHeadFile().toPath());
              ObjectOutputStream objectStream = new ObjectOutputStream(outputStream)) {
             objectStream.writeObject(referenceName);
         }
     }
 
     private void writeToHead(final @NotNull Commit commit) throws NoSuchElement, IOException {
-        try (OutputStream outputStream = Files.newOutputStream(getHeadFile());
+        try (OutputStream outputStream = Files.newOutputStream(getHeadFile().toPath());
              ObjectOutputStream objectStream = new ObjectOutputStream(outputStream)) {
             objectStream.writeObject(commit.getVCSHash());
         }
+    }
+
+    // TODO: implementation
+    // TODO: javadocs
+    private @NotNull Tree buildTreeFromIndex() throws IOException, InvalidDataInStorage {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -380,7 +389,7 @@ public final class Repository {
          * Returns a path to data represented by this object.
          */
         public @NotNull Path getPathInStorage() {
-            return getObjectsDirectory().resolve(getVCSHash().getHex());
+            return getObjectsDirectory().resolve(getVCSHash().getHex()).toPath();
         }
     }
 
