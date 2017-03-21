@@ -10,6 +10,10 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import ru.spbau.bachelor2015.veselov.hw02.exceptions.FileFromWorkingDirectoryExpected;
+import ru.spbau.bachelor2015.veselov.hw02.exceptions.NamesContainsDuplicates;
+import ru.spbau.bachelor2015.veselov.hw02.exceptions.NoSuchElement;
+import ru.spbau.bachelor2015.veselov.hw02.exceptions.RegularFileExpected;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -204,19 +208,8 @@ public class RepositoryTest {
 
     @Test
     public void referenceConstruction() throws Exception {
-        repository.new Reference("reference", mockedCommit("hash"));
+        repository.createReference("reference", mockedCommit("hash"));
 
-        assertFilesInFolder(repository.getHeadsDirectory(), 1);
-    }
-
-    @Test
-    public void referenceConstructionFromName() throws Exception {
-        final String name = "name";
-
-        VCSManager.Repository.Reference reference1 = repository.new Reference(name, mockedCommit("hash"));
-        VCSManager.Repository.Reference reference2 = repository.new Reference(name);
-
-        assertThat(reference2, is(similarTo(reference1)));
         assertFilesInFolder(repository.getHeadsDirectory(), 1);
     }
 
@@ -227,9 +220,10 @@ public class RepositoryTest {
                                                                      Collections.emptyList(),
                                                                      mockedTree("hash"));
 
-        VCSManager.Repository.Reference reference = repository.new Reference("name", commit);
+        final String referenceName = "name";
+        repository.createReference(referenceName, commit);
 
-        assertThat(reference.getCommit(), is(similarTo(commit)));
+        assertThat(repository.getCommitByReference(referenceName), is(similarTo(commit)));
     }
 
     private void assertFilesInFolder(final @NotNull Path pathToFolder, final int expected) {
@@ -310,28 +304,6 @@ public class RepositoryTest {
                 description.appendText(", expected author: ").appendValue(expected.getAuthor())
                            .appendText(", expected message:" ).appendValue(expected.getMessage())
                            .appendText(", expected date: ").appendValue(expected.getDate());
-            }
-        };
-    }
-
-    private Matcher<VCSManager.Repository.Reference> similarTo(VCSManager.Repository.Reference expected) {
-        return new BaseMatcher<VCSManager.Repository.Reference>() {
-            @Override
-            public boolean matches(Object o) {
-                if (!(o instanceof VCSManager.Repository.Reference)) {
-                    return false;
-                }
-
-                VCSManager.Repository.Reference actual = (VCSManager.Repository.Reference) o;
-
-                return actual.getName().equals(expected.getName()) &&
-                       actual.getPathInStorage().equals(expected.getPathInStorage());
-            }
-
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("expected name: ").appendValue(expected.getName())
-                           .appendText(", expected pathInStorage: ").appendValue(expected.getPathInStorage());
             }
         };
     }

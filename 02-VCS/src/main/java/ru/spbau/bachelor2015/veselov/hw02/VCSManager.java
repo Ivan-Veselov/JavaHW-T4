@@ -1,6 +1,7 @@
 package ru.spbau.bachelor2015.veselov.hw02;
 
 import org.jetbrains.annotations.NotNull;
+import ru.spbau.bachelor2015.veselov.hw02.exceptions.*;
 
 import java.io.*;
 import java.nio.file.FileAlreadyExistsException;
@@ -15,6 +16,7 @@ import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 /**
+ * TODO: make base class for VCS exceptions
  * VCS Manager which can create VCS repository interfaces. Repository interface can be created for already existed
  * system or for a new one.
  */
@@ -166,12 +168,67 @@ public final class VCSManager {
             return isInsideRepository(path) && !isInsideStorage(path);
         }
 
-        private boolean isInside(final @NotNull Path innerPath, final @NotNull Path outerPath) {
-            return normalized(innerPath).startsWith(normalized(outerPath));
+        /**
+         * Creates a new reference inside VCS inner storage.
+         *
+         * @param name a name of a new reference.
+         * @param commit a commit which will be referenced.
+         * @throws AlreadyExists if reference with such name already exists.
+         * @throws IOException if any IO exception occurs during a creation of file for this object in storage.
+         */
+        public void createReference(final @NotNull String name, final @NotNull Commit commit)
+                throws AlreadyExists, IOException {
+            Path pathToReference = getReferencePath(name);
+
+            if (Files.exists(pathToReference)) {
+                throw new AlreadyExists();
+            }
+
+            try (OutputStream fileStream = Files.newOutputStream(pathToReference);
+                 ObjectOutputStream objectStream = new ObjectOutputStream(fileStream)) {
+                objectStream.writeObject(commit.getVCSHash());
+            }
+        }
+
+        /**
+         * Returns a commit which is referenced by a reference with a given name.
+         *
+         * @param name name of reference.
+         * @throws NoSuchElement if there is no reference with a given name or there is no commit with a hash that this
+         *                       reference stores
+         * @throws InvalidDataInStorage if it is an attempt to read an invalid data from storage.
+         * @throws IOException if any IO error occurs during data reading.
+         */
+        @SuppressWarnings("unchecked")
+        public Commit getCommitByReference(final @NotNull String name)
+                throws NoSuchElement, IOException, InvalidDataInStorage {
+            Path pathToReference = getReferencePath(name);
+
+            if (!Files.exists(pathToReference)) {
+                throw new NoSuchElement();
+            }
+
+            SHA1Hash commitHash;
+            try (InputStream inputStream = Files.newInputStream(pathToReference);
+                 ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
+                commitHash = (SHA1Hash) objectInputStream.readObject();
+            } catch (ClassNotFoundException | ClassCastException e ) {
+                throw new InvalidDataInStorage(e);
+            }
+
+            return new Commit(commitHash);
         }
 
         private static @NotNull Path normalized(final @NotNull Path path) {
             return path.toAbsolutePath().normalize();
+        }
+
+        private boolean isInside(final @NotNull Path innerPath, final @NotNull Path outerPath) {
+            return normalized(innerPath).startsWith(normalized(outerPath));
+        }
+
+        private @NotNull Path getReferencePath(final @NotNull String name) {
+            return getHeadsDirectory().resolve(name);
         }
 
         /**
@@ -549,86 +606,6 @@ public final class VCSManager {
              */
             public @NotNull Iterable<Commit> parentCommits() {
                 return () -> StoredObjectIterator.fromHashIterator(parentCommitsHashes.iterator(), Commit::new);
-            }
-        }
-
-        /**
-         * Reference is a named object which references some commit. As reference isn't bound to its hash, object of
-         * this class represents a view on real reference at the moment of this object creation. Therefore it is
-         * recommended to store name of a reference and every time some additional information about this reference is
-         * needed create object of this type.
-         * TODO: replace this class with methods.
-         */
-        public class Reference implements VCSElement {
-            private final @NotNull String name;
-
-            private final @NotNull SHA1Hash commitHash;
-
-            /**
-             * Creates a reference object. A file for this object in VCS inner storage will be created.
-             *
-             * @param name a name of new reference
-             * @param commit a commit which will be referenced
-             * @throws IOException if any IO exception occurs during a creation of file for this object in storage.
-             */
-            public Reference(final @NotNull String name, final @NotNull Commit commit) throws IOException {
-                this.name = name;
-                commitHash = commit.getVCSHash();
-
-                try (OutputStream fileStream = Files.newOutputStream(getPathInStorage());
-                     ObjectOutputStream objectStream = new ObjectOutputStream(fileStream)) {
-                    objectStream.writeObject(commitHash);
-                }
-            }
-
-            /**
-             * Creates Reference element for previously existed data by its name.
-             *
-             * @param name name of reference.
-             * @throws NoSuchElement if there is no reference with a given name.
-             * @throws InvalidDataInStorage if it is an attempt to read an invalid data from storage.
-             * @throws IOException if any IO error occurs during data reading.
-             */
-            @SuppressWarnings("unchecked")
-            public Reference(final @NotNull String name) throws NoSuchElement, IOException, InvalidDataInStorage {
-                this.name = name;
-
-                if (!Files.exists(getPathInStorage())) {
-                    throw new NoSuchElement();
-                }
-
-                try (InputStream inputStream = Files.newInputStream(getPathInStorage());
-                     ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
-                    commitHash = (SHA1Hash) objectInputStream.readObject();
-                } catch (ClassNotFoundException | ClassCastException e ) {
-                    throw new InvalidDataInStorage(e);
-                }
-            }
-
-            /**
-             * Returns a path to data represented by this object.
-             */
-            @Override
-            public @NotNull Path getPathInStorage() {
-                return getHeadsDirectory().resolve(name);
-            }
-
-            /**
-             * Returns a name of this reference.
-             */
-            public @NotNull String getName() {
-                return name;
-            }
-
-            /**
-             * Returns a commit which is referenced.
-             *
-             * @throws InvalidDataInStorage if referenced commit is invalid or data was corrupted.
-             * @throws IOException if any IO exception occurs during reading data for referenced commit.
-             * @throws NoSuchElement if there is no commit with a hash that this reference stores.
-             */
-            public @NotNull Commit getCommit() throws InvalidDataInStorage, IOException, NoSuchElement {
-                return new Commit(commitHash);
             }
         }
     }

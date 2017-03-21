@@ -5,6 +5,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import ru.spbau.bachelor2015.veselov.hw02.exceptions.DirectoryExpected;
+import ru.spbau.bachelor2015.veselov.hw02.exceptions.VCSIsAlreadyInitialized;
+import ru.spbau.bachelor2015.veselov.hw02.exceptions.VCSWasNotInitialized;
 
 import java.io.File;
 import java.nio.file.Files;

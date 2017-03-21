@@ -1,4 +1,4 @@
-package ru.spbau.bachelor2015.veselov.hw02;
+package ru.spbau.bachelor2015.veselov.hw02.exceptions;
 
 public class InvalidDataInStorage extends Exception {
     public InvalidDataInStorage(final Throwable cause) {
