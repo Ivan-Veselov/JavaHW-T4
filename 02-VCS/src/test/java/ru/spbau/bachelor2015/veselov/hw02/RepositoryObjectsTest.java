@@ -23,9 +23,8 @@ import java.util.Collections;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.withSettings;
+import static org.hamcrest.Matchers.contains;
+import static org.mockito.Mockito.*;
 
 /**
  * TODO: reconsider tests one more time
@@ -218,6 +217,60 @@ public class RepositoryObjectsTest {
         repository.updateFileStateInIndex(pathToFile);
     }
 
+    @Test
+    public void addNewCommitFromIndex() throws Exception {
+        final String file1Name = "file1";
+        final String folderName = "folder";
+        final String file2Name = "file2";
+
+        Path pathToFile1 = rootDirectory.newFile(file1Name).toPath();
+        Path pathToFolder = rootDirectory.newFolder(folderName).toPath();
+        Path pathToFile2 = pathToFolder.resolve(file2Name);
+        Files.createFile(pathToFile2);
+
+        repository.updateFileStateInIndex(pathToFile1);
+        repository.updateFileStateInIndex(pathToFile2);
+
+        final String message = "message";
+        Repository.Commit commit = repository.newCommitFromIndex(message);
+
+        assertThat(commit.getMessage(), is(equalTo(message)));
+
+        Repository.Tree outerTree = commit.getTree();
+        assertThat(outerTree,
+            allOf(
+                blobChildren(
+                    contains(
+                        allOf(
+                            name(is(equalTo(file1Name))),
+                            underlyingObject(is(similarTo(repository.new Blob(pathToFile1))))
+                        )
+                    )
+                ),
+                treeChildren(
+                    contains(
+                        allOf(
+                            name(is(equalTo(folderName))),
+                            underlyingObject(
+                                allOf(
+                                    blobChildren(
+                                        contains(
+                                            allOf(
+                                                name(is(equalTo(file2Name))),
+                                                underlyingObject(is(similarTo(repository.new Blob(pathToFile2))))
+                                            )
+                                        )
+                                    ),
+                                    treeChildren(emptyIterable())
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        );
+    }
+
     private @NotNull SHA1Hash mockedHash(final @NotNull String hashHex) {
         SHA1Hash hash = mock(SHA1Hash.class, withSettings().serializable());
         when(hash.getHex()).thenReturn(hashHex);
@@ -310,6 +363,32 @@ public class RepositoryObjectsTest {
             @Override
             protected T featureValueOf(final @NotNull Named<T> actual) {
                 return actual.getObject();
+            }
+        };
+    }
+
+    private FeatureMatcher<Repository.Tree, Iterable<Named<Repository.Blob>>> blobChildren(
+            final @NotNull Matcher<? super Iterable<Named<Repository.Blob>>> subMatcher) {
+        return new FeatureMatcher<Repository.Tree, Iterable<Named<Repository.Blob>>>(
+                                                            subMatcher,
+                                                           "named blob children of Tree",
+                                                           "blobChildren") {
+            @Override
+            protected Iterable<Named<Repository.Blob>> featureValueOf(final @NotNull Repository.Tree actual) {
+                return actual.blobChildren();
+            }
+        };
+    }
+
+    private FeatureMatcher<Repository.Tree, Iterable<Named<Repository.Tree>>> treeChildren(
+            final @NotNull Matcher<? super Iterable<Named<Repository.Tree>>> subMatcher) {
+        return new FeatureMatcher<Repository.Tree, Iterable<Named<Repository.Tree>>>(
+                                                                        subMatcher,
+                                                                       "named tree children of Tree",
+                                                                       "treeChildren") {
+            @Override
+            protected Iterable<Named<Repository.Tree>> featureValueOf(final @NotNull Repository.Tree actual) {
+                return actual.treeChildren();
             }
         };
     }

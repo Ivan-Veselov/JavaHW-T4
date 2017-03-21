@@ -7,6 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class NormalRelativePath implements Serializable {
     private @NotNull Path basePath;
@@ -22,11 +23,11 @@ public class NormalRelativePath implements Serializable {
         this.path = this.basePath.relativize(path.toAbsolutePath().normalize());
     }
 
-    @NotNull NormalRelativePath relativePath(final @NotNull Path path) {
-        return new NormalRelativePath(toPath(), path);
+    public @NotNull NormalRelativePath relativePath(final @NotNull Path path) {
+        return new NormalRelativePath(realPath(), path);
     }
 
-    public @NotNull Path toPath() {
+    public @NotNull Path realPath() {
         if (path.getName(0).toString().equals("")) {
             return basePath;
         }
@@ -34,12 +35,20 @@ public class NormalRelativePath implements Serializable {
         return basePath.resolve(path).normalize();
     }
 
+    public @NotNull Path relativePath() {
+        return path;
+    }
+
     public @NotNull NormalRelativePath resolve(final @NotNull String path) {
-        return new NormalRelativePath(basePath, toPath().resolve(path));
+        return new NormalRelativePath(basePath, realPath().resolve(path));
+    }
+
+    public @NotNull NormalRelativePath shifted() {
+        return new NormalRelativePath(basePath.resolve(path.getName(0)), realPath());
     }
 
     public boolean isInner() {
-        return toPath().startsWith(basePath);
+        return realPath().startsWith(basePath);
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException {
@@ -48,7 +57,7 @@ public class NormalRelativePath implements Serializable {
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        basePath = (Path) in.readObject();
-        path = (Path) in.readObject();
+        basePath = Paths.get((String) in.readObject());
+        path = Paths.get((String) in.readObject());
     }
 }

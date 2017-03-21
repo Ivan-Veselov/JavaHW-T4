@@ -33,4 +33,9 @@ public class SHA1Hash implements Serializable {
     public @NotNull String getHex() {
         return hexString;
     }
+
+    @Override
+    public @NotNull String toString() {
+        return getHex();
+    }
 }

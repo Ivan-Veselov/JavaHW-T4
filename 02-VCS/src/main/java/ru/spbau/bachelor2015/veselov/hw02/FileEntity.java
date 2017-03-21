@@ -2,7 +2,6 @@ package ru.spbau.bachelor2015.veselov.hw02;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.io.Serializable;
 
 public class FileEntity implements Serializable {
@@ -14,12 +13,6 @@ public class FileEntity implements Serializable {
         this.pathToFile = pathToFile;
 
         this.contentHash = contentHash;
-    }
-
-    public FileEntity(final @NotNull NormalRelativePath pathToFile) throws IOException {
-        this.pathToFile = pathToFile;
-
-        this.contentHash = new SHA1Hash(pathToFile.toPath());
     }
 
     public @NotNull NormalRelativePath getPathToFile() {
