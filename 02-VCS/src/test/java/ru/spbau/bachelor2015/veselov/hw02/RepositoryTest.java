@@ -21,6 +21,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 // TODO: reconsider tests one more time
 public class RepositoryTest {
@@ -72,7 +73,7 @@ public class RepositoryTest {
         Path pathToFile = rootDirectory.newFile().toPath();
         VCSManager.Repository.Blob blob1 = repository.new Blob(pathToFile);
 
-        VCSManager.Repository.Blob blob2 = repository.new Blob(blob1.getSha1Hash());
+        VCSManager.Repository.Blob blob2 = repository.new Blob(blob1.getVCSHash());
 
         assertThat(blob2, is(similarTo(blob1)));
         assertFilesInFolder(repository.getObjectsDirectory(), 1);
@@ -80,7 +81,7 @@ public class RepositoryTest {
 
     @Test(expected = NoSuchElement.class)
     public void blobConstructionFromNonExistingHash() throws Exception {
-        repository.new Blob("hash");
+        repository.new Blob(mockedHash("hash"));
     }
 
     @Test(expected = FileFromWorkingDirectoryExpected.class)
@@ -118,7 +119,7 @@ public class RepositoryTest {
     @Test
     public void treeConstructionFromHash() throws Exception {
         VCSManager.Repository.Tree tree1 = repository.new Tree(Collections.emptyList(), Collections.emptyList());
-        VCSManager.Repository.Tree tree2 = repository.new Tree(tree1.getSha1Hash());
+        VCSManager.Repository.Tree tree2 = repository.new Tree(tree1.getVCSHash());
 
         assertThat(tree2, is(similarTo(tree1)));
         assertFilesInFolder(repository.getObjectsDirectory(), 1);
@@ -126,7 +127,7 @@ public class RepositoryTest {
 
     @Test(expected = NoSuchElement.class)
     public void treeConstructionFromNonExistingHash() throws Exception {
-        repository.new Tree("hash");
+        repository.new Tree(mockedHash("hash"));
     }
 
     @Test
@@ -169,7 +170,7 @@ public class RepositoryTest {
                                                                       Collections.emptyList(),
                                                                       mockedTree("hash"));
 
-        VCSManager.Repository.Commit commit2 = repository.new Commit(commit1.getSha1Hash());
+        VCSManager.Repository.Commit commit2 = repository.new Commit(commit1.getVCSHash());
 
         assertThat(commit2, is(similarTo(commit1)));
         assertFilesInFolder(repository.getObjectsDirectory(), 1);
@@ -226,9 +227,9 @@ public class RepositoryTest {
                                                                      Collections.emptyList(),
                                                                      mockedTree("hash"));
 
-        VCSManager.Repository.Reference referenece = repository.new Reference("name", commit);
+        VCSManager.Repository.Reference reference = repository.new Reference("name", commit);
 
-        assertThat(referenece.getCommit(), is(similarTo(commit)));
+        assertThat(reference.getCommit(), is(similarTo(commit)));
     }
 
     private void assertFilesInFolder(final @NotNull Path pathToFolder, final int expected) {
@@ -239,23 +240,35 @@ public class RepositoryTest {
         assertThat(filesInFolder.length, is(equalTo(expected)));
     }
 
-    private @NotNull VCSManager.Repository.Blob mockedBlob(final @NotNull String hash) {
+    private @NotNull SHA1Hash mockedHash(final @NotNull String hashHex) {
+        SHA1Hash hash = mock(SHA1Hash.class, withSettings().serializable());
+        when(hash.getHex()).thenReturn(hashHex);
+        return hash;
+    }
+
+    private @NotNull VCSManager.Repository.Blob mockedBlob(final @NotNull String hashHex) {
+        SHA1Hash hash = mockedHash(hashHex);
+
         VCSManager.Repository.Blob blob = mock(VCSManager.Repository.Blob.class);
-        when(blob.getSha1Hash()).thenReturn(hash);
+        when(blob.getVCSHash()).thenReturn(hash);
 
         return blob;
     }
 
-    private @NotNull VCSManager.Repository.Tree mockedTree(final @NotNull String hash) {
+    private @NotNull VCSManager.Repository.Tree mockedTree(final @NotNull String hashHex) {
+        SHA1Hash hash = mockedHash(hashHex);
+
         VCSManager.Repository.Tree tree = mock(VCSManager.Repository.Tree.class);
-        when(tree.getSha1Hash()).thenReturn(hash);
+        when(tree.getVCSHash()).thenReturn(hash);
 
         return tree;
     }
 
-    private @NotNull VCSManager.Repository.Commit mockedCommit(final @NotNull String hash) {
+    private @NotNull VCSManager.Repository.Commit mockedCommit(final @NotNull String hashHex) {
+        SHA1Hash hash = mockedHash(hashHex);
+
         VCSManager.Repository.Commit commit = mock(VCSManager.Repository.Commit.class);
-        when(commit.getSha1Hash()).thenReturn(hash);
+        when(commit.getVCSHash()).thenReturn(hash);
 
         return commit;
     }
@@ -360,13 +373,13 @@ public class RepositoryTest {
 
             VCSManager.Repository.StoredObject actual = (VCSManager.Repository.StoredObject) o;
 
-            return actual.getSha1Hash().equals(expected.getSha1Hash()) &&
+            return actual.getVCSHash().equals(expected.getVCSHash()) &&
                     actual.getPathInStorage().equals(expected.getPathInStorage());
         }
 
         @Override
         public void describeTo(Description description) {
-            description.appendText("expected sha1Hash: ").appendValue(expected.getSha1Hash())
+            description.appendText("expected VCSHash: ").appendValue(expected.getVCSHash())
                        .appendText(", expected pathInStorage: ").appendValue(expected.getPathInStorage());
         }
     }

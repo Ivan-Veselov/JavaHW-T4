@@ -1,6 +1,5 @@
 package ru.spbau.bachelor2015.veselov.hw02;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
@@ -16,7 +15,6 @@ import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 /**
- * TODO: add hashing utility classes
  * VCS Manager which can create VCS repository interfaces. Repository interface can be created for already existed
  * system or for a new one.
  */
@@ -194,18 +192,18 @@ public final class VCSManager {
             /**
              * Returns SHA1 hash of data represented by this object.
              */
-            public abstract @NotNull String getSha1Hash();
+            public abstract @NotNull SHA1Hash getVCSHash();
 
             /**
              * Returns a path to data represented by this object.
              */
             public @NotNull Path getPathInStorage() {
-                return getObjectsDirectory().resolve(getSha1Hash());
+                return getObjectsDirectory().resolve(getVCSHash().getHex());
             }
         }
 
         private interface StoredObjectLoader<T extends StoredObject> {
-            @NotNull T load(final @NotNull String hash) throws NoSuchElement, InvalidDataInStorage, IOException;
+            @NotNull T load(final @NotNull SHA1Hash hash) throws NoSuchElement, InvalidDataInStorage, IOException;
         }
 
         private final static class StoredObjectIterator<I, E, T extends StoredObject> implements Iterator<E> {
@@ -213,19 +211,19 @@ public final class VCSManager {
 
             private final @NotNull StoredObjectLoader<T> loader;
 
-            private final @NotNull Function<? super I, ? extends String> innerConverter;
+            private final @NotNull Function<? super I, ? extends SHA1Hash> innerConverter;
 
             private final @NotNull BiFunction<? super I, ? super T, ? extends E> outerConverter;
 
-            public static <U extends StoredObject> StoredObjectIterator<String, U, U> fromHashIterator(
-                                                                        final @NotNull Iterator<String> iterator,
+            public static <U extends StoredObject> StoredObjectIterator<SHA1Hash, U, U> fromHashIterator(
+                                                                        final @NotNull Iterator<SHA1Hash> iterator,
                                                                         final @NotNull StoredObjectLoader<U> loader) {
                 return new StoredObjectIterator<>(iterator, loader, Function.identity(), (x, y) -> y);
             }
 
             public StoredObjectIterator(final @NotNull Iterator<I> iterator,
                                         final @NotNull StoredObjectLoader<T> loader,
-                                        final @NotNull Function<? super I, ? extends String> innerConverter,
+                                        final @NotNull Function<? super I, ? extends SHA1Hash> innerConverter,
                                         final @NotNull BiFunction<? super I, ? super T, ? extends E> outerConverter) {
                 this.iterator = iterator;
                 this.loader = loader;
@@ -255,7 +253,7 @@ public final class VCSManager {
          * VCS inner storage.
          */
         public class Blob extends StoredObject {
-            private final @NotNull String contentSha1Hash;
+            private final @NotNull SHA1Hash contentHash;
 
             /**
              * Creates Blob object. Given file will be copied into VCS inner storage.
@@ -275,7 +273,7 @@ public final class VCSManager {
                     throw new RegularFileExpected();
                 }
 
-                contentSha1Hash = DigestUtils.sha1Hex(Files.readAllBytes(path));
+                contentHash = new SHA1Hash(Files.readAllBytes(path));
                 Files.copy(path, getPathInStorage(), REPLACE_EXISTING, NOFOLLOW_LINKS);
             }
 
@@ -285,8 +283,8 @@ public final class VCSManager {
              * @param hash hash of data.
              * @throws NoSuchElement if there is no data with a given hash.
              */
-            public Blob(final @NotNull String hash) throws NoSuchElement {
-                contentSha1Hash = hash;
+            public Blob(final @NotNull SHA1Hash hash) throws NoSuchElement {
+                contentHash = hash;
 
                 if (!Files.exists(getPathInStorage())) {
                     throw new NoSuchElement();
@@ -296,8 +294,8 @@ public final class VCSManager {
             /**
              * Returns SHA1 hash of data represented by this blob.
              */
-            public @NotNull String getSha1Hash() {
-                return contentSha1Hash;
+            public @NotNull SHA1Hash getVCSHash() {
+                return contentHash;
             }
         }
 
@@ -306,11 +304,11 @@ public final class VCSManager {
          * objects and Blob objects. Each reference supplied with a name of a referenced object.
          */
         public class Tree extends StoredObject {
-            private final @NotNull String sha1Hash;
+            private final @NotNull SHA1Hash hash;
 
-            private final @NotNull List<Named<String>> treeChildrenHashes;
+            private final @NotNull List<Named<SHA1Hash>> treeChildrenHashes;
 
-            private final @NotNull List<Named<String>> blobChildrenHashes;
+            private final @NotNull List<Named<SHA1Hash>> blobChildrenHashes;
 
             /**
              * Constructs a Tree object. A file for this object in VCS inner storage will be created.
@@ -326,15 +324,15 @@ public final class VCSManager {
                     throw new NamesContainsDuplicates();
                 }
 
-                Function<Named<? extends StoredObject>, Named<String>> mapper =
-                        namedObject -> new Named<>(namedObject.getObject().getSha1Hash(), namedObject.getName());
+                Function<Named<? extends StoredObject>, Named<SHA1Hash>> mapper =
+                        namedObject -> new Named<>(namedObject.getObject().getVCSHash(), namedObject.getName());
 
                 treeChildrenHashes = new ArrayList<>(treeList.stream()
-                                                       .map(mapper)
-                                                       .collect(Collectors.toList()));
+                                                             .map(mapper)
+                                                             .collect(Collectors.toList()));
                 blobChildrenHashes = new ArrayList<>(blobList.stream()
-                                                       .map(mapper)
-                                                       .collect(Collectors.toList()));
+                                                             .map(mapper)
+                                                             .collect(Collectors.toList()));
 
                 Collections.sort(treeChildrenHashes);
                 Collections.sort(blobChildrenHashes);
@@ -350,7 +348,7 @@ public final class VCSManager {
                     data = byteStream.toByteArray();
                 }
 
-                sha1Hash = DigestUtils.sha1Hex(data);
+                hash = new SHA1Hash(data);
                 Files.write(getPathInStorage(), data);
             }
 
@@ -363,8 +361,8 @@ public final class VCSManager {
              * @throws IOException if any IO error occurs during data reading.
              */
             @SuppressWarnings("unchecked")
-            public Tree(final @NotNull String hash) throws NoSuchElement, InvalidDataInStorage, IOException {
-                sha1Hash = hash;
+            public Tree(final @NotNull SHA1Hash hash) throws NoSuchElement, InvalidDataInStorage, IOException {
+                this.hash = hash;
 
                 if (!Files.exists(getPathInStorage())) {
                     throw new NoSuchElement();
@@ -372,8 +370,8 @@ public final class VCSManager {
 
                 try (InputStream inputStream = Files.newInputStream(getPathInStorage());
                      ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
-                    treeChildrenHashes = (List<Named<String>>) objectInputStream.readObject();
-                    blobChildrenHashes = (List<Named<String>>) objectInputStream.readObject();
+                    treeChildrenHashes = (List<Named<SHA1Hash>>) objectInputStream.readObject();
+                    blobChildrenHashes = (List<Named<SHA1Hash>>) objectInputStream.readObject();
                 } catch (ClassNotFoundException | ClassCastException e ) {
                     throw new InvalidDataInStorage(e);
                 }
@@ -383,8 +381,8 @@ public final class VCSManager {
              * Returns SHA1 hash of data represented by this tree.
              */
             @Override
-            public @NotNull String getSha1Hash() {
-                return sha1Hash;
+            public @NotNull SHA1Hash getVCSHash() {
+                return hash;
             }
 
             /**
@@ -424,7 +422,7 @@ public final class VCSManager {
          * that produced this one.
          */
         public class Commit extends StoredObject {
-            private final @NotNull String sha1Hash;
+            private final @NotNull SHA1Hash hash;
 
             private final @NotNull String author;
 
@@ -432,9 +430,9 @@ public final class VCSManager {
 
             private final @NotNull Date date;
 
-            private final @NotNull String underlyingTreeHash;
+            private final @NotNull SHA1Hash underlyingTreeHash;
 
-            private final @NotNull List<String> parentCommitsHashes;
+            private final @NotNull List<SHA1Hash> parentCommitsHashes;
 
             /**
              * Constructs a Commit object. A file for this object in VCS inner storage will be created.
@@ -455,10 +453,10 @@ public final class VCSManager {
                 date = new Date();
 
                 parentCommitsHashes = new ArrayList<>(parentCommits.stream()
-                                                                   .map(Commit::getSha1Hash)
+                                                                   .map(Commit::getVCSHash)
                                                                    .collect(Collectors.toList()));
 
-                underlyingTreeHash = tree.getSha1Hash();
+                underlyingTreeHash = tree.getVCSHash();
 
                 byte[] data;
                 try (ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
@@ -474,7 +472,7 @@ public final class VCSManager {
                     data = byteStream.toByteArray();
                 }
 
-                sha1Hash = DigestUtils.sha1Hex(data);
+                hash = new SHA1Hash(data);
                 Files.write(getPathInStorage(), data);
             }
 
@@ -487,8 +485,8 @@ public final class VCSManager {
              * @throws IOException if any IO error occurs during data reading.
              */
             @SuppressWarnings("unchecked")
-            public Commit(final @NotNull String hash) throws NoSuchElement, InvalidDataInStorage, IOException {
-                sha1Hash = hash;
+            public Commit(final @NotNull SHA1Hash hash) throws NoSuchElement, InvalidDataInStorage, IOException {
+                this.hash = hash;
 
                 if (!Files.exists(getPathInStorage())) {
                     throw new NoSuchElement();
@@ -499,8 +497,8 @@ public final class VCSManager {
                     author = (String) objectInputStream.readObject();
                     message = (String) objectInputStream.readObject();
                     date = (Date) objectInputStream.readObject();
-                    underlyingTreeHash = (String) objectInputStream.readObject();
-                    parentCommitsHashes = (List<String>) objectInputStream.readObject();
+                    underlyingTreeHash = (SHA1Hash) objectInputStream.readObject();
+                    parentCommitsHashes = (List<SHA1Hash>) objectInputStream.readObject();
                 } catch (ClassNotFoundException | ClassCastException e ) {
                     throw new InvalidDataInStorage(e);
                 }
@@ -510,8 +508,8 @@ public final class VCSManager {
              * Returns SHA1 hash of data represented by this commit.
              */
             @Override
-            public @NotNull String getSha1Hash() {
-                return sha1Hash;
+            public @NotNull SHA1Hash getVCSHash() {
+                return hash;
             }
 
             /**
@@ -564,7 +562,7 @@ public final class VCSManager {
         public class Reference implements VCSElement {
             private final @NotNull String name;
 
-            private final @NotNull String commitHash;
+            private final @NotNull SHA1Hash commitHash;
 
             /**
              * Creates a reference object. A file for this object in VCS inner storage will be created.
@@ -575,7 +573,7 @@ public final class VCSManager {
              */
             public Reference(final @NotNull String name, final @NotNull Commit commit) throws IOException {
                 this.name = name;
-                commitHash = commit.getSha1Hash();
+                commitHash = commit.getVCSHash();
 
                 try (OutputStream fileStream = Files.newOutputStream(getPathInStorage());
                      ObjectOutputStream objectStream = new ObjectOutputStream(fileStream)) {
@@ -601,7 +599,7 @@ public final class VCSManager {
 
                 try (InputStream inputStream = Files.newInputStream(getPathInStorage());
                      ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
-                    commitHash = (String) objectInputStream.readObject();
+                    commitHash = (SHA1Hash) objectInputStream.readObject();
                 } catch (ClassNotFoundException | ClassCastException e ) {
                     throw new InvalidDataInStorage(e);
                 }
