@@ -83,6 +83,14 @@ public class RepositoryTest {
         repository.new Blob("hash");
     }
 
+    @Test(expected = FileFromWorkingDirectoryExpected.class)
+    public void blobConstructionFromVCSFile() throws Exception {
+        Path pathToFile = rootDirectory.newFile().toPath();
+        VCSManager.Repository.Blob blob = repository.new Blob(pathToFile);
+
+        repository.new Blob(blob.getPathInStorage());
+    }
+
     @Test
     public void treeConstruction() throws Exception {
         repository.new Tree(Collections.emptyList(),

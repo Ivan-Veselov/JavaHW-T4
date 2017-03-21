@@ -16,6 +16,7 @@ import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 /**
+ * TODO: add hashing utility classes
  * VCS Manager which can create VCS repository interfaces. Repository interface can be created for already existed
  * system or for a new one.
  */
@@ -137,6 +138,43 @@ public final class VCSManager {
             return getReferencesDirectory().resolve(headsDirectoryName);
         }
 
+        /**
+         * Checks whether or not given path lies inside repository root folder.
+         *
+         * @param path a path to check.
+         * @return true if path lies inside repository folder, false otherwise.
+         */
+        public boolean isInsideRepository(final @NotNull Path path) {
+            return isInside(path, getRootDirectory());
+        }
+
+        /**
+         * Checks whether or not given path lies inside vcs inner storage.
+         *
+         * @param path a path to check.
+         * @return true if path lies inside repository inner storage, false otherwise.
+         */
+        public boolean isInsideStorage(final @NotNull Path path) {
+            return isInside(path, getVCSDirectory());
+        }
+
+        /**
+         * Checks whether or not given path lies inside working directory.
+         *
+         * @param path a path to check.
+         * @return true if path lies inside working directory, false otherwise.
+         */
+        public boolean isInsideWorkingDirectory(final @NotNull Path path) {
+            return isInsideRepository(path) && !isInsideStorage(path);
+        }
+
+        private boolean isInside(final @NotNull Path innerPath, final @NotNull Path outerPath) {
+            return normalized(innerPath).startsWith(normalized(outerPath));
+        }
+
+        private static @NotNull Path normalized(final @NotNull Path path) {
+            return path.toAbsolutePath().normalize();
+        }
 
         /**
          * An interface which all vcs elements are implement.
@@ -220,14 +258,19 @@ public final class VCSManager {
             private final @NotNull String contentSha1Hash;
 
             /**
-             * TODO: check that file is inside repository and not inside hidden folder
              * Creates Blob object. Given file will be copied into VCS inner storage.
              *
              * @param path a path to a file which should be copied.
+             * @throws FileFromWorkingDirectoryExpected if given file doesn't lie in working directory.
              * @throws RegularFileExpected if given path does not represent a regular file.
              * @throws IOException if any IO exception occurs during process of copying.
              */
-            public Blob(final @NotNull Path path) throws RegularFileExpected, IOException {
+            public Blob(final @NotNull Path path)
+                    throws FileFromWorkingDirectoryExpected, RegularFileExpected, IOException {
+                if (!isInsideWorkingDirectory(path)) {
+                    throw new FileFromWorkingDirectoryExpected();
+                }
+
                 if (!Files.isRegularFile(path)) {
                     throw new RegularFileExpected();
                 }
@@ -516,6 +559,7 @@ public final class VCSManager {
          * this class represents a view on real reference at the moment of this object creation. Therefore it is
          * recommended to store name of a reference and every time some additional information about this reference is
          * needed create object of this type.
+         * TODO: replace this class with methods.
          */
         public class Reference implements VCSElement {
             private final @NotNull String name;
