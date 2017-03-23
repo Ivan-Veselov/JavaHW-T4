@@ -258,12 +258,13 @@ public final class Repository {
     }
 
     // TODO: javadocs
-    // TODO: add check for nothing to commit
     public @NotNull Commit newCommitFromIndex(final @NotNull String message)
             throws IOException, InvalidDataInStorage, NoSuchElement {
         Commit commit =  new Commit(message, Collections.singletonList(getCurrentCommit()), buildTreeFromIndex());
         if (!isHeadContainReference()) {
             writeToHead(commit);
+        } else {
+            // TODO: update reference
         }
 
         return commit;
