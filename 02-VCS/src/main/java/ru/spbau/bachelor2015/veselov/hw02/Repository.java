@@ -18,7 +18,6 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 /**
  * TODO: javadocs for SHA1Hash
  * TODO: javadocs for FileEntity
- * TODO: javadocs for AbsolutePath
  *
  * An interface which allows modify and inspect files inside VCS.
  */
