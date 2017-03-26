@@ -82,9 +82,6 @@ public final class Repository {
 
         Repository repository = new Repository(path);
 
-        // System.out.println(path);
-        // System.out.println(repository.getVCSDirectory().realPath());
-
         try {
             Files.createDirectory(repository.getVCSDirectory().realPath());
             Files.createDirectory(repository.getObjectsDirectory().realPath());
@@ -257,14 +254,27 @@ public final class Repository {
         writeToIndex(entities);
     }
 
-    // TODO: javadocs
+    /**
+     * Build a nem commit from a content of an index file.
+     *
+     * @param message message for new commit.
+     * @return Commit object for newly created commit.
+     * @throws IOException if any IO exception occurs during reading from vcs storage or writing to it.
+     * @throws InvalidDataInStorage if some data in storage is corrupted.
+     */
     public @NotNull Commit newCommitFromIndex(final @NotNull String message)
-            throws IOException, InvalidDataInStorage, NoSuchElement {
+            throws IOException, InvalidDataInStorage {
         Commit commit =  new Commit(message, Collections.singletonList(getCurrentCommit()), buildTreeFromIndex());
-        if (!isHeadContainReference()) {
-            writeToHead(commit);
-        } else {
-            // TODO: update reference
+
+        Object headContent = readFromHead();
+        try {
+            if (headContent instanceof Commit) {
+                writeToHead(commit);
+            } else {
+                moveReference((String) headContent, commit);
+            }
+        } catch (NoSuchElement e) {
+            throw new InvalidDataInStorage(e);
         }
 
         return commit;
@@ -384,10 +394,6 @@ public final class Repository {
         }
     }
 
-    private boolean isHeadContainReference() throws IOException, InvalidDataInStorage {
-        return readFromHead() instanceof String;
-    }
-
     private @NotNull Commit getCurrentCommit() throws IOException, InvalidDataInStorage {
         Object o = readFromHead();
 
@@ -448,6 +454,20 @@ public final class Repository {
             return new Tree(trees, blobs);
         } catch (NamesContainsDuplicates e) {
             throw new InvalidDataInStorage(e);
+        }
+    }
+
+    private void moveReference(final @NotNull String name, final @NotNull Commit commit)
+            throws NoSuchElement, IOException {
+        NormalRelativePath pathToReference = getReferencePath(name);
+
+        if (!Files.exists(pathToReference.realPath())) {
+            throw new NoSuchElement();
+        }
+
+        try (OutputStream fileStream = Files.newOutputStream(pathToReference.realPath());
+             ObjectOutputStream objectStream = new ObjectOutputStream(fileStream)) {
+            objectStream.writeObject(commit.getVCSHash());
         }
     }
 
