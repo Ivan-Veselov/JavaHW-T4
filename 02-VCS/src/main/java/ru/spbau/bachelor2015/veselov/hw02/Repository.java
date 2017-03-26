@@ -377,6 +377,22 @@ public final class Repository {
     }
 
     /**
+     * Returns a statistics provider for current state of this repository.
+     *
+     * @throws IOException if any IO exception occurs during vcs storage interaction.
+     * @throws InvalidDataInStorage if data in vcs storage is corrupted.
+     */
+    public @NotNull RepositoryFileStatisticsProvider getStatisticsProvider() throws IOException, InvalidDataInStorage {
+        try {
+            return new RepositoryFileStatisticsProvider(getCurrentCommit().getTree().getFileStructure(),
+                                                readFromIndex(),
+                                                getWorkingDirectoryEntities());
+        } catch (NoSuchElement e) {
+            throw new InvalidDataInStorage(e);
+        }
+    }
+
+    /**
      * Returns a path to root directory of this repository.
      */
     private @NotNull AbsolutePath getRootDirectory() {
@@ -603,6 +619,43 @@ public final class Repository {
             Files.copy(getObjectsDirectory().resolve(Paths.get(entity.getContentHash().getHex())).getPath(),
                        getRootDirectory().resolve(entity.getPathToFile()).getPath());
         }
+    }
+
+    private @NotNull List<FileEntity> getWorkingDirectoryEntities() throws IOException {
+        ArrayList<FileEntity> entities = new ArrayList<>();
+
+        Files.walkFileTree(getRootDirectory().getPath(), new FileVisitor<Path>() {
+            @Override
+            public FileVisitResult preVisitDirectory(final @NotNull Path dir,
+                                                     final @NotNull BasicFileAttributes attrs) throws IOException {
+                if (Files.isSameFile(dir, getVCSDirectory().getPath())) {
+                    return FileVisitResult.SKIP_SUBTREE;
+                }
+
+                return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult visitFile(final @NotNull Path file,
+                                             final @NotNull BasicFileAttributes attrs) throws IOException {
+                entities.add(new FileEntity(getRootDirectory().getPath().relativize(file), new SHA1Hash(file)));
+                return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult visitFileFailed(final @NotNull Path file,
+                                                   final @NotNull IOException exc) throws IOException {
+                throw exc;
+            }
+
+            @Override
+            public FileVisitResult postVisitDirectory(final @NotNull Path dir,
+                                                      final @Nullable IOException exc) throws IOException {
+                return FileVisitResult.CONTINUE;
+            }
+        });
+
+        return entities;
     }
 
     /**
