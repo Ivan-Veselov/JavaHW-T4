@@ -302,6 +302,16 @@ public class RepositoryObjectsTest {
         assertThat(Files.readAllBytes(path1), is(equalTo(content1)));
     }
 
+    @Test
+    public void testCurrentCommitHistory() throws Exception {
+        Path pathToFile = rootDirectory.newFile().toPath();
+
+        repository.updateFileStateInIndex(pathToFile);
+        Repository.Commit commit = repository.newCommitFromIndex("message");
+
+        assertThat(repository.getHistoryForCurrentCommit(), contains(anything(), equalTo(commit)));
+    }
+
     private @NotNull SHA1Hash mockedHash(final @NotNull String hashHex) {
         SHA1Hash hash = mock(SHA1Hash.class, withSettings().serializable());
         when(hash.getHex()).thenReturn(hashHex);

@@ -348,6 +348,36 @@ public final class Repository {
     }
 
     /**
+     * Returns a list of commits which directly or indirectly influenced current commit.
+     *
+     * @throws IOException if any IO exception occurs during interaction with vcs storage.
+     * @throws InvalidDataInStorage if data in vcs storage is corrupted.
+     */
+    public @NotNull List<Commit> getHistoryForCurrentCommit()
+            throws IOException, InvalidDataInStorage {
+        ArrayList<Commit> commitsToProcess = new ArrayList<>();
+        ArrayList<Commit> history = new ArrayList<>();
+
+        commitsToProcess.add(getCurrentCommit());
+        while (!commitsToProcess.isEmpty()) {
+            Commit commit = commitsToProcess.get(0);
+            commitsToProcess.remove(0);
+
+            history.add(commit);
+            for (Commit parent : commit.parentCommits()) {
+                if (history.contains(parent)) {
+                    continue;
+                }
+
+                commitsToProcess.add(parent);
+            }
+        }
+
+        history.sort(Comparator.comparing(Commit::getDate));
+        return history;
+    }
+
+    /**
      * Returns a path to root directory of this repository.
      */
     private @NotNull AbsolutePath getRootDirectory() {
@@ -591,6 +621,17 @@ public final class Repository {
          */
         public @NotNull AbsolutePath getPathInStorage() {
             return getObjectsDirectory().resolve(Paths.get(getVCSHash().getHex()));
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof StoredObject)) {
+                return false;
+            }
+
+            StoredObject other = (StoredObject) o;
+
+            return getVCSHash().equals(other.getVCSHash());
         }
     }
 
