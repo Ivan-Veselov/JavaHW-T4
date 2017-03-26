@@ -50,7 +50,7 @@ public class RepositoryObjectsTest {
         Repository.Blob blob = repository.new Blob(pathToFile);
 
         // TODO: Find or write matcher
-        assertThat(FileUtils.contentEquals(pathToFile.toFile(), blob.getPathInStorage().toFile()), is(true));
+        assertThat(FileUtils.contentEquals(pathToFile.toFile(), blob.getPathInStorage().getPath().toFile()), is(true));
     }
 
     @Test(expected = RegularFileExpected.class)
@@ -70,7 +70,7 @@ public class RepositoryObjectsTest {
 
         assertThat(blob2, is(similarTo(blob1)));
         // TODO: Find or write matcher
-        assertThat(FileUtils.contentEquals(pathToFile.toFile(), blob2.getPathInStorage().toFile()), is(true));
+        assertThat(FileUtils.contentEquals(pathToFile.toFile(), blob2.getPathInStorage().getPath().toFile()), is(true));
     }
 
     @Test
@@ -93,7 +93,7 @@ public class RepositoryObjectsTest {
         Path pathToFile = rootDirectory.newFile().toPath();
         Repository.Blob blob = repository.new Blob(pathToFile);
 
-        repository.new Blob(blob.getPathInStorage());
+        repository.new Blob(blob.getPathInStorage().getPath());
     }
 
     @Test
@@ -269,6 +269,37 @@ public class RepositoryObjectsTest {
                 )
             )
         );
+    }
+
+    @Test
+    public void restoreStateTest() throws Exception {
+        final String file1Name = "name1";
+        final String file2Name = "name2";
+
+        File file1 = rootDirectory.newFile(file1Name);
+        Path path1 = file1.toPath();
+
+        byte[] content1 = new byte[] {1};
+        Files.write(path1, content1);
+        repository.updateFileStateInIndex(path1);
+        Repository.Commit commit1 = repository.newCommitFromIndex("message1");
+
+        Files.write(path1, new byte[] {2});
+        repository.updateFileStateInIndex(path1);
+
+        File file2 = rootDirectory.newFile(file2Name);
+        Path path2 = file2.toPath();
+        repository.updateFileStateInIndex(path2);
+
+        repository.newCommitFromIndex("message2");
+
+        repository.restoreState(commit1);
+
+        // TODO: matchers
+        assertThat(Files.exists(path1), is(true));
+        assertThat(Files.exists(path2), is(false));
+
+        assertThat(Files.readAllBytes(path1), is(equalTo(content1)));
     }
 
     private @NotNull SHA1Hash mockedHash(final @NotNull String hashHex) {

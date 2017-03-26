@@ -1,12 +1,12 @@
 package ru.spbau.bachelor2015.veselov.hw02;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ru.spbau.bachelor2015.veselov.hw02.exceptions.*;
 
 import java.io.*;
-import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -16,11 +16,9 @@ import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 /**
- * TODO: make base class for VCS exceptions
- * TODO: javadocs for exceptions
  * TODO: javadocs for SHA1Hash
  * TODO: javadocs for FileEntity
- * TODO: javadocs for NormalRelativePath
+ * TODO: javadocs for AbsolutePath
  *
  * An interface which allows modify and inspect files inside VCS.
  */
@@ -59,10 +57,10 @@ public final class Repository {
 
     private static final @NotNull String masterBranchName = "master";
 
-    private final @NotNull NormalRelativePath rootDirectory;
+    private final @NotNull AbsolutePath rootDirectory;
 
     private Repository(final @NotNull Path rootDirectory) {
-        this.rootDirectory = new NormalRelativePath(rootDirectory);
+        this.rootDirectory = new AbsolutePath(rootDirectory);
     }
 
     /**
@@ -83,12 +81,12 @@ public final class Repository {
         Repository repository = new Repository(path);
 
         try {
-            Files.createDirectory(repository.getVCSDirectory().realPath());
-            Files.createDirectory(repository.getObjectsDirectory().realPath());
-            Files.createDirectory(repository.getReferencesDirectory().realPath());
-            Files.createDirectory(repository.getHeadsDirectory().realPath());
-            Files.createFile(repository.getIndexFile().realPath());
-            Files.createFile(repository.getHeadFile().realPath());
+            Files.createDirectory(repository.getVCSDirectory().getPath());
+            Files.createDirectory(repository.getObjectsDirectory().getPath());
+            Files.createDirectory(repository.getReferencesDirectory().getPath());
+            Files.createDirectory(repository.getHeadsDirectory().getPath());
+            Files.createFile(repository.getIndexFile().getPath());
+            Files.createFile(repository.getHeadFile().getPath());
         } catch (FileAlreadyExistsException caught) {
             throw new VCSIsAlreadyInitialized(caught);
         }
@@ -101,7 +99,7 @@ public final class Repository {
             repository.writeToHead(masterBranchName);
 
             repository.writeToIndex(new ArrayList<>());
-        } catch (NamesContainsDuplicates | AlreadyExists | FileFromWorkingDirectoryExpected | NoSuchElement e) {
+        } catch (NamesContainsDuplicates | AlreadyExists | NoSuchElement e) {
             throw new RuntimeException(e);
         }
 
@@ -138,7 +136,7 @@ public final class Repository {
      * @return true if path lies inside repository folder, false otherwise.
      */
     public boolean isInsideRepository(final @NotNull Path path) {
-        return getRootDirectory().relativePath(path).isInner();
+        return getRootDirectory().isInside(new AbsolutePath(path));
     }
 
     /**
@@ -148,7 +146,7 @@ public final class Repository {
      * @return true if path lies inside repository inner storage, false otherwise.
      */
     public boolean isInsideStorage(final @NotNull Path path) {
-        return getVCSDirectory().relativePath(path).isInner();
+        return getVCSDirectory().isInside(new AbsolutePath(path));
     }
 
     /**
@@ -171,16 +169,41 @@ public final class Repository {
      */
     public void createReference(final @NotNull String name, final @NotNull Commit commit)
             throws AlreadyExists, IOException {
-        NormalRelativePath pathToReference = getReferencePath(name);
+        AbsolutePath pathToReference = getReferencePath(name);
 
-        if (Files.exists(pathToReference.realPath())) {
+        if (Files.exists(pathToReference.getPath())) {
             throw new AlreadyExists();
         }
 
-        try (OutputStream fileStream = Files.newOutputStream(pathToReference.realPath());
+        try (OutputStream fileStream = Files.newOutputStream(pathToReference.getPath());
              ObjectOutputStream objectStream = new ObjectOutputStream(fileStream)) {
             objectStream.writeObject(commit.getVCSHash());
         }
+    }
+
+    /**
+     * Deletes reference with a given name.
+     *
+     * @param name name of a reference to delete.
+     * @throws NoSuchElement if there is no reference with such name
+     * @throws IOException if any IO exception occurs during reading data from storage or writing data to it.
+     * @throws InvalidDataInStorage if there is a corrupted data in storage.
+     * @throws ReferenceIsUsed if reference which deletion is requested is currently being used and can't be deleted.
+     */
+    public void deleteReference(final @NotNull String name)
+            throws NoSuchElement, IOException, InvalidDataInStorage, ReferenceIsUsed {
+        AbsolutePath pathToReference = getReferencePath(name);
+
+        if (!Files.exists(pathToReference.getPath())) {
+            throw new NoSuchElement();
+        }
+
+        Object headContent = readFromHead();
+        if (name.equals(headContent)) {
+            throw new ReferenceIsUsed();
+        }
+
+        Files.delete(pathToReference.getPath());
     }
 
     /**
@@ -195,14 +218,14 @@ public final class Repository {
     @SuppressWarnings("unchecked")
     public Commit getCommitByReference(final @NotNull String name)
             throws NoSuchElement, IOException, InvalidDataInStorage {
-        NormalRelativePath pathToReference = getReferencePath(name);
+        AbsolutePath pathToReference = getReferencePath(name);
 
-        if (!Files.exists(pathToReference.realPath())) {
+        if (!Files.exists(pathToReference.getPath())) {
             throw new NoSuchElement();
         }
 
         SHA1Hash commitHash;
-        try (InputStream inputStream = Files.newInputStream(pathToReference.realPath());
+        try (InputStream inputStream = Files.newInputStream(pathToReference.getPath());
              ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
             commitHash = (SHA1Hash) objectInputStream.readObject();
         } catch (ClassNotFoundException | ClassCastException e ) {
@@ -235,9 +258,11 @@ public final class Repository {
         List<FileEntity> entities = readFromIndex();
         for (int i = 0; i < entities.size(); i++) {
             FileEntity entity = entities.get(i);
-            if (Files.isSameFile(path, entity.getPathToFile().realPath())) {
+            Path pathToFile = entity.getPathToFile();
+
+            if (Files.isSameFile(path, getRootDirectory().resolve(pathToFile).getPath())) {
                 if (Files.exists(path)) {
-                    entities.set(i, new FileEntity(getRootDirectory().relativePath(path), new Blob(path).getVCSHash()));
+                    entities.set(i, new FileEntity(pathToFile, new Blob(path).getVCSHash()));
                 } else {
                     entities.remove(i);
                 }
@@ -248,7 +273,7 @@ public final class Repository {
         }
 
         if (Files.exists(path)) {
-            entities.add(new FileEntity(getRootDirectory().relativePath(path), new Blob(path).getVCSHash()));
+            entities.add(new FileEntity(getRootDirectory().getPath().relativize(path), new Blob(path).getVCSHash()));
         }
 
         writeToIndex(entities);
@@ -281,67 +306,102 @@ public final class Repository {
     }
 
     /**
+     * Restores state of working directory which corresponds to a given commit.
+     *
+     * @param commit a commit which defines state that should be restored.
+     * @throws IOException if any IO exception occurs during interaction with vcs storage.
+     * @throws InvalidDataInStorage if data in vcs storage is corrupted.
+     */
+    public void restoreState(final @NotNull Commit commit) throws IOException, InvalidDataInStorage {
+        try {
+            writeToHead(commit);
+            rewriteIndexWithCommit(commit);
+        } catch (NoSuchElement e) {
+            throw new IllegalArgumentException(e);
+        }
+
+        clearWorkingDirectory();
+        restoreFileStructureFromIndex();
+    }
+
+    /**
+     * Restores state of working directory which corresponds to a commit which is referenced by a reference with a given
+     * name.
+     *
+     * @param referenceName a name of a reference.
+     * @throws IOException if any IO exception occurs during interaction with vcs storage.
+     * @throws InvalidDataInStorage if data in vcs storage is corrupted.
+     */
+    public void restoreState(final @NotNull String referenceName) throws IOException, InvalidDataInStorage {
+        Commit commit;
+
+        try {
+            writeToHead(referenceName);
+            commit = getCommitByReference(referenceName);
+            rewriteIndexWithCommit(commit);
+        } catch (NoSuchElement e) {
+            throw new IllegalArgumentException(e);
+        }
+
+        clearWorkingDirectory();
+        restoreFileStructureFromIndex();
+    }
+
+    /**
      * Returns a path to root directory of this repository.
      */
-    private @NotNull NormalRelativePath getRootDirectory() {
+    private @NotNull AbsolutePath getRootDirectory() {
         return rootDirectory;
     }
 
     /**
      * Returns a path to the VCS directory inside root directory of the repository.
      */
-    private @NotNull NormalRelativePath getVCSDirectory() {
-        return getRootDirectory().resolve(vcsDirectoryName);
+    private @NotNull AbsolutePath getVCSDirectory() {
+        return new AbsolutePath(getRootDirectory().getPath().resolve(vcsDirectoryName));
     }
 
     /**
      * Returns a path to the VCS's objects directory.
      */
-    private @NotNull NormalRelativePath getObjectsDirectory() {
-        return getVCSDirectory().resolve(objectsDirectoryName);
+    private @NotNull AbsolutePath getObjectsDirectory() {
+        return new AbsolutePath(getVCSDirectory().getPath().resolve(objectsDirectoryName));
     }
 
     /**
      * Returns a path to the VCS's references directory.
      */
-    private @NotNull NormalRelativePath getReferencesDirectory() {
-        return getVCSDirectory().resolve(referencesDirectoryName);
+    private @NotNull AbsolutePath getReferencesDirectory() {
+        return new AbsolutePath(getVCSDirectory().getPath().resolve(referencesDirectoryName));
     }
 
     /**
      * Returns a path to the VCS's head references directory.
      */
-    private @NotNull NormalRelativePath getHeadsDirectory() {
-        return getReferencesDirectory().resolve(headsDirectoryName);
+    private @NotNull AbsolutePath getHeadsDirectory() {
+        return new AbsolutePath(getReferencesDirectory().getPath().resolve(headsDirectoryName));
     }
 
     /**
      * Returns a path to the vcs index file.
      */
-    private @NotNull NormalRelativePath getIndexFile() {
-        return getVCSDirectory().resolve(indexFileName);
+    private @NotNull AbsolutePath getIndexFile() {
+        return new AbsolutePath(getVCSDirectory().getPath().resolve(indexFileName));
     }
 
     /**
      * Returns a path to the vcs index file.
      */
-    private @NotNull NormalRelativePath getHeadFile() {
-        return getVCSDirectory().resolve(headFileName);
+    private @NotNull AbsolutePath getHeadFile() {
+        return new AbsolutePath(getVCSDirectory().getPath().resolve(headFileName));
     }
 
-    private @NotNull NormalRelativePath getReferencePath(final @NotNull String name) {
-        return getHeadsDirectory().resolve(name);
+    private @NotNull AbsolutePath getReferencePath(final @NotNull String name) {
+        return new AbsolutePath(getHeadsDirectory().getPath().resolve(name));
     }
 
-    private void writeToIndex(final @NotNull List<FileEntity> fileEntities)
-            throws FileFromWorkingDirectoryExpected, IOException {
-        for (FileEntity entity : fileEntities) {
-            if (!isInsideWorkingDirectory(entity.getPathToFile().realPath())) {
-                throw new FileFromWorkingDirectoryExpected();
-            }
-        }
-
-        try (OutputStream outputStream = Files.newOutputStream(getIndexFile().realPath());
+    private void writeToIndex(final @NotNull List<FileEntity> fileEntities) throws IOException {
+        try (OutputStream outputStream = Files.newOutputStream(getIndexFile().getPath());
              ObjectOutputStream objectStream = new ObjectOutputStream(outputStream)) {
             objectStream.writeObject(fileEntities);
         }
@@ -351,42 +411,36 @@ public final class Repository {
     private List<FileEntity> readFromIndex() throws IOException, InvalidDataInStorage {
         List<FileEntity> entities;
 
-        try (InputStream inputStream = Files.newInputStream(getIndexFile().realPath());
+        try (InputStream inputStream = Files.newInputStream(getIndexFile().getPath());
              ObjectInputStream objectStream = new ObjectInputStream(inputStream)) {
             entities = (List<FileEntity>) objectStream.readObject();
         } catch (ClassNotFoundException e) {
             throw new InvalidDataInStorage(e);
         }
 
-        for (FileEntity entity : entities) {
-            if (!isInsideWorkingDirectory(entity.getPathToFile().realPath())) {
-                throw new InvalidDataInStorage();
-            }
-        }
-
         return entities;
     }
 
     private void writeToHead(final @NotNull String referenceName) throws NoSuchElement, IOException {
-        if (!Files.exists(getReferencePath(referenceName).realPath())) {
+        if (!Files.exists(getReferencePath(referenceName).getPath())) {
             throw new NoSuchElement();
         }
 
-        try (OutputStream outputStream = Files.newOutputStream(getHeadFile().realPath());
+        try (OutputStream outputStream = Files.newOutputStream(getHeadFile().getPath());
              ObjectOutputStream objectStream = new ObjectOutputStream(outputStream)) {
             objectStream.writeObject(referenceName);
         }
     }
 
     private void writeToHead(final @NotNull Commit commit) throws NoSuchElement, IOException {
-        try (OutputStream outputStream = Files.newOutputStream(getHeadFile().realPath());
+        try (OutputStream outputStream = Files.newOutputStream(getHeadFile().getPath());
              ObjectOutputStream objectStream = new ObjectOutputStream(outputStream)) {
             objectStream.writeObject(commit.getVCSHash());
         }
     }
 
     private @NotNull Object readFromHead() throws IOException, InvalidDataInStorage {
-        try (InputStream inputStream = Files.newInputStream(getHeadFile().realPath());
+        try (InputStream inputStream = Files.newInputStream(getHeadFile().getPath());
              ObjectInputStream objectStream = new ObjectInputStream(inputStream)) {
             return objectStream.readObject();
         } catch (ClassNotFoundException e) {
@@ -427,10 +481,10 @@ public final class Repository {
 
         Map<String, List<FileEntity>> subdirectories = new HashMap<>();
         for (FileEntity entity : entities) {
-            Path relativeComponent = entity.getPathToFile().relativePath();
-            if (relativeComponent.getNameCount() == 1) {
+            Path relativePath = entity.getPathToFile();
+            if (relativePath.getNameCount() == 1) {
                 try {
-                    blobs.add(new Named<>(new Blob(entity.getContentHash()), relativeComponent.getName(0).toString()));
+                    blobs.add(new Named<>(new Blob(entity.getContentHash()), relativePath.getName(0).toString()));
                 } catch (NoSuchElement e) {
                     throw new InvalidDataInStorage(e);
                 }
@@ -438,12 +492,13 @@ public final class Repository {
                 continue;
             }
 
-            String name = relativeComponent.getName(0).toString();
+            String name = relativePath.getName(0).toString();
             if (!subdirectories.containsKey(name)) {
                 subdirectories.put(name, new ArrayList<>());
             }
 
-            subdirectories.get(name).add(new FileEntity(entity.getPathToFile().shifted(), entity.getContentHash()));
+            subdirectories.get(name).add(new FileEntity(relativePath.subpath(1, relativePath.getNameCount()),
+                                         entity.getContentHash()));
         }
 
         for (Map.Entry<String, List<FileEntity>> entry : subdirectories.entrySet()) {
@@ -459,15 +514,65 @@ public final class Repository {
 
     private void moveReference(final @NotNull String name, final @NotNull Commit commit)
             throws NoSuchElement, IOException {
-        NormalRelativePath pathToReference = getReferencePath(name);
+        AbsolutePath pathToReference = getReferencePath(name);
 
-        if (!Files.exists(pathToReference.realPath())) {
+        if (!Files.exists(pathToReference.getPath())) {
             throw new NoSuchElement();
         }
 
-        try (OutputStream fileStream = Files.newOutputStream(pathToReference.realPath());
+        try (OutputStream fileStream = Files.newOutputStream(pathToReference.getPath());
              ObjectOutputStream objectStream = new ObjectOutputStream(fileStream)) {
             objectStream.writeObject(commit.getVCSHash());
+        }
+    }
+
+    private void rewriteIndexWithCommit(final @NotNull Commit commit)
+            throws InvalidDataInStorage, IOException, NoSuchElement {
+        writeToIndex(commit.getTree().getFileStructure());
+    }
+
+    private void clearWorkingDirectory() throws IOException {
+        Files.walkFileTree(getRootDirectory().getPath(), new FileVisitor<Path>() {
+            @Override
+            public FileVisitResult preVisitDirectory(final @NotNull Path dir,
+                                                     final @NotNull BasicFileAttributes attrs) throws IOException {
+                if (Files.isSameFile(dir, getVCSDirectory().getPath())) {
+                    return FileVisitResult.SKIP_SUBTREE;
+                }
+
+                return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult visitFile(final @NotNull Path file,
+                                             final @NotNull BasicFileAttributes attrs) throws IOException {
+                Files.delete(file);
+                return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult visitFileFailed(final @NotNull Path file,
+                                                   final @NotNull IOException exc) throws IOException {
+                throw exc;
+            }
+
+            @Override
+            public FileVisitResult postVisitDirectory(final @NotNull Path dir,
+                                                      final @Nullable IOException exc) throws IOException {
+                if (!Files.isSameFile(dir, getRootDirectory().getPath())) {
+                    Files.delete(dir);
+                }
+
+                return FileVisitResult.CONTINUE;
+            }
+        });
+    }
+
+    private void restoreFileStructureFromIndex() throws IOException, InvalidDataInStorage {
+        List<FileEntity> entities = readFromIndex();
+        for (FileEntity entity : entities) {
+            Files.copy(getObjectsDirectory().resolve(Paths.get(entity.getContentHash().getHex())).getPath(),
+                       getRootDirectory().resolve(entity.getPathToFile()).getPath());
         }
     }
 
@@ -484,8 +589,8 @@ public final class Repository {
         /**
          * Returns a path to data represented by this object.
          */
-        public @NotNull Path getPathInStorage() {
-            return getObjectsDirectory().resolve(getVCSHash().getHex()).realPath();
+        public @NotNull AbsolutePath getPathInStorage() {
+            return getObjectsDirectory().resolve(Paths.get(getVCSHash().getHex()));
         }
     }
 
@@ -561,7 +666,7 @@ public final class Repository {
             }
 
             contentHash = new SHA1Hash(path);
-            Files.copy(path, getPathInStorage(), REPLACE_EXISTING, NOFOLLOW_LINKS);
+            Files.copy(path, getPathInStorage().getPath(), REPLACE_EXISTING, NOFOLLOW_LINKS);
         }
 
         /**
@@ -573,7 +678,7 @@ public final class Repository {
         public Blob(final @NotNull SHA1Hash hash) throws NoSuchElement {
             contentHash = hash;
 
-            if (!Files.exists(getPathInStorage())) {
+            if (!Files.exists(getPathInStorage().getPath())) {
                 throw new NoSuchElement();
             }
         }
@@ -636,7 +741,7 @@ public final class Repository {
             }
 
             hash = new SHA1Hash(data);
-            Files.write(getPathInStorage(), data);
+            Files.write(getPathInStorage().getPath(), data);
         }
 
         /**
@@ -651,11 +756,11 @@ public final class Repository {
         public Tree(final @NotNull SHA1Hash hash) throws NoSuchElement, InvalidDataInStorage, IOException {
             this.hash = hash;
 
-            if (!Files.exists(getPathInStorage())) {
+            if (!Files.exists(getPathInStorage().getPath())) {
                 throw new NoSuchElement();
             }
 
-            try (InputStream inputStream = Files.newInputStream(getPathInStorage());
+            try (InputStream inputStream = Files.newInputStream(getPathInStorage().getPath());
                  ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
                 treeChildrenHashes = (List<Named<SHA1Hash>>) objectInputStream.readObject();
                 blobChildrenHashes = (List<Named<SHA1Hash>>) objectInputStream.readObject();
@@ -690,6 +795,27 @@ public final class Repository {
                                                     Blob::new,
                                                     Named::getObject,
                                                     Named::replace);
+        }
+
+        public @NotNull List<FileEntity> getFileStructure() {
+            List<FileEntity> fileStructure = new ArrayList<>();
+
+            for (Named<Blob> blob : blobChildren()) {
+                fileStructure.add(new FileEntity(Paths.get(blob.getName()), blob.getObject().getVCSHash()));
+            }
+
+            for (Named<Tree> subtree : treeChildren()) {
+                fileStructure.addAll(
+                        subtree
+                        .getObject()
+                        .getFileStructure()
+                        .stream()
+                        .map(entity -> new FileEntity(Paths.get(subtree.getName()).resolve(entity.getPathToFile()),
+                                                      entity.getContentHash()))
+                        .collect(Collectors.toList()));
+            }
+
+            return fileStructure;
         }
 
         private boolean namesContainsDuplicates(final @NotNull List<Named<Tree>> treeList,
@@ -758,7 +884,7 @@ public final class Repository {
             }
 
             hash = new SHA1Hash(data);
-            Files.write(getPathInStorage(), data);
+            Files.write(getPathInStorage().getPath(), data);
         }
 
         /**
@@ -773,11 +899,11 @@ public final class Repository {
         public Commit(final @NotNull SHA1Hash hash) throws NoSuchElement, InvalidDataInStorage, IOException {
             this.hash = hash;
 
-            if (!Files.exists(getPathInStorage())) {
+            if (!Files.exists(getPathInStorage().getPath())) {
                 throw new NoSuchElement();
             }
 
-            try (InputStream inputStream = Files.newInputStream(getPathInStorage());
+            try (InputStream inputStream = Files.newInputStream(getPathInStorage().getPath());
                  ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
                 author = (String) objectInputStream.readObject();
                 message = (String) objectInputStream.readObject();
