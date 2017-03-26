@@ -393,6 +393,54 @@ public final class Repository {
     }
 
     /**
+     * Removes untracked files from working directory.
+     *
+     * @throws IOException if any IO exception occurs during interaction with vcs storage.
+     * @throws InvalidDataInStorage if data in vcs storage is corrupted.
+     */
+    public void removeUntrackedFiles() throws IOException, InvalidDataInStorage {
+        RepositoryFileStatisticsProvider provider = getStatisticsProvider();
+
+        Files.walkFileTree(getRootDirectory().getPath(), new FileVisitor<Path>() {
+            @Override
+            public FileVisitResult preVisitDirectory(final @NotNull Path dir,
+                                                     final @NotNull BasicFileAttributes attrs) throws IOException {
+                if (Files.isSameFile(dir, getVCSDirectory().getPath())) {
+                    return FileVisitResult.SKIP_SUBTREE;
+                }
+
+                return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult visitFile(final @NotNull Path file,
+                                             final @NotNull BasicFileAttributes attrs) throws IOException {
+                if (provider.getFileStatistics(file).isUntracked()) {
+                    Files.delete(file);
+                }
+
+                return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult visitFileFailed(final @NotNull Path file,
+                                                   final @NotNull IOException exc) throws IOException {
+                throw exc;
+            }
+
+            @Override
+            public FileVisitResult postVisitDirectory(final @NotNull Path dir,
+                                                      final @Nullable IOException exc) throws IOException {
+                if (!Files.isSameFile(dir, getRootDirectory().getPath())) {
+                    Files.delete(dir);
+                }
+
+                return FileVisitResult.CONTINUE;
+            }
+        });
+    }
+
+    /**
      * Returns a path to root directory of this repository.
      */
     private @NotNull AbsolutePath getRootDirectory() {

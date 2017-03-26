@@ -312,6 +312,15 @@ public class RepositoryObjectsTest {
         assertThat(repository.getHistoryForCurrentCommit(), contains(anything(), equalTo(commit)));
     }
 
+    @Test
+    public void testRemoveUntrackedFiles() throws Exception {
+        Path pathToFile = rootDirectory.newFile().toPath();
+
+        repository.removeUntrackedFiles();
+
+        assertThat(Files.exists(pathToFile), is(false));
+    }
+
     private @NotNull SHA1Hash mockedHash(final @NotNull String hashHex) {
         SHA1Hash hash = mock(SHA1Hash.class, withSettings().serializable());
         when(hash.getHex()).thenReturn(hashHex);
