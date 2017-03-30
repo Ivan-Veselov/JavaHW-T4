@@ -85,5 +85,9 @@ public final class DirectoryHasher {
             MD5Hash other = (MD5Hash) o;
             return Arrays.equals(this.bytes, other.bytes);
         }
+
+        public @NotNull byte[] getBytes() {
+            return bytes;
+        }
     }
 }
