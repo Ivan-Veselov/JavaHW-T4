@@ -18,9 +18,20 @@ import java.util.List;
  * Objects of this class allows to calculate MD5 hash of a directory.
  */
 public final class DirectoryHasher {
+    /**
+     * Creates new hasher.
+     */
     public DirectoryHasher() {
     }
 
+    /**
+     * Returns MD5 hash of a given directory content or file content.
+     *
+     * @param path a path to a directory or a file.
+     * @return MD5 hash.
+     * @throws IOException if any IO exception occurs during reading of data.
+     * @throws IrregularFileException if any irregular file encountered during file structure traversing.
+     */
     public @NotNull MD5Hash getHash(final @NotNull Path path) throws IOException, IrregularFileException {
         MessageDigest message;
 
@@ -35,6 +46,12 @@ public final class DirectoryHasher {
         return new MD5Hash(message.digest());
     }
 
+    /**
+     * Returns MD5 hash of a given directory content or file content. This hash is computed concurrently.
+     *
+     * @param path a path to a directory or a file.
+     * @return MD5 hash.
+     */
     public @NotNull MD5Hash getHashConcurrently(final @NotNull Path path) {
         ForkJoinPool pool = new ForkJoinPool();
         return pool.invoke(new DirectoryHashTask(path.toFile()));
@@ -81,6 +98,9 @@ public final class DirectoryHasher {
         }
     }
 
+    /**
+     * A class which stores an array of bytes that represents a MD5 hash.
+     */
     public static class MD5Hash {
         private final @NotNull byte[] bytes;
 
@@ -88,6 +108,11 @@ public final class DirectoryHasher {
             this.bytes = bytes;
         }
 
+        /**
+         * Returns true if given object is object of this class and underlying byte arrays are equal.
+         *
+         * @param o object to compare with.
+         */
         @Override
         public boolean equals(Object o) {
             if (!(o instanceof MD5Hash)) {
@@ -98,6 +123,9 @@ public final class DirectoryHasher {
             return Arrays.equals(this.bytes, other.bytes);
         }
 
+        /**
+         * Returns underlying byte array.
+         */
         public @NotNull byte[] getBytes() {
             return bytes;
         }
