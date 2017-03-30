@@ -6,8 +6,17 @@ import java.io.*;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinTask;
+import java.util.concurrent.RecursiveTask;
+import java.util.function.BiConsumer;
+import java.util.List;
 
+/**
+ * Objects of this class allows to calculate MD5 hash of a directory.
+ */
 public final class DirectoryHasher {
     public DirectoryHasher() {
     }
@@ -21,16 +30,19 @@ public final class DirectoryHasher {
             throw new RuntimeException(e);
         }
 
-        updateMessageDigest(message, path.toFile());
+        updateMessageDigest(message, path.toFile(), recursiveCaller);
 
         return new MD5Hash(message.digest());
     }
 
     public @NotNull MD5Hash getHashConcurrently(final @NotNull Path path) {
-        throw new UnsupportedOperationException();
+        ForkJoinPool pool = new ForkJoinPool();
+        return pool.invoke(new DirectoryHashTask(path.toFile()));
     }
 
-    private void updateMessageDigest(final @NotNull MessageDigest message, final @NotNull File file)
+    private static void updateMessageDigest(final @NotNull MessageDigest message,
+                                            final @NotNull File file,
+                                            final @NotNull BiConsumer<MessageDigest, File> action)
             throws IOException, IrregularFileException {
         if (file.isFile()) {
             try (FileInputStream stream = new FileInputStream(file)) {
@@ -48,11 +60,11 @@ public final class DirectoryHasher {
         message.update(file.getName().getBytes());
 
         for (File subfile : files) {
-            updateMessageDigest(message, subfile);
+            action.accept(message, subfile);
         }
     }
 
-    private void updateMessageDigest(final @NotNull MessageDigest message, final @NotNull InputStream stream)
+    private static void updateMessageDigest(final @NotNull MessageDigest message, final @NotNull InputStream stream)
             throws IOException {
         final int chunkSize = 4096;
         final byte[] chunk = new byte[chunkSize];
@@ -88,6 +100,58 @@ public final class DirectoryHasher {
 
         public @NotNull byte[] getBytes() {
             return bytes;
+        }
+    }
+
+    private static BiConsumer<MessageDigest, File> recursiveCaller = new BiConsumer<MessageDigest, File>() {
+        @Override
+        public void accept(final @NotNull MessageDigest message, final @NotNull File file) {
+            try {
+                updateMessageDigest(message, file, this);
+            } catch (IOException | IrregularFileException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    };
+
+    private static class DirectoryHashTask extends RecursiveTask<MD5Hash> {
+        final @NotNull MessageDigest message;
+
+        final @NotNull File file;
+
+        public DirectoryHashTask(final @NotNull File file) {
+            try {
+                this.message = MessageDigest.getInstance("MD5");
+            } catch (NoSuchAlgorithmException e) {
+                throw new RuntimeException(e);
+            }
+
+            this.file = file;
+        }
+
+        @Override
+        protected MD5Hash compute() {
+            final List<ForkJoinTask<MD5Hash>> taskList = new ArrayList<>();
+
+            try {
+                updateMessageDigest(
+                    message,
+                    file,
+                    (messageDigest, file) -> {
+                        DirectoryHashTask task = new DirectoryHashTask(file);
+                        task.fork();
+                        taskList.add(task);
+                    }
+                );
+            } catch (IOException | IrregularFileException e) {
+                throw new RuntimeException(e);
+            }
+
+            for (ForkJoinTask<MD5Hash> task : taskList) {
+                message.update(task.join().getBytes());
+            }
+
+            return new MD5Hash(message.digest());
         }
     }
 }
