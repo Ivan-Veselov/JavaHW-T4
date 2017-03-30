@@ -13,7 +13,7 @@ public final class DirectoryHasher {
         throw new UnsupportedOperationException();
     }
 
-    public @NotNull MD5Hash getHashConcurrent(final @NotNull Path path) {
+    public @NotNull MD5Hash getHashConcurrently(final @NotNull Path path) {
         throw new UnsupportedOperationException();
     }
 
