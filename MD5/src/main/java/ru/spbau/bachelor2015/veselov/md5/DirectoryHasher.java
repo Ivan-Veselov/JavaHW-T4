@@ -6,15 +6,18 @@ import java.nio.file.Path;
 import java.util.Arrays;
 
 public final class DirectoryHasher {
-    public static @NotNull MD5Hash getHash(final @NotNull Path path) {
+    public DirectoryHasher() {
+    }
+
+    public @NotNull MD5Hash getHash(final @NotNull Path path) {
         throw new UnsupportedOperationException();
     }
 
-    public static @NotNull MD5Hash getHashConcurrent(final @NotNull Path path) {
+    public @NotNull MD5Hash getHashConcurrent(final @NotNull Path path) {
         throw new UnsupportedOperationException();
     }
 
-    public class MD5Hash {
+    public static class MD5Hash {
         private final @NotNull byte[] bytes;
 
         private MD5Hash(final @NotNull byte[] bytes) {
