@@ -444,6 +444,38 @@ public final class Repository {
     }
 
     /**
+     * Creates a new commit which is a merge of two given commits. If one file has different content in two commit then
+     * merging is unspecified and null will be returned.
+     *
+     * @param commit1 first commit.
+     * @param commit2 second commit.
+     * @return new commit or null if merging can't be done.
+     * @throws IOException if any IO exception occurs during interaction with vcs storage.
+     * @throws InvalidDataInStorage if data in vcs storage is corrupted.
+     */
+    public @Nullable Commit mergeCommits(final @NotNull Commit commit1, final @NotNull Commit commit2)
+            throws InvalidDataInStorage, IOException {
+        Tree tree;
+
+        try {
+            tree = mergeTrees(commit1.getTree(), commit2.getTree());
+        } catch (NoSuchElement e) {
+            throw new InvalidDataInStorage(e);
+        }
+
+        if (tree == null) {
+            return null;
+        }
+
+        return new Commit("Merging " +
+                                   commit1.getVCSHash() +
+                                   " and " +
+                                   commit2.getVCSHash() +
+                                   " commits",
+                           Arrays.asList(commit1, commit2), tree);
+    }
+
+    /**
      * Returns a path to root directory of this repository.
      */
     private @NotNull AbsolutePath getRootDirectory() {
@@ -742,6 +774,72 @@ public final class Repository {
         }
 
         writeToIndex(entities);
+    }
+
+    private @Nullable Tree mergeTrees(final @NotNull Tree tree1, final @NotNull Tree tree2) throws IOException {
+        List<Named<Blob>> blobs = new ArrayList<>();
+        List<Named<Tree>> trees = new ArrayList<>();
+
+        Map<String, List<Blob>> blobsMap = new HashMap<>();
+        Map<String, List<Tree>> treesMap = new HashMap<>();
+
+        addToMap(blobsMap, tree1.blobChildren());
+        addToMap(blobsMap, tree2.blobChildren());
+
+        addToMap(treesMap, tree1.treeChildren());
+        addToMap(treesMap, tree2.treeChildren());
+
+        for (Map.Entry<String, List<Blob>> entry : blobsMap.entrySet()) {
+            switch (entry.getValue().size()) {
+                case 2:
+                    if (!entry.getValue().get(0).equals(entry.getValue().get(1))) {
+                        return null;
+                    }
+
+                case 1:
+                    blobs.add(new Named<>(entry.getValue().get(0), entry.getKey()));
+                    break;
+
+                default:
+                    throw new RuntimeException();
+            }
+        }
+
+        for (Map.Entry<String, List<Tree>> entry : treesMap.entrySet()) {
+            switch (entry.getValue().size()) {
+                case 1:
+                    trees.add(new Named<>(entry.getValue().get(0), entry.getKey()));
+                    break;
+
+                case 2:
+                    Tree tree = mergeTrees(entry.getValue().get(0), entry.getValue().get(1));
+                    if (tree == null) {
+                        return null;
+                    }
+
+                    trees.add(new Named<>(tree, entry.getKey()));
+                    break;
+
+                default:
+                    throw new RuntimeException();
+            }
+        }
+
+        try {
+            return new Tree(trees, blobs);
+        } catch (NamesContainsDuplicates e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private <T> void addToMap(final @NotNull Map<String, List<T>> map, Iterable<Named<T>> iterable) {
+        for (Named<T> named : iterable) {
+            if (!map.containsKey(named.getName())) {
+                map.put(named.getName(), new ArrayList<>());
+            }
+
+            map.get(named.getName()).add(named.getObject());
+        }
     }
 
     /**
