@@ -246,36 +246,7 @@ public final class Repository {
      */
     public void updateFileStateInIndex(final @NotNull Path path)
             throws RegularFileExpected, FileFromWorkingDirectoryExpected, IOException, InvalidDataInStorage {
-        if (Files.exists(path) && !Files.isRegularFile(path)) {
-            throw new RegularFileExpected();
-        }
-
-        if (!isInsideWorkingDirectory(path)) {
-            throw new FileFromWorkingDirectoryExpected();
-        }
-
-        List<FileEntity> entities = readFromIndex();
-        for (int i = 0; i < entities.size(); i++) {
-            FileEntity entity = entities.get(i);
-            Path pathToFile = entity.getPathToFile();
-
-            if (Files.isSameFile(path, getRootDirectory().resolve(pathToFile).getPath())) {
-                if (Files.exists(path)) {
-                    entities.set(i, new FileEntity(pathToFile, new Blob(path).getVCSHash()));
-                } else {
-                    entities.remove(i);
-                }
-
-                writeToIndex(entities);
-                return;
-            }
-        }
-
-        if (Files.exists(path)) {
-            entities.add(new FileEntity(getRootDirectory().getPath().relativize(path), new Blob(path).getVCSHash()));
-        }
-
-        writeToIndex(entities);
+        updateFileStateInIndex(new FileEntity(path, new Blob(path).getVCSHash()));
     }
 
     /**
@@ -438,6 +409,38 @@ public final class Repository {
                 return FileVisitResult.CONTINUE;
             }
         });
+    }
+
+    /**
+     * Resets file state in index file. After this operation file is considered to be in a state similar to it's state
+     * in current commit.
+     *
+     * @param path a path to a file which state should be reset.
+     * @throws RegularFileExpected if given file isn't a regular file.
+     * @throws FileFromWorkingDirectoryExpected if given file doesn't lie in a working directory.
+     * @throws IOException if any IO exception occurs during interaction with vcs storage.
+     * @throws InvalidDataInStorage if data in vcs storage is corrupted.
+     */
+    public void resetFileState(final @NotNull Path path)
+            throws RegularFileExpected, FileFromWorkingDirectoryExpected, IOException, InvalidDataInStorage {
+        if (!Files.isRegularFile(path)) {
+            throw new RegularFileExpected();
+        }
+
+        if (!isInsideWorkingDirectory(path)) {
+            throw new FileFromWorkingDirectoryExpected();
+        }
+
+        try {
+            for (FileEntity entity : getCurrentCommit().getTree().getFileStructure()) {
+                if (entity.getPathToFile().equals(path)) {
+                    updateFileStateInIndex(entity);
+                    break;
+                }
+            }
+        } catch (NoSuchElement e) {
+            throw new InvalidDataInStorage(e);
+        }
     }
 
     /**
@@ -704,6 +707,41 @@ public final class Repository {
         });
 
         return entities;
+    }
+
+    private void updateFileStateInIndex(final @NotNull FileEntity entityToUpdate)
+            throws RegularFileExpected, FileFromWorkingDirectoryExpected, IOException, InvalidDataInStorage {
+        if (Files.exists(entityToUpdate.getPathToFile()) && !Files.isRegularFile(entityToUpdate.getPathToFile())) {
+            throw new RegularFileExpected();
+        }
+
+        if (!isInsideWorkingDirectory(entityToUpdate.getPathToFile())) {
+            throw new FileFromWorkingDirectoryExpected();
+        }
+
+        List<FileEntity> entities = readFromIndex();
+        for (int i = 0; i < entities.size(); i++) {
+            FileEntity entity = entities.get(i);
+            Path pathToFile = entity.getPathToFile();
+
+            if (Files.isSameFile(entityToUpdate.getPathToFile(), getRootDirectory().resolve(pathToFile).getPath())) {
+                if (Files.exists(entityToUpdate.getPathToFile())) {
+                    entities.set(i, new FileEntity(pathToFile, entityToUpdate.getContentHash()));
+                } else {
+                    entities.remove(i);
+                }
+
+                writeToIndex(entities);
+                return;
+            }
+        }
+
+        if (Files.exists(entityToUpdate.getPathToFile())) {
+            entities.add(new FileEntity(getRootDirectory().getPath().relativize(entityToUpdate.getPathToFile()),
+                         entityToUpdate.getContentHash()));
+        }
+
+        writeToIndex(entities);
     }
 
     /**
