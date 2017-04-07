@@ -40,7 +40,7 @@ public class Server {
                 }
 
                 SocketChannel channel = (SocketChannel) key.channel();
-                channel.write(buffer);
+                channel.write(buffer); // TODO: add while cycle
                 buffer.rewind();
                 channel.close();
             }
