@@ -257,18 +257,7 @@ public final class Repository {
     public @NotNull Commit newCommitFromIndex(final @NotNull String message)
             throws IOException, InvalidDataInStorage {
         Commit commit =  new Commit(message, Collections.singletonList(getCurrentCommit()), buildTreeFromIndex());
-
-        Object headContent = readFromHead();
-        try {
-            if (headContent instanceof Commit) {
-                writeToHead(commit);
-            } else {
-                moveReference((String) headContent, commit);
-            }
-        } catch (NoSuchElement e) {
-            throw new InvalidDataInStorage(e);
-        }
-
+        updateHead(commit);
         return commit;
     }
 
@@ -441,21 +430,22 @@ public final class Repository {
     }
 
     /**
-     * Creates a new commit which is a merge of two given commits. If one file has different content in two commit then
-     * merging is unspecified and null will be returned.
+     * Creates a new commit which is a merge of current commit and given one. If one file has different content in two
+     * commit then merging is unspecified and null will be returned.
      *
-     * @param commit1 first commit.
-     * @param commit2 second commit.
+     * @param commit a commit to merge with current one.
      * @return new commit or null if merging can't be done.
      * @throws IOException if any IO exception occurs during interaction with vcs storage.
      * @throws InvalidDataInStorage if data in vcs storage is corrupted.
      */
-    public @Nullable Commit mergeCommits(final @NotNull Commit commit1, final @NotNull Commit commit2)
+    public @Nullable Commit mergeCommitWithCurrent(final @NotNull Commit commit)
             throws InvalidDataInStorage, IOException {
         Tree tree;
 
+        Commit currentCommit = getCurrentCommit();
+
         try {
-            tree = mergeTrees(commit1.getTree(), commit2.getTree());
+            tree = mergeTrees(currentCommit.getTree(), commit.getTree());
         } catch (NoSuchElement e) {
             throw new InvalidDataInStorage(e);
         }
@@ -464,12 +454,43 @@ public final class Repository {
             return null;
         }
 
-        return new Commit("Merging " +
-                                   commit1.getVCSHash() +
-                                   " and " +
-                                   commit2.getVCSHash() +
-                                   " commits",
-                           Arrays.asList(commit1, commit2), tree);
+        Commit newCommit = new Commit("Merging " +
+                                       currentCommit.getVCSHash() +
+                                       " and " +
+                                       commit.getVCSHash() +
+                                       " commits",
+                                       Arrays.asList(currentCommit, commit), tree);
+
+        updateHead(newCommit);
+        return newCommit;
+    }
+
+    /**
+     * Returns current commit.
+     *
+     * @throws IOException if any IO exception occurs during interaction with vcs storage.
+     * @throws InvalidDataInStorage if data in vcs storage is corrupted.
+     */
+    public @NotNull Commit getCurrentCommit() throws IOException, InvalidDataInStorage {
+        Object o = readFromHead();
+
+        if (o instanceof SHA1Hash) {
+            try {
+                return new Commit((SHA1Hash) o);
+            } catch (NoSuchElement e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        if (o instanceof String) {
+            try {
+                return getCommitByReference((String) o);
+            } catch (NoSuchElement e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        throw new RuntimeException();
     }
 
     /**
@@ -571,28 +592,6 @@ public final class Repository {
         } catch (ClassNotFoundException e) {
             throw new InvalidDataInStorage(e);
         }
-    }
-
-    private @NotNull Commit getCurrentCommit() throws IOException, InvalidDataInStorage {
-        Object o = readFromHead();
-
-        if (o instanceof SHA1Hash) {
-            try {
-                return new Commit((SHA1Hash) o);
-            } catch (NoSuchElement e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        if (o instanceof String) {
-            try {
-                return getCommitByReference((String) o);
-            } catch (NoSuchElement e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        throw new RuntimeException();
     }
 
     private @NotNull Tree buildTreeFromIndex() throws IOException, InvalidDataInStorage {
@@ -836,6 +835,19 @@ public final class Repository {
             }
 
             map.get(named.getName()).add(named.getObject());
+        }
+    }
+
+    private void updateHead(final @NotNull Commit commit) throws IOException, InvalidDataInStorage {
+        Object headContent = readFromHead();
+        try {
+            if (headContent instanceof Commit) {
+                writeToHead(commit);
+            } else {
+                moveReference((String) headContent, commit);
+            }
+        } catch (NoSuchElement e) {
+            throw new InvalidDataInStorage(e);
         }
     }
 

@@ -321,6 +321,24 @@ public class RepositoryObjectsTest {
         assertThat(Files.exists(pathToFile), is(false));
     }
 
+    @Test
+    public void testMerge() throws Exception {
+        final String file1Name = "file1";
+        final String file2Name = "file2";
+        final String branchName = "branch";
+
+        repository.createReference(branchName, repository.getCurrentCommit());
+        repository.restoreState(branchName);
+        repository.updateFileStateInIndex(rootDirectory.newFile(file1Name).toPath());
+        Repository.Commit commitInBranch = repository.newCommitFromIndex("message");
+
+        repository.restoreState("master");
+        repository.updateFileStateInIndex(rootDirectory.newFile(file2Name).toPath());
+        repository.newCommitFromIndex("message");
+
+        repository.mergeCommitWithCurrent(commitInBranch);
+    }
+
     private @NotNull SHA1Hash mockedHash(final @NotNull String hashHex) {
         SHA1Hash hash = mock(SHA1Hash.class, withSettings().serializable());
         when(hash.getHex()).thenReturn(hashHex);
