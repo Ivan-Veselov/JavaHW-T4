@@ -339,6 +339,14 @@ public class RepositoryObjectsTest {
         repository.mergeCommitWithCurrent(commitInBranch);
     }
 
+    @Test
+    public void testReset() throws Exception {
+        Path pathToFile = rootDirectory.newFile().toPath();
+
+        repository.updateFileStateInIndex(pathToFile);
+        repository.resetFileState(pathToFile);
+    }
+
     private @NotNull SHA1Hash mockedHash(final @NotNull String hashHex) {
         SHA1Hash hash = mock(SHA1Hash.class, withSettings().serializable());
         when(hash.getHex()).thenReturn(hashHex);
