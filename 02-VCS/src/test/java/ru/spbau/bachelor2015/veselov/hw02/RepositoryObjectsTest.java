@@ -340,6 +340,14 @@ public class RepositoryObjectsTest {
     }
 
     @Test
+    public void testReferenceDeletion() throws Exception {
+        final String referenceName = "reference";
+
+        repository.createReference(referenceName, repository.getCurrentCommit());
+        repository.deleteReference(referenceName);
+    }
+
+    @Test
     public void testReset() throws Exception {
         Path pathToFile = rootDirectory.newFile().toPath();
 
