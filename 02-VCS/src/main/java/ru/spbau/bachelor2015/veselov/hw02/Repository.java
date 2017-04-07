@@ -16,9 +16,6 @@ import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 /**
- * TODO: javadocs for SHA1Hash
- * TODO: javadocs for FileEntity
- *
  * An interface which allows modify and inspect files inside VCS.
  */
 public final class Repository {
