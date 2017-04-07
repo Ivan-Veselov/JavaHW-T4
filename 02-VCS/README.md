@@ -1,4 +1,4 @@
-###Inner folder structure
+### Inner folder structure
 
 - HEAD
 - index
@@ -9,9 +9,10 @@
 - refs/
     - references to commits
 
-###Commands list
+### Commands list
 
-`init <folder>`
+`init <folder>`  
+Initializes a repository in a given folder.
 
 `add <file>`
 
@@ -24,3 +25,11 @@
 `log`
 
 `merge <branch-name>`
+
+`status`
+
+`reset <file>`
+
+`rm <file>`
+
+`clean`
