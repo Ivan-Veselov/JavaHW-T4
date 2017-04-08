@@ -20,7 +20,8 @@ Adds current file state to the index.
 `commit <message>`  
 Creates new commit from current index.
 
-`branch [-d] <branch-name>`
+`branch [-d] <branch-name>`  
+Creates a branch with a given name. If `-d` option is specified then branch with a given name is deleted.
 
 `checkout (<commit-hash> | <branch-name>)`
 

@@ -14,7 +14,7 @@ import java.nio.file.Paths;
 public class Main {
     public static void main(String[] args)
             throws DirectoryExpected, IOException, VCSIsAlreadyInitialized, VCSWasNotInitialized, InvalidDataInStorage,
-            FileFromWorkingDirectoryExpected, RegularFileExpected {
+            FileFromWorkingDirectoryExpected, RegularFileExpected, AlreadyExists, ReferenceIsUsed, NoSuchElement {
         if (args.length == 0) {
             System.out.println("Arguments expected");
             return;
@@ -98,6 +98,31 @@ public class Main {
                 }
 
                 repository.removeUntrackedFiles();
+                break;
+
+            case "branch":
+                switch (args.length) {
+                    case 1:
+                        System.out.println("Arguments expected");
+                        break;
+
+                    case 2:
+                        repository.createReference(args[1], repository.getCurrentCommit());
+                        break;
+
+                    case 3:
+                        if (!args[1].equals("-d")) {
+                            System.out.println("Unknown option: " + args[1]);
+                            break;
+                        }
+
+                        repository.deleteReference(args[2]);
+                        break;
+
+                    default:
+                        System.out.println("Too many arguments");
+                }
+
                 break;
 
             default:
