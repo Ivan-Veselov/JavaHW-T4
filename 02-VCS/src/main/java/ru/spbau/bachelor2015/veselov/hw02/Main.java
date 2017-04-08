@@ -9,12 +9,12 @@ import java.nio.file.Paths;
 
 
 /**
- * TODO: impl, javadocs, exceptions
+ * Main class which delegates user input to Repository class.
  */
 public class Main {
     public static void main(String[] args)
-            throws DirectoryExpected, IOException, VCSIsAlreadyInitialized, VCSWasNotInitialized, InvalidDataInStorage,
-            FileFromWorkingDirectoryExpected, RegularFileExpected, AlreadyExists, ReferenceIsUsed, NoSuchElement {
+            throws DirectoryExpected, IOException, InvalidDataInStorage,
+            FileFromWorkingDirectoryExpected, RegularFileExpected {
         if (args.length == 0) {
             System.out.println("Arguments expected");
             return;
@@ -26,11 +26,23 @@ public class Main {
                 return;
             }
 
-            Repository.initializeVCS(Paths.get(args[1]));
+            try {
+                Repository.initializeVCS(Paths.get(args[1]));
+            } catch (VCSIsAlreadyInitialized e) {
+                System.out.println("VCS is already initialized");
+            }
+
             return;
         }
 
-        Repository repository = Repository.getRepository(Paths.get(""));
+        Repository repository;
+        try {
+            repository = Repository.getRepository(Paths.get(""));
+        } catch (VCSWasNotInitialized e) {
+            System.out.println("VCS was not initialized");
+            return;
+        }
+
         switch (args[0]) {
             case "status":
                 if (args.length != 1) {
@@ -107,7 +119,12 @@ public class Main {
                         break;
 
                     case 2:
-                        repository.createReference(args[1], repository.getCurrentCommit());
+                        try {
+                            repository.createReference(args[1], repository.getCurrentCommit());
+                        } catch (AlreadyExists e) {
+                            System.out.println("Reference with such name already exists");
+                        }
+
                         break;
 
                     case 3:
@@ -116,7 +133,14 @@ public class Main {
                             break;
                         }
 
-                        repository.deleteReference(args[2]);
+                        try {
+                            repository.deleteReference(args[2]);
+                        } catch (ReferenceIsUsed e) {
+                            System.out.println("Can't delete reference which is currently used");
+                        } catch (NoSuchElement e) {
+                            System.out.println("There is no reference with such name");
+                        }
+
                         break;
 
                     default:
@@ -148,8 +172,12 @@ public class Main {
                     break;
                 }
 
-                if (repository.mergeCommitWithCurrent(repository.getCommitByReference(args[1])) == null) {
-                    System.out.println("Unable to merge");
+                try {
+                    if (repository.mergeCommitWithCurrent(repository.getCommitByReference(args[1])) == null) {
+                        System.out.println("Unable to merge");
+                    }
+                } catch (NoSuchElement e) {
+                    System.out.println("There is no reference with such name");
                 }
 
                 break;
