@@ -26,7 +26,8 @@ Initializes a repository in a given folder.
 
 `merge <branch-name>`
 
-`status`
+`status`  
+Prints a current state of a staging area.
 
 `reset <file>`
 
