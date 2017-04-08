@@ -29,7 +29,8 @@ Changes working directory to match specified commit. Instead of commit hash comm
 `log`  
 Prints a history of commits up until current one.
 
-`merge <branch-name>`
+`merge <branch-name>`  
+Merges current branch with a given one.
 
 `status`  
 Prints a current state of a staging area.

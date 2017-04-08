@@ -142,6 +142,18 @@ public class Main {
                 }
                 break;
 
+            case "merge":
+                if (args.length != 2) {
+                    System.out.println("One argument expected");
+                    break;
+                }
+
+                if (repository.mergeCommitWithCurrent(repository.getCommitByReference(args[1])) == null) {
+                    System.out.println("Unable to merge");
+                }
+
+                break;
+
             default:
                 System.out.println("Unknown command: " + args[0]);
         }

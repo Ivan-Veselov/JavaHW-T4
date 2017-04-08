@@ -467,7 +467,7 @@ public final class Repository {
                                        " commits",
                                        Arrays.asList(currentCommit, commit), tree);
 
-        updateHead(newCommit);
+        restoreState(newCommit);
         return newCommit;
     }
 
