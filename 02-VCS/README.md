@@ -17,7 +17,8 @@ Initializes a repository in a given folder.
 `add <file>`  
 Adds current file state to the index.
 
-`commit <message>`
+`commit <message>`  
+Creates new commit from current index.
 
 `branch [-d] <branch-name>`
 

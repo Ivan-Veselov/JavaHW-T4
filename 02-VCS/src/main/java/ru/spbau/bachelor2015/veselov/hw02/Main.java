@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 
 
 /**
- * TODO
+ * TODO: impl, javadocs, exceptions
  */
 public class Main {
     public static void main(String[] args)
@@ -46,7 +46,15 @@ public class Main {
                 }
 
                 repository.updateFileStateInIndex(Paths.get(args[1]));
+                break;
 
+            case "commit":
+                if (args.length != 2) {
+                    System.out.println("One argument expected");
+                    return;
+                }
+
+                repository.newCommitFromIndex(args[1]);
                 break;
 
             default:
