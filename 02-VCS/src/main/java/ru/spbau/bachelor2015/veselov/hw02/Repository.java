@@ -413,7 +413,7 @@ public final class Repository {
      */
     public void resetFileState(final @NotNull Path path)
             throws RegularFileExpected, FileFromWorkingDirectoryExpected, IOException, InvalidDataInStorage {
-        if (!Files.isRegularFile(path)) {
+        if (Files.exists(path) && !Files.isRegularFile(path)) {
             throw new RegularFileExpected();
         }
 
@@ -765,11 +765,9 @@ public final class Repository {
             }
         }
 
-        if (Files.exists(entityToUpdate.getPathToFile())) {
-            entities.add(new FileEntity(getRootDirectory().getPath()
-                                                          .relativize(entityToUpdate.getPathToFile().toAbsolutePath()),
-                         entityToUpdate.getContentHash()));
-        }
+        entities.add(new FileEntity(getRootDirectory().getPath()
+                                                      .relativize(entityToUpdate.getPathToFile().toAbsolutePath()),
+                     entityToUpdate.getContentHash()));
 
         writeToIndex(entities);
     }

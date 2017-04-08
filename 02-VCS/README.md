@@ -35,6 +35,7 @@ Prints a current state of a staging area.
 `reset <file>`  
 Resets file state in index.
 
-`rm <file>`
+`rm <file>`  
+Removes file from file system and updates index.
 
 `clean`

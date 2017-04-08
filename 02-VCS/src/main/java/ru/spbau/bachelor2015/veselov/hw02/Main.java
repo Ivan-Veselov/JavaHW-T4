@@ -3,6 +3,8 @@ package ru.spbau.bachelor2015.veselov.hw02;
 import ru.spbau.bachelor2015.veselov.hw02.exceptions.*;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 
@@ -76,6 +78,17 @@ public class Main {
                 }
 
                 repository.resetFileState(Paths.get(args[1]));
+                break;
+
+            case "rm":
+                if (args.length != 2) {
+                    System.out.println("One argument expected");
+                    break;
+                }
+
+                Path path = Paths.get(args[1]);
+                Files.delete(path);
+                repository.updateFileStateInIndex(path);
                 break;
 
             default:
