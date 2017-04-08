@@ -243,7 +243,11 @@ public final class Repository {
      */
     public void updateFileStateInIndex(final @NotNull Path path)
             throws RegularFileExpected, FileFromWorkingDirectoryExpected, IOException, InvalidDataInStorage {
-        updateFileStateInIndex(new FileEntity(path, new Blob(path).getVCSHash()));
+        if (Files.exists(path)) {
+            updateFileStateInIndex(new FileEntity(path, new Blob(path).getVCSHash()));
+        } else {
+            removeFileFromIndex(path);
+        }
     }
 
     /**
@@ -421,12 +425,14 @@ public final class Repository {
             for (FileEntity entity : getCurrentCommit().getTree().getFileStructure()) {
                 if (entity.getPathToFile().equals(path)) {
                     updateFileStateInIndex(entity);
-                    break;
+                    return;
                 }
             }
         } catch (NoSuchElement e) {
             throw new InvalidDataInStorage(e);
         }
+
+        removeFileFromIndex(path);
     }
 
     /**
@@ -753,12 +759,7 @@ public final class Repository {
             Path pathToFile = entity.getPathToFile();
 
             if (Files.isSameFile(entityToUpdate.getPathToFile(), getRootDirectory().resolve(pathToFile).getPath())) {
-                if (Files.exists(entityToUpdate.getPathToFile())) {
-                    entities.set(i, new FileEntity(pathToFile, entityToUpdate.getContentHash()));
-                } else {
-                    entities.remove(i);
-                }
-
+                entities.set(i, new FileEntity(pathToFile, entityToUpdate.getContentHash()));
                 writeToIndex(entities);
                 return;
             }
@@ -771,6 +772,25 @@ public final class Repository {
         }
 
         writeToIndex(entities);
+    }
+
+    private void removeFileFromIndex(final @NotNull Path path)
+            throws FileFromWorkingDirectoryExpected, IOException, InvalidDataInStorage {
+        if (!isInsideWorkingDirectory(path)) {
+            throw new FileFromWorkingDirectoryExpected();
+        }
+
+        List<FileEntity> entities = readFromIndex();
+        for (int i = 0; i < entities.size(); i++) {
+            FileEntity entity = entities.get(i);
+            Path pathToFile = entity.getPathToFile();
+
+            if (path.equals(pathToFile)) {
+                entities.remove(i);
+                writeToIndex(entities);
+                return;
+            }
+        }
     }
 
     private @Nullable Tree mergeTrees(final @NotNull Tree tree1, final @NotNull Tree tree2) throws IOException {

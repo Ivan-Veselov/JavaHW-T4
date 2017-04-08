@@ -32,7 +32,8 @@ Prints a history of commits up until current one.
 `status`  
 Prints a current state of a staging area.
 
-`reset <file>`
+`reset <file>`  
+Resets file state in index.
 
 `rm <file>`
 

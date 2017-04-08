@@ -69,6 +69,15 @@ public class Main {
 
                 break;
 
+            case "reset":
+                if (args.length != 2) {
+                    System.out.println("One argument expected");
+                    break;
+                }
+
+                repository.resetFileState(Paths.get(args[1]));
+                break;
+
             default:
                 System.out.println("Unknown command: " + args[0]);
         }
