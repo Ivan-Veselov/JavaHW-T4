@@ -14,7 +14,8 @@
 `init <folder>`  
 Initializes a repository in a given folder.
 
-`add <file>`
+`add <file>`  
+Adds current file state to the index.
 
 `commit <message>`
 

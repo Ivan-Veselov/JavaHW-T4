@@ -1,9 +1,6 @@
 package ru.spbau.bachelor2015.veselov.hw02;
 
-import ru.spbau.bachelor2015.veselov.hw02.exceptions.DirectoryExpected;
-import ru.spbau.bachelor2015.veselov.hw02.exceptions.InvalidDataInStorage;
-import ru.spbau.bachelor2015.veselov.hw02.exceptions.VCSIsAlreadyInitialized;
-import ru.spbau.bachelor2015.veselov.hw02.exceptions.VCSWasNotInitialized;
+import ru.spbau.bachelor2015.veselov.hw02.exceptions.*;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -14,7 +11,8 @@ import java.nio.file.Paths;
  */
 public class Main {
     public static void main(String[] args)
-            throws DirectoryExpected, IOException, VCSIsAlreadyInitialized, VCSWasNotInitialized, InvalidDataInStorage {
+            throws DirectoryExpected, IOException, VCSIsAlreadyInitialized, VCSWasNotInitialized, InvalidDataInStorage,
+            FileFromWorkingDirectoryExpected, RegularFileExpected {
         if (args.length == 0) {
             System.out.println("Arguments expected");
             return;
@@ -39,6 +37,16 @@ public class Main {
                 }
 
                 System.out.println(repository.getStatisticsProvider());
+                break;
+
+            case "add":
+                if (args.length != 2) {
+                    System.out.println("One argument expected");
+                    return;
+                }
+
+                repository.updateFileStateInIndex(Paths.get(args[1]));
+
                 break;
 
             default:

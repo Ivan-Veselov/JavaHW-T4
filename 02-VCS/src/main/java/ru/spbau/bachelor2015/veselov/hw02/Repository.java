@@ -372,7 +372,7 @@ public final class Repository {
             @Override
             public FileVisitResult visitFile(final @NotNull Path file,
                                              final @NotNull BasicFileAttributes attrs) throws IOException {
-                if (provider.getFileStatistics(file).isUntracked()) {
+                if (provider.getFileStatistics(getRootDirectory().getPath().relativize(file)).isUntracked()) {
                     Files.delete(file);
                 }
 
@@ -765,7 +765,8 @@ public final class Repository {
         }
 
         if (Files.exists(entityToUpdate.getPathToFile())) {
-            entities.add(new FileEntity(getRootDirectory().getPath().relativize(entityToUpdate.getPathToFile()),
+            entities.add(new FileEntity(getRootDirectory().getPath()
+                                                          .relativize(entityToUpdate.getPathToFile().toAbsolutePath()),
                          entityToUpdate.getContentHash()));
         }
 
