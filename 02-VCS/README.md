@@ -24,7 +24,8 @@ Creates new commit from current index.
 
 `checkout (<commit-hash> | <branch-name>)`
 
-`log`
+`log`  
+Prints a history of commits up until current one.
 
 `merge <branch-name>`
 

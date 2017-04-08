@@ -33,7 +33,7 @@ public class Main {
             case "status":
                 if (args.length != 1) {
                     System.out.println("No arguments expected");
-                    return;
+                    break;
                 }
 
                 System.out.println(repository.getStatisticsProvider());
@@ -42,7 +42,7 @@ public class Main {
             case "add":
                 if (args.length != 2) {
                     System.out.println("One argument expected");
-                    return;
+                    break;
                 }
 
                 repository.updateFileStateInIndex(Paths.get(args[1]));
@@ -51,10 +51,22 @@ public class Main {
             case "commit":
                 if (args.length != 2) {
                     System.out.println("One argument expected");
-                    return;
+                    break;
                 }
 
                 repository.newCommitFromIndex(args[1]);
+                break;
+
+            case "log":
+                if (args.length != 1) {
+                    System.out.println("No arguments expected");
+                    break;
+                }
+
+                for (Repository.Commit commit : repository.getHistoryForCurrentCommit()) {
+                    System.out.println(commit + "\n");
+                }
+
                 break;
 
             default:

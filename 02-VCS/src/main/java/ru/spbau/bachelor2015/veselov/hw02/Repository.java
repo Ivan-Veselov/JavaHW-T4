@@ -1248,5 +1248,20 @@ public final class Repository {
         public @NotNull Iterable<Commit> parentCommits() {
             return () -> StoredObjectIterator.fromHashIterator(parentCommitsHashes.iterator(), Commit::new);
         }
+
+        /**
+         * Returns a string representation of this commit.
+         */
+        @Override
+        public @NotNull String toString() {
+            StringBuilder builder = new StringBuilder();
+
+            builder.append("commit ").append(hash.toString()).append('\n');
+            builder.append("Author: ").append(author).append('\n');
+            builder.append("Date: ").append(date).append('\n');
+            builder.append('\t').append(message);
+
+            return builder.toString();
+        }
     }
 }
