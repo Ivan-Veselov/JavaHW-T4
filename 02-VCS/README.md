@@ -38,4 +38,5 @@ Resets file state in index.
 `rm <file>`  
 Removes file from file system and updates index.
 
-`clean`
+`clean`  
+Removes all untacked files in working directory.

@@ -91,6 +91,15 @@ public class Main {
                 repository.updateFileStateInIndex(path);
                 break;
 
+            case "clean":
+                if (args.length != 1) {
+                    System.out.println("No arguments expected");
+                    break;
+                }
+
+                repository.removeUntrackedFiles();
+                break;
+
             default:
                 System.out.println("Unknown command: " + args[0]);
         }
