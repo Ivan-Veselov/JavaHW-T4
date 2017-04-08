@@ -23,7 +23,8 @@ Creates new commit from current index.
 `branch [-d] <branch-name>`  
 Creates a branch with a given name. If `-d` option is specified then branch with a given name is deleted.
 
-`checkout (<commit-hash> | <branch-name>)`
+`checkout (<commit-hash> | <branch-name>)`  
+Changes working directory to match specified commit. Instead of commit hash command can accept reference.
 
 `log`  
 Prints a history of commits up until current one.

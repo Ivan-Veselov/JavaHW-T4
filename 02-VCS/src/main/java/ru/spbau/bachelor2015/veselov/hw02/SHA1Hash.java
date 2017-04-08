@@ -15,6 +15,15 @@ public class SHA1Hash implements Serializable {
     private final @NotNull String hexString;
 
     /**
+     * Creates a hash from a given string.
+     *
+     * @param hexString a string representation of hash.
+     */
+    public SHA1Hash(final @NotNull String hexString) {
+        this.hexString = hexString;
+    }
+
+    /**
      * Creates a hash from data.
      *
      * @param data a data to hash.

@@ -125,6 +125,23 @@ public class Main {
 
                 break;
 
+            case "checkout":
+                if (args.length != 2) {
+                    System.out.println("One argument expected");
+                    break;
+                }
+
+                try {
+                    repository.restoreState(args[1]);
+                } catch (IllegalArgumentException e) {
+                    try {
+                        repository.restoreState(repository.new Commit(new SHA1Hash(args[1])));
+                    } catch (NoSuchElement ee) {
+                        System.out.println("No such reference or commit");
+                    }
+                }
+                break;
+
             default:
                 System.out.println("Unknown command: " + args[0]);
         }
