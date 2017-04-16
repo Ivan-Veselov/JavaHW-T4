@@ -19,7 +19,7 @@ public class MessageReader {
 
     private boolean isLengthRead = false;
 
-    private @Nullable ByteBuffer lengthBuffer = ByteBuffer.allocate(4);
+    private @NotNull final ByteBuffer lengthBuffer = ByteBuffer.allocate(4);
 
     private @Nullable ByteBuffer messageBuffer;
 
@@ -50,7 +50,6 @@ public class MessageReader {
 
             lengthBuffer.flip();
             int length = lengthBuffer.getInt();
-            lengthBuffer = null;
 
             if (length < 0) {
                 throw new MessageWithNegativeLengthException();
@@ -74,5 +73,14 @@ public class MessageReader {
         }
 
         return messageBuffer.array().clone();
+    }
+
+    /**
+     * Resets message reader so that it can be used to read a new message.
+     */
+    public void reset() {
+        isLengthRead = false;
+        lengthBuffer.clear();
+        messageBuffer = null;
     }
 }
