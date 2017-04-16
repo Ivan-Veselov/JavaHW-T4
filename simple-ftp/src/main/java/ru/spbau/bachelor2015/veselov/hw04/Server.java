@@ -1,5 +1,7 @@
 package ru.spbau.bachelor2015.veselov.hw04;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.spbau.bachelor2015.veselov.hw04.exceptions.MessageNotReadException;
@@ -16,13 +18,15 @@ import java.util.Map;
 
 /**
  * TODO: handle connections which were closed.
- * TODO: queue of message writers
  * TODO: more accurate writing (only when it is required)
+ * TODO: limit a length of a message
  */
 public class Server {
     private final static int port = 10000;
 
     private final static @NotNull byte[] data = new byte[] {'H', 'i', '!'};
+
+    private final static @NotNull Logger logger = LogManager.getLogger(Server.class.getCanonicalName());
 
     private @Nullable Selector selector;
 
@@ -32,13 +36,18 @@ public class Server {
 
     private final @NotNull Map<SelectionKey, MessageTransmitter> messageTransmitters = new HashMap<>();
 
-    // TODO: handle exceptions
     public Server() {
+        logger.info("New Server ({}) is created", this);
     }
 
+    // TODO: handle exceptions
     public void start() throws IOException {
-        try (Selector selector = Selector.open();
-             ServerSocketChannel serverSocketChannel = ServerSocketChannel.open()) {
+        logger.info("Server ({}) is started", this);
+
+        try {
+            selector = Selector.open();
+            serverSocketChannel = ServerSocketChannel.open();
+
             serverSocketChannel.socket().bind(new InetSocketAddress(port));
             serverSocketChannel.configureBlocking(false);
             serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
@@ -48,7 +57,7 @@ public class Server {
 
                 for (SelectionKey key : selector.selectedKeys()) {
                     if (key.channel().equals(serverSocketChannel)) {
-                        if (!key.isAcceptable()) {
+                        if (key.isAcceptable()) {
                             acceptNewConnection();
                         }
 
@@ -66,6 +75,14 @@ public class Server {
 
                 selector.selectedKeys().clear();
             }
+        } finally {
+            if (serverSocketChannel != null) {
+                serverSocketChannel.close();
+            }
+
+            if (selector != null) {
+                selector.close();
+            }
         }
     }
 
@@ -74,6 +91,8 @@ public class Server {
         if (socketChannel == null) {
             return;
         }
+
+        logger.info("Server ({}) accepted new connection", this);
 
         socketChannel.configureBlocking(false);
 

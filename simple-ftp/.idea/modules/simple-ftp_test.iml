@@ -14,11 +14,13 @@
     <orderEntry type="library" name="Gradle: org.jetbrains:annotations:15.0" level="project" />
     <orderEntry type="library" name="Gradle: org.mockito:mockito-core:2.7.17" level="project" />
     <orderEntry type="library" name="Gradle: org.apache.commons:commons-lang3:3.5" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.logging.log4j:log4j-core:2.8.2" level="project" />
     <orderEntry type="library" name="Gradle: junit:junit:4.11" level="project" />
     <orderEntry type="library" name="Gradle: org.hamcrest:hamcrest-core:1.3" level="project" />
     <orderEntry type="library" name="Gradle: net.bytebuddy:byte-buddy:1.6.11" level="project" />
     <orderEntry type="library" name="Gradle: net.bytebuddy:byte-buddy-agent:1.6.11" level="project" />
     <orderEntry type="library" name="Gradle: org.objenesis:objenesis:2.5" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.logging.log4j:log4j-api:2.8.2" level="project" />
   </component>
   <component name="TestModuleProperties" production-module="simple-ftp_main" />
 </module>
