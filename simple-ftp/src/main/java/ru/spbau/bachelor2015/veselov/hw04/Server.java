@@ -15,6 +15,8 @@ import java.util.Map;
 
 /**
  * TODO: handle connections which were closed.
+ * TODO: queue of message writers
+ * TODO: more accurate writing (only when it is required)
  */
 public class Server {
     private final static int port = 10000;
@@ -46,7 +48,8 @@ public class Server {
                         }
 
                         socketChannel.configureBlocking(false);
-                        SelectionKey socketChannelKey = socketChannel.register(selector, SelectionKey.OP_READ);
+                        SelectionKey socketChannelKey = socketChannel.register(selector,
+                                                                SelectionKey.OP_READ | SelectionKey.OP_WRITE);
                         messageReaders.put(socketChannelKey, new MessageReader(socketChannel));
                         continue;
                     }
@@ -67,7 +70,7 @@ public class Server {
                         } catch (MessageNotReadException e) {
                             throw new RuntimeException(e);
                         }
-                        
+
                         reader.reset();
                         // TODO: send an answer
                     }

@@ -19,7 +19,7 @@ public class MessageReader {
 
     private boolean isLengthRead = false;
 
-    private @NotNull final ByteBuffer lengthBuffer = ByteBuffer.allocate(4);
+    private @NotNull final ByteBuffer lengthBuffer = ByteBuffer.allocate(Integer.BYTES);
 
     private @Nullable ByteBuffer messageBuffer;
 
