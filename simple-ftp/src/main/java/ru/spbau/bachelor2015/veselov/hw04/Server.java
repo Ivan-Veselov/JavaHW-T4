@@ -4,7 +4,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
@@ -17,35 +16,34 @@ public class Server {
 
     // TODO: handle exceptions
     public Server() throws IOException {
-        ByteBuffer buffer = ByteBuffer.allocate(1024);
-        buffer.put(data);
-        buffer.rewind();
+        try (Selector selector = Selector.open();
+             ServerSocketChannel serverSocketChannel = ServerSocketChannel.open()) {
+            serverSocketChannel.socket().bind(new InetSocketAddress(port));
+            serverSocketChannel.configureBlocking(false);
+            serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 
-        Selector selector = Selector.open();
+            while (true) {
+                selector.select();
 
-        ServerSocketChannel serverChannel = ServerSocketChannel.open();
-        serverChannel.socket().bind(new InetSocketAddress(port));
-        serverChannel.configureBlocking(false);
-        serverChannel.register(selector, SelectionKey.OP_ACCEPT);
+                for (SelectionKey key : selector.selectedKeys()) {
+                    if (key.channel().equals(serverSocketChannel)) {
+                        if (!key.isAcceptable()) {
+                            continue;
+                        }
 
-        while (true) {
-            selector.select();
+                        SocketChannel socketChannel = serverSocketChannel.accept();
+                        if (socketChannel == null) {
+                            continue;
+                        }
 
-            for (SelectionKey key : selector.selectedKeys()) {
-                if (key.channel().equals(serverChannel)) {
-                    SocketChannel channel = serverChannel.accept();
-                    channel.configureBlocking(false);
-                    channel.register(selector, SelectionKey.OP_WRITE);
-                    continue;
+                        socketChannel.configureBlocking(false);
+                        socketChannel.register(selector, SelectionKey.OP_READ);
+                        continue;
+                    }
                 }
 
-                SocketChannel channel = (SocketChannel) key.channel();
-                channel.write(buffer); // TODO: add while cycle
-                buffer.rewind();
-                channel.close();
+                selector.selectedKeys().clear();
             }
-
-            selector.selectedKeys().clear();
         }
     }
 }
