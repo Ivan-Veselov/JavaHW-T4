@@ -18,6 +18,7 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static ru.spbau.bachelor2015.veselov.hw04.TestUtils.intArrayOfOnes;
 
 public class MessageWriterTest {
     @Test
@@ -42,13 +43,6 @@ public class MessageWriterTest {
         MessageWriter writer = new MessageWriter(channel, data);
 
         while (!writer.write());
-    }
-
-    private @NotNull int[] intArrayOfOnes(final int size) {
-        int[] array = new int[size];
-        Arrays.fill(array, 1);
-
-        return array;
     }
 
     private @NotNull Reader read(final @NotNull int... bytesToRead) {

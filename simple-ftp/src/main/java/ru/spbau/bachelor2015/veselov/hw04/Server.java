@@ -1,20 +1,19 @@
 package ru.spbau.bachelor2015.veselov.hw04;
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.spbau.bachelor2015.veselov.hw04.messages.exceptions.MessageNotReadException;
-import ru.spbau.bachelor2015.veselov.hw04.messages.exceptions.MessageWithNegativeLengthException;
 import ru.spbau.bachelor2015.veselov.hw04.ftpmessages.FTPListAnswerMessage;
 import ru.spbau.bachelor2015.veselov.hw04.ftpmessages.FTPListMessage;
 import ru.spbau.bachelor2015.veselov.hw04.ftpmessages.FTPMessage;
 import ru.spbau.bachelor2015.veselov.hw04.messages.MessageReader;
+import ru.spbau.bachelor2015.veselov.hw04.messages.exceptions.MessageNotReadException;
+import ru.spbau.bachelor2015.veselov.hw04.messages.exceptions.MessageWithNegativeLengthException;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -33,16 +32,15 @@ import java.util.Map;
  * TODO: more accurate writing (only when it is required)
  * TODO: limit a length of an incoming message
  * TODO: add javadocs
- * TODO: add list message test
  * TODO: add FTPMessageTransmitter test
  * TODO: add javadocs to Main
  */
 public class Server {
-    private final static int port = 10000;
-
     private final static @NotNull Logger logger = LogManager.getLogger(Server.class.getCanonicalName());
 
     private volatile boolean shouldRun;
+
+    private final int port;
 
     private final @NotNull Path trackedFolder;
 
@@ -50,10 +48,11 @@ public class Server {
 
     private @Nullable Map<SelectionKey, FTPMessageTransmitter> messageTransmitters = new HashMap<>();
 
-    public Server(final @NotNull Path trackedFolder) {
+    public Server(final @NotNull Path trackedFolder, final int port) {
         logger.info("New Server ({}) is created", this);
 
         this.trackedFolder = trackedFolder;
+        this.port = port;
     }
 
     public void start() {
@@ -153,15 +152,7 @@ public class Server {
     }
 
     private void handleMessage(final @NotNull SelectionKey key, final @NotNull byte[] rawMessage) throws IOException {
-        FTPMessage message;
-        try(ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(rawMessage);
-            ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream)) {
-
-            message = (FTPMessage) objectInputStream.readObject();
-        } catch (ClassNotFoundException e) {
-            logger.error("Server ({}) received a message with class which can't be deserialized", this);
-            return;
-        }
+        FTPMessage message = SerializationUtils.deserialize(rawMessage);
 
         // TODO: use double dispatch
         if (message instanceof FTPListMessage) {
@@ -186,7 +177,8 @@ public class Server {
 
         if (files != null) {
             for (File file : files) {
-                entries.add(new FTPListAnswerMessage.Entry(file.getPath(), file.isDirectory()));
+                entries.add(new FTPListAnswerMessage.Entry(trackedFolder.relativize(file.toPath()).toString(),
+                                                           file.isDirectory()));
             }
         }
 

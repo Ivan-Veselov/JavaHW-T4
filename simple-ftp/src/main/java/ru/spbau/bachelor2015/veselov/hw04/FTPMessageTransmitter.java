@@ -1,14 +1,13 @@
 package ru.spbau.bachelor2015.veselov.hw04;
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import ru.spbau.bachelor2015.veselov.hw04.ftpmessages.FTPMessage;
 import ru.spbau.bachelor2015.veselov.hw04.messages.MessageWriter;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.nio.channels.WritableByteChannel;
 import java.util.LinkedList;
 
@@ -41,13 +40,7 @@ public class FTPMessageTransmitter {
     public void addMessage(final @NotNull FTPMessage message) throws IOException {
         logger.info("New message is added to FTPMessageTransmitter ({})", this);
 
-        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-             ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream)) {
-            objectOutputStream.writeObject(message);
-            objectOutputStream.flush();
-
-            writers.add(new MessageWriter(channel, byteArrayOutputStream.toByteArray()));
-        }
+        writers.add(new MessageWriter(channel, SerializationUtils.serialize(message)));
     }
 
     /**

@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        Server server = new Server(Paths.get(""));
+        Server server = new Server(Paths.get(""), 10000);
 
         boolean shouldRun = true;
 

@@ -21,12 +21,13 @@ import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static ru.spbau.bachelor2015.veselov.hw04.TestUtils.toLengthByteArray;
 
 public class MessageReaderTest {
     @Test
     public void testZeroLengthMessage() throws Exception {
         ReadableByteChannel channel = mock(ReadableByteChannel.class);
-        when(channel.read(any())).thenAnswer(write(toByteArray(0)));
+        when(channel.read(any())).thenAnswer(write(toLengthByteArray(0)));
 
         MessageReader reader = new MessageReader(channel);
 
@@ -37,7 +38,7 @@ public class MessageReaderTest {
     @Test(expected = MessageWithNegativeLengthException.class)
     public void testNegativeLengthMessage() throws Exception {
         ReadableByteChannel channel = mock(ReadableByteChannel.class);
-        when(channel.read(any())).thenAnswer(write(toByteArray(-1)));
+        when(channel.read(any())).thenAnswer(write(toLengthByteArray(-1)));
 
         MessageReader reader = new MessageReader(channel);
 
@@ -58,7 +59,7 @@ public class MessageReaderTest {
         final byte[] data = new byte[] {1, 2, 3};
 
         ReadableByteChannel channel = mock(ReadableByteChannel.class);
-        when(channel.read(any())).thenAnswer(write(addAll(toByteArray(3), data)));
+        when(channel.read(any())).thenAnswer(write(addAll(toLengthByteArray(3), data)));
 
         MessageReader reader = new MessageReader(channel);
 
@@ -71,7 +72,7 @@ public class MessageReaderTest {
         final byte[] data = new byte[] {1, 2, 3};
 
         ReadableByteChannel channel = mock(ReadableByteChannel.class);
-        when(channel.read(any())).thenAnswer(write(extrude(addAll(toByteArray(3), data))));
+        when(channel.read(any())).thenAnswer(write(extrude(addAll(toLengthByteArray(3), data))));
 
         MessageReader reader = new MessageReader(channel);
         while (!reader.read());
@@ -86,10 +87,6 @@ public class MessageReaderTest {
         }
 
         return result;
-    }
-
-    private @NotNull byte[] toByteArray(int integer) {
-        return ByteBuffer.allocate(4).putInt(integer).array().clone();
     }
 
     private @NotNull Writer write(final @NotNull byte[]... dataToWrite) {
