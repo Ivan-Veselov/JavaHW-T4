@@ -92,7 +92,7 @@ public class Server {
             return;
         }
 
-        logger.info("Server ({}) accepted new connection", this);
+        logger.info("Server ({}) accept new connection", this);
 
         socketChannel.configureBlocking(false);
 
