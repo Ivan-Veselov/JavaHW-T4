@@ -1,9 +1,9 @@
-package ru.spbau.bachelor2015.veselov.hw04;
+package ru.spbau.bachelor2015.veselov.hw04.messages;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.spbau.bachelor2015.veselov.hw04.exceptions.MessageNotReadException;
-import ru.spbau.bachelor2015.veselov.hw04.exceptions.MessageWithNegativeLengthException;
+import ru.spbau.bachelor2015.veselov.hw04.messages.exceptions.MessageNotReadException;
+import ru.spbau.bachelor2015.veselov.hw04.messages.exceptions.MessageWithNegativeLengthException;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -19,7 +19,7 @@ public class MessageReader {
 
     private boolean isLengthRead = false;
 
-    private @NotNull final ByteBuffer lengthBuffer = ByteBuffer.allocate(Integer.BYTES);
+    private @NotNull final ByteBuffer lengthBuffer = ByteBuffer.allocate(Message.LENGTH_BYTES);
 
     private @Nullable ByteBuffer messageBuffer;
 

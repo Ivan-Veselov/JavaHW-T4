@@ -4,11 +4,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.spbau.bachelor2015.veselov.hw04.exceptions.MessageNotReadException;
-import ru.spbau.bachelor2015.veselov.hw04.exceptions.MessageWithNegativeLengthException;
-import ru.spbau.bachelor2015.veselov.hw04.messages.FTPListAnswerMessage;
-import ru.spbau.bachelor2015.veselov.hw04.messages.FTPListMessage;
-import ru.spbau.bachelor2015.veselov.hw04.messages.FTPMessage;
+import ru.spbau.bachelor2015.veselov.hw04.messages.exceptions.MessageNotReadException;
+import ru.spbau.bachelor2015.veselov.hw04.messages.exceptions.MessageWithNegativeLengthException;
+import ru.spbau.bachelor2015.veselov.hw04.ftpmessages.FTPListAnswerMessage;
+import ru.spbau.bachelor2015.veselov.hw04.ftpmessages.FTPListMessage;
+import ru.spbau.bachelor2015.veselov.hw04.ftpmessages.FTPMessage;
+import ru.spbau.bachelor2015.veselov.hw04.messages.MessageReader;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -34,8 +35,6 @@ import java.util.Map;
  * TODO: add javadocs
  * TODO: add list message test
  * TODO: add FTPMessageTransmitter test
- * TODO: add bytes for message length constant
- * TODO: fix multiple 1 in MessageWriterTest
  * TODO: add javadocs to Main
  */
 public class Server {

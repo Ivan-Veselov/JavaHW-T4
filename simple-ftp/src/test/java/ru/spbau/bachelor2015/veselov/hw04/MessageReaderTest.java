@@ -4,8 +4,9 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import ru.spbau.bachelor2015.veselov.hw04.exceptions.MessageNotReadException;
-import ru.spbau.bachelor2015.veselov.hw04.exceptions.MessageWithNegativeLengthException;
+import ru.spbau.bachelor2015.veselov.hw04.messages.exceptions.MessageNotReadException;
+import ru.spbau.bachelor2015.veselov.hw04.messages.exceptions.MessageWithNegativeLengthException;
+import ru.spbau.bachelor2015.veselov.hw04.messages.MessageReader;
 
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;

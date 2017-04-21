@@ -1,4 +1,4 @@
-package ru.spbau.bachelor2015.veselov.hw04;
+package ru.spbau.bachelor2015.veselov.hw04.messages;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -24,7 +24,7 @@ public class MessageWriter {
     public MessageWriter(final @NotNull WritableByteChannel channel, final @NotNull byte[] data) {
         this.channel = channel;
 
-        buffer = ByteBuffer.allocate(Integer.BYTES + data.length);
+        buffer = ByteBuffer.allocate(Message.LENGTH_BYTES + data.length);
         buffer.putInt(data.length);
         buffer.put(data);
         buffer.flip();

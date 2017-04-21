@@ -4,6 +4,8 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import ru.spbau.bachelor2015.veselov.hw04.messages.Message;
+import ru.spbau.bachelor2015.veselov.hw04.messages.MessageWriter;
 
 import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
@@ -23,7 +25,7 @@ public class MessageWriterTest {
         final byte[] data = new byte[] {1, 2, 3};
 
         WritableByteChannel channel = mock(WritableByteChannel.class);
-        when(channel.write(any())).thenAnswer(read(data.length + Integer.BYTES));
+        when(channel.write(any())).thenAnswer(read(data.length + Message.LENGTH_BYTES));
 
         MessageWriter writer = new MessageWriter(channel, data);
 
@@ -35,11 +37,18 @@ public class MessageWriterTest {
         final byte[] data = new byte[] {1, 2, 3};
 
         WritableByteChannel channel = mock(WritableByteChannel.class);
-        when(channel.write(any())).thenAnswer(read(1, 1, 1, 1, 1, 1, 1));
+        when(channel.write(any())).thenAnswer(read(intArrayOfOnes(data.length + Message.LENGTH_BYTES)));
 
         MessageWriter writer = new MessageWriter(channel, data);
 
         while (!writer.write());
+    }
+
+    private @NotNull int[] intArrayOfOnes(final int size) {
+        int[] array = new int[size];
+        Arrays.fill(array, 1);
+
+        return array;
     }
 
     private @NotNull Reader read(final @NotNull int... bytesToRead) {

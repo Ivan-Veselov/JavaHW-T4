@@ -3,7 +3,8 @@ package ru.spbau.bachelor2015.veselov.hw04;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
-import ru.spbau.bachelor2015.veselov.hw04.messages.FTPMessage;
+import ru.spbau.bachelor2015.veselov.hw04.ftpmessages.FTPMessage;
+import ru.spbau.bachelor2015.veselov.hw04.messages.MessageWriter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
