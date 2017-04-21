@@ -40,8 +40,6 @@ import java.util.Map;
 public class Server {
     private final static int port = 10000;
 
-    private final static @NotNull byte[] data = new byte[] {'H', 'i', '!'};
-
     private final static @NotNull Logger logger = LogManager.getLogger(Server.class.getCanonicalName());
 
     private volatile boolean shouldRun;
