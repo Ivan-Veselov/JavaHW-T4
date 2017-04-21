@@ -70,7 +70,7 @@ public class MessageReaderTest {
         final byte[] data = new byte[] {1, 2, 3};
 
         ReadableByteChannel channel = mock(ReadableByteChannel.class);
-        when(channel.read(any())).thenAnswer(write(extend(addAll(toByteArray(3), data))));
+        when(channel.read(any())).thenAnswer(write(extrude(addAll(toByteArray(3), data))));
 
         MessageReader reader = new MessageReader(channel);
         while (!reader.read());
@@ -78,7 +78,7 @@ public class MessageReaderTest {
         assertThat(toObject(reader.getMessage()), is(arrayContaining(toObject(data))));
     }
 
-    private @NotNull byte[][] extend(final @NotNull byte[] array) {
+    private @NotNull byte[][] extrude(final @NotNull byte[] array) {
         byte[][] result = new byte[array.length][1];
         for (int i = 0; i < array.length; i++) {
             result[i][0] = array[i];
