@@ -91,7 +91,7 @@ public class MessageReaderTest {
         return ByteBuffer.allocate(4).putInt(integer).array().clone();
     }
 
-    private Writer write(final @NotNull byte[]... dataToWrite) {
+    private @NotNull Writer write(final @NotNull byte[]... dataToWrite) {
         return new Writer(dataToWrite);
     }
 
