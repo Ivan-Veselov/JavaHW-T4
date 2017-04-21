@@ -23,8 +23,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
 /**
  * TODO: handle connections which were closed
@@ -32,9 +32,11 @@ import java.util.List;
  * TODO: more accurate writing (only when it is required)
  * TODO: limit a length of an incoming message
  * TODO: add javadocs
- * TODO: add server thread
- * TODO: implement main
  * TODO: add list message test
+ * TODO: add FTPMessageTransmitter test
+ * TODO: add bytes for message length constant
+ * TODO: fix multiple 1 in MessageWriterTest
+ * TODO: add javadocs to Main
  */
 public class Server {
     private final static int port = 10000;
@@ -43,15 +45,13 @@ public class Server {
 
     private final static @NotNull Logger logger = LogManager.getLogger(Server.class.getCanonicalName());
 
+    private volatile boolean shouldRun;
+
     private final @NotNull Path trackedFolder;
 
-    private @Nullable Selector selector;
+    private @Nullable Map<SelectionKey, MessageReader> messageReaders = new HashMap<>();
 
-    private @Nullable ServerSocketChannel serverSocketChannel;
-
-    private final @NotNull Map<SelectionKey, MessageReader> messageReaders = new HashMap<>();
-
-    private final @NotNull Map<SelectionKey, FTPMessageTransmitter> messageTransmitters = new HashMap<>();
+    private @Nullable Map<SelectionKey, FTPMessageTransmitter> messageTransmitters = new HashMap<>();
 
     public Server(final @NotNull Path trackedFolder) {
         logger.info("New Server ({}) is created", this);
@@ -59,53 +59,62 @@ public class Server {
         this.trackedFolder = trackedFolder;
     }
 
-    // TODO: handle exceptions
-    public void start() throws IOException {
+    public void start() {
         logger.info("Server ({}) is started", this);
 
-        try {
-            selector = Selector.open();
-            serverSocketChannel = ServerSocketChannel.open();
+        shouldRun = true;
 
-            serverSocketChannel.socket().bind(new InetSocketAddress(port));
-            serverSocketChannel.configureBlocking(false);
-            serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
+        messageReaders = new HashMap<>();
+        messageTransmitters = new HashMap<>();
 
-            while (true) {
-                selector.select();
+        new Thread(
+            () -> {
+                // TODO: handle exceptions
+                try (Selector selector = Selector.open();
+                     ServerSocketChannel serverSocketChannel = ServerSocketChannel.open()) {
+                    serverSocketChannel.socket().bind(new InetSocketAddress(port));
+                    serverSocketChannel.configureBlocking(false);
+                    serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 
-                for (SelectionKey key : selector.selectedKeys()) {
-                    if (key.channel().equals(serverSocketChannel)) {
-                        if (key.isAcceptable()) {
-                            acceptNewConnection();
+                    while (shouldRun) {
+                        selector.select();
+
+                        for (SelectionKey key : selector.selectedKeys()) {
+                            if (key.channel().equals(serverSocketChannel)) {
+                                if (key.isAcceptable()) {
+                                    acceptNewConnection(selector, serverSocketChannel);
+                                }
+
+                                continue;
+                            }
+
+                            if (key.isReadable()) {
+                                readMessage(key);
+                            }
+
+                            if (key.isWritable()) {
+                                messageTransmitters.get(key).write();
+                            }
                         }
 
-                        continue;
+                        selector.selectedKeys().clear();
                     }
-
-                    if (key.isReadable()) {
-                        readMessage(key);
-                    }
-
-                    if (key.isWritable()) {
-                        messageTransmitters.get(key).write();
-                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                } finally {
+                    messageReaders = null;
+                    messageTransmitters = null;
                 }
-
-                selector.selectedKeys().clear();
             }
-        } finally {
-            if (serverSocketChannel != null) {
-                serverSocketChannel.close();
-            }
-
-            if (selector != null) {
-                selector.close();
-            }
-        }
+        ).start();
     }
 
-    private void acceptNewConnection() throws IOException {
+    public void stop() {
+        shouldRun = false;
+    }
+
+    private void acceptNewConnection(final @NotNull Selector selector,
+                                     final @NotNull ServerSocketChannel serverSocketChannel) throws IOException {
         SocketChannel socketChannel = serverSocketChannel.accept();
         if (socketChannel == null) {
             return;
