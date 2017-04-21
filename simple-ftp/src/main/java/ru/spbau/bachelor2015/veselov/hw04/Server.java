@@ -31,9 +31,8 @@ import java.util.Map;
  * TODO: close connections which sent incorrect messages
  * TODO: more accurate writing (only when it is required)
  * TODO: limit a length of an incoming message
- * TODO: add javadocs
+ * TODO: add javadocs to Server
  * TODO: add FTPMessageTransmitter test
- * TODO: add javadocs to Main
  */
 public class Server {
     private final static @NotNull Logger logger = LogManager.getLogger(Server.class.getCanonicalName());
