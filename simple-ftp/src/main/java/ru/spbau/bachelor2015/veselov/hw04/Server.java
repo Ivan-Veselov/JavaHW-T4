@@ -33,6 +33,7 @@ import java.util.Map;
  * TODO: limit a length of an incoming message
  * TODO: add javadocs to Server
  * TODO: add FTPMessageTransmitter test
+ * TODO: add server test with multiple messages
  */
 public class Server {
     private final static @NotNull Logger logger = LogManager.getLogger(Server.class.getCanonicalName());
@@ -55,8 +56,6 @@ public class Server {
     }
 
     public void start() {
-        logger.info("Server ({}) is started", this);
-
         shouldRun = true;
 
         messageReaders = new HashMap<>();
@@ -70,6 +69,8 @@ public class Server {
                     serverSocketChannel.socket().bind(new InetSocketAddress(port));
                     serverSocketChannel.configureBlocking(false);
                     serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
+
+                    logger.info("Server ({}) is started", this);
 
                     while (shouldRun) {
                         selector.select();
@@ -99,6 +100,8 @@ public class Server {
                 } finally {
                     messageReaders = null;
                     messageTransmitters = null;
+
+                    logger.info("Server ({}) is stopped", this);
                 }
             }
         ).start();
