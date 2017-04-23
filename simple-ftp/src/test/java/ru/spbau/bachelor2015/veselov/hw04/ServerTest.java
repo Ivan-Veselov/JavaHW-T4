@@ -92,6 +92,8 @@ public class ServerTest {
         }
 
         socket.close();
+
+        server.stop();
     }
 
     private @NotNull byte[] prepareMessage(final @NotNull FTPMessage message) {

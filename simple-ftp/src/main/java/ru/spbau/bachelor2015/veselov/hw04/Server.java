@@ -4,7 +4,6 @@ import org.apache.commons.lang3.SerializationUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import ru.spbau.bachelor2015.veselov.hw04.ftpmessages.FTPListAnswerMessage;
 import ru.spbau.bachelor2015.veselov.hw04.ftpmessages.FTPListMessage;
 import ru.spbau.bachelor2015.veselov.hw04.ftpmessages.FTPMessage;
@@ -22,17 +21,13 @@ import java.nio.channels.SocketChannel;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
- * TODO: more accurate writing (only when it is required)
  * TODO: limit a length of an incoming message
  * TODO: add javadocs to Server
  * TODO: add FTPMessageTransmitter test
  * TODO: add javadocs to exceptions
- * TODO: use special field instead of maps
  */
 public class Server {
     private final static @NotNull Logger logger = LogManager.getLogger(Server.class.getCanonicalName());
@@ -43,10 +38,6 @@ public class Server {
 
     private final @NotNull Path trackedFolder;
 
-    private @Nullable Map<SelectionKey, MessageReader> messageReaders = new HashMap<>();
-
-    private @Nullable Map<SelectionKey, FTPMessageTransmitter> messageTransmitters = new HashMap<>();
-
     public Server(final @NotNull Path trackedFolder, final int port) {
         logger.info("New Server ({}) is created", this);
 
@@ -56,9 +47,6 @@ public class Server {
 
     public void start() {
         shouldRun = true;
-
-        messageReaders = new HashMap<>();
-        messageTransmitters = new HashMap<>();
 
         new Thread(
             () -> {
@@ -84,7 +72,7 @@ public class Server {
                                 }
 
                                 if (key.isWritable()) {
-                                    messageTransmitters.get(key).write();
+                                    ((FTPChannelAttachment) key.attachment()).getTransmitter().write();
                                 }
                             } catch (InvalidMessageException e) {
                                 logger.error("Server ({}) received an invalid message", this);
@@ -104,9 +92,6 @@ public class Server {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 } finally {
-                    messageReaders = null;
-                    messageTransmitters = null;
-
                     logger.info("Server ({}) is stopped", this);
                 }
             }
@@ -128,22 +113,18 @@ public class Server {
 
         socketChannel.configureBlocking(false);
 
-        // TODO: only SelectionKey.OP_READ required
-        SelectionKey socketChannelKey = socketChannel.register(selector,
-                                                               SelectionKey.OP_READ | SelectionKey.OP_WRITE);
-        messageReaders.put(socketChannelKey, new MessageReader(socketChannel));
-        messageTransmitters.put(socketChannelKey, new FTPMessageTransmitter(socketChannel));
+        socketChannel.register(
+                selector,
+               SelectionKey.OP_READ | SelectionKey.OP_WRITE,
+                new FTPChannelAttachment(new MessageReader(socketChannel), new FTPMessageTransmitter(socketChannel)));
     }
 
     private void closeConnection(final @NotNull SelectionKey key) throws IOException {
-        messageTransmitters.remove(key);
-        messageReaders.remove(key);
-
         key.channel().close();
     }
 
     private void readMessage(final @NotNull SelectionKey key) throws IOException, InvalidMessageException {
-        MessageReader reader = messageReaders.get(key);
+        MessageReader reader = ((FTPChannelAttachment) key.attachment()).getReader();
 
         if (!reader.read()) {
             return;
@@ -193,6 +174,6 @@ public class Server {
             }
         }
 
-        messageTransmitters.get(key).addMessage(new FTPListAnswerMessage(entries));
+        ((FTPChannelAttachment) key.attachment()).getTransmitter().addMessage(new FTPListAnswerMessage(entries));
     }
 }
