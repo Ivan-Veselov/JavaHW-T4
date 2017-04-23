@@ -9,8 +9,8 @@ import ru.spbau.bachelor2015.veselov.hw04.ftpmessages.FTPListAnswerMessage;
 import ru.spbau.bachelor2015.veselov.hw04.ftpmessages.FTPListMessage;
 import ru.spbau.bachelor2015.veselov.hw04.ftpmessages.FTPMessage;
 import ru.spbau.bachelor2015.veselov.hw04.messages.MessageReader;
+import ru.spbau.bachelor2015.veselov.hw04.messages.exceptions.InvalidMessageException;
 import ru.spbau.bachelor2015.veselov.hw04.messages.exceptions.MessageNotReadException;
-import ru.spbau.bachelor2015.veselov.hw04.messages.exceptions.MessageWithNegativeLengthException;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,8 +27,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * TODO: handle connections which were closed
- * TODO: close connections which sent incorrect messages
  * TODO: more accurate writing (only when it is required)
  * TODO: limit a length of an incoming message
  * TODO: add javadocs to Server
@@ -63,7 +61,6 @@ public class Server {
 
         new Thread(
             () -> {
-                // TODO: handle exceptions
                 try (Selector selector = Selector.open();
                      ServerSocketChannel serverSocketChannel = ServerSocketChannel.open()) {
                     serverSocketChannel.socket().bind(new InetSocketAddress(port));
@@ -76,20 +73,23 @@ public class Server {
                         selector.select();
 
                         for (SelectionKey key : selector.selectedKeys()) {
-                            if (key.channel().equals(serverSocketChannel)) {
+                            try {
                                 if (key.isAcceptable()) {
                                     acceptNewConnection(selector, serverSocketChannel);
                                 }
 
-                                continue;
-                            }
+                                if (key.isReadable()) {
+                                    readMessage(key);
+                                }
 
-                            if (key.isReadable()) {
-                                readMessage(key);
-                            }
-
-                            if (key.isWritable()) {
-                                messageTransmitters.get(key).write();
+                                if (key.isWritable()) {
+                                    messageTransmitters.get(key).write();
+                                }
+                            } catch (InvalidMessageException e) {
+                                logger.error("Server ({}) received an invalid message", this);
+                            } catch (IOException ignored) {
+                            } finally {
+                                key.channel().close();
                             }
                         }
 
@@ -124,20 +124,15 @@ public class Server {
 
         // TODO: only SelectionKey.OP_READ required
         SelectionKey socketChannelKey = socketChannel.register(selector,
-                                                        SelectionKey.OP_READ | SelectionKey.OP_WRITE);
+                                                               SelectionKey.OP_READ | SelectionKey.OP_WRITE);
         messageReaders.put(socketChannelKey, new MessageReader(socketChannel));
         messageTransmitters.put(socketChannelKey, new FTPMessageTransmitter(socketChannel));
     }
 
-    private void readMessage(final @NotNull SelectionKey key) throws IOException {
+    private void readMessage(final @NotNull SelectionKey key) throws IOException, InvalidMessageException {
         MessageReader reader = messageReaders.get(key);
 
-        try {
-            if (!reader.read()) {
-                return;
-            }
-        } catch (MessageWithNegativeLengthException e) {
-            logger.error("Server ({}) received a message with negative length", this);
+        if (!reader.read()) {
             return;
         }
 
@@ -153,14 +148,15 @@ public class Server {
         handleMessage(key, message);
     }
 
-    private void handleMessage(final @NotNull SelectionKey key, final @NotNull byte[] rawMessage) throws IOException {
+    private void handleMessage(final @NotNull SelectionKey key, final @NotNull byte[] rawMessage)
+            throws IOException, InvalidMessageException {
         FTPMessage message = SerializationUtils.deserialize(rawMessage);
 
         // TODO: use double dispatch
         if (message instanceof FTPListMessage) {
             handleMessage(key, (FTPListMessage) message);
         } else {
-            logger.error("Server ({}) received an unknown message", this);
+            throw new InvalidMessageException();
         }
     }
 
