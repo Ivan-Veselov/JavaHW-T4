@@ -26,6 +26,7 @@ import java.util.Optional;
  * TODO: add javadocs to Server
  * TODO: add FTPMessageTransmitter test
  * TODO: add javadocs to exceptions
+ * TODO: server arguments
  */
 public class Server {
     private final static @NotNull Logger logger = LogManager.getLogger(Server.class.getCanonicalName());
