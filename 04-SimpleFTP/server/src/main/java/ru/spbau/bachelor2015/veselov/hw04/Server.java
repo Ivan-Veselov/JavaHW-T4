@@ -1,15 +1,12 @@
 package ru.spbau.bachelor2015.veselov.hw04;
 
-import org.apache.commons.lang3.SerializationUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import ru.spbau.bachelor2015.veselov.hw04.exceptions.InvalidFTPMessageException;
 import ru.spbau.bachelor2015.veselov.hw04.exceptions.InvalidPathException;
 import ru.spbau.bachelor2015.veselov.hw04.exceptions.NoSuchMessageException;
-import ru.spbau.bachelor2015.veselov.hw04.messages.MessageReader;
 import ru.spbau.bachelor2015.veselov.hw04.messages.exceptions.InvalidMessageException;
-import ru.spbau.bachelor2015.veselov.hw04.messages.exceptions.MessageNotReadException;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,11 +19,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * TODO: limit a length of an incoming message
  * TODO: add javadocs to Server
- * TODO: add ru.spbau.bachelor2015.veselov.hw04.FTPMessageTransmitter test
+ * TODO: add FTPMessageTransmitter test
  * TODO: add javadocs to exceptions
  * TODO: add method which allows wait until server is stopped and use in server test
  */
@@ -117,33 +115,19 @@ public class Server {
         socketChannel.register(
                 selector,
                SelectionKey.OP_READ | SelectionKey.OP_WRITE,
-                new FTPChannelAttachment(new MessageReader(socketChannel), new FTPMessageTransmitter(socketChannel)));
+                new FTPChannelAttachment(new FTPMessageReader(socketChannel), new FTPMessageTransmitter(socketChannel)));
     }
 
     private void readMessage(final @NotNull SelectionKey key)
             throws IOException, InvalidMessageException, InvalidFTPMessageException {
-        MessageReader reader = ((FTPChannelAttachment) key.attachment()).getReader();
+        FTPMessageReader reader = ((FTPChannelAttachment) key.attachment()).getReader();
 
-        if (!reader.read()) {
+        Optional<FTPMessage> optional = reader.read();
+        if (!optional.isPresent()) {
             return;
         }
 
-        byte[] message;
-        try {
-            message = reader.getMessage();
-        } catch (MessageNotReadException e) {
-            throw new RuntimeException(e);
-        }
-
-        reader.reset();
-
-        handleMessage(key, message);
-    }
-
-    private void handleMessage(final @NotNull SelectionKey key, final @NotNull byte[] rawMessage)
-            throws IOException, InvalidFTPMessageException {
-        FTPMessage message = SerializationUtils.deserialize(rawMessage);
-
+        FTPMessage message = optional.get();
         if (message instanceof FTPListMessage) {
             handleMessage(key, (FTPListMessage) message);
         } else {

@@ -26,7 +26,7 @@ public class FTPMessageTransmitter {
      * @param channel a channel to which new transmitter will be writing messages.
      */
     public FTPMessageTransmitter(final @NotNull WritableByteChannel channel) {
-        logger.info("New ru.spbau.bachelor2015.veselov.hw04.FTPMessageTransmitter ({}) is created", this);
+        logger.info("New FTPMessageTransmitter ({}) is created", this);
 
         this.channel = channel;
     }
@@ -37,7 +37,7 @@ public class FTPMessageTransmitter {
      * @param message a message to add.
      */
     public void addMessage(final @NotNull FTPMessage message) throws IOException {
-        logger.info("New message is added to ru.spbau.bachelor2015.veselov.hw04.FTPMessageTransmitter ({})", this);
+        logger.info("New message is added to FTPMessageTransmitter ({})", this);
 
         writers.add(new MessageWriter(channel, SerializationUtils.serialize(message)));
     }
@@ -45,17 +45,35 @@ public class FTPMessageTransmitter {
     /**
      * Makes an attempt to write a message to a channel.
      *
+     * @return true if there is no messages to write left.
      * @throws IOException if any IO exception occurs during writing.
      */
-    public void write() throws IOException {
-        logger.debug("Write method of ru.spbau.bachelor2015.veselov.hw04.FTPMessageTransmitter ({}) is called", this);
+    public boolean write() throws IOException {
+        logger.debug("Write method of FTPMessageTransmitter ({}) is called", this);
 
-        if (writers.isEmpty()) {
-            return;
+        if (!writers.isEmpty()) {
+            MessageWriter writer = writers.getFirst();
+            if (writer.write()) {
+                writers.poll();
+            }
         }
 
-        MessageWriter writer = writers.getFirst();
-        if (writer.write()) {
+        return writers.isEmpty();
+    }
+
+    /**
+     * Writes every message in queue into the underlying channel. A better performance may be achieved if
+     * underlying channel is switched to blocking mode.
+     *
+     * @throws IOException if any IO exception occurs during writing.
+     */
+    public void waitUntilWritten() throws IOException {
+        logger.debug("WaitUntilWritten method of FTPMessageTransmitter ({}) is called", this);
+
+        while (!writers.isEmpty()) {
+            MessageWriter writer = writers.getFirst();
+            while (!writer.write());
+
             writers.poll();
         }
     }
