@@ -4,6 +4,8 @@
     <bytecodeTargetLevel>
       <module name="console-client_main" target="1.8" />
       <module name="console-client_test" target="1.8" />
+      <module name="integration-tests_main" target="1.8" />
+      <module name="integration-tests_test" target="1.8" />
       <module name="messages_main" target="1.8" />
       <module name="messages_test" target="1.8" />
       <module name="server_main" target="1.8" />

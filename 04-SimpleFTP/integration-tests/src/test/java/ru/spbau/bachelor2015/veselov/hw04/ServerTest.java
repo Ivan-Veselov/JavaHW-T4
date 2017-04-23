@@ -12,7 +12,6 @@ import ru.spbau.bachelor2015.veselov.hw04.messages.Message;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -39,15 +38,15 @@ public class ServerTest {
     }
 
     private final TestMessage listTestMessage =
-            new TestMessage(new FTPListMessage(Paths.get("").toString())) {
-                @Override
-                public void check(@NotNull FTPMessage message) throws Exception {
-                    FTPListAnswerMessage answer = (FTPListAnswerMessage) message;
+        new TestMessage() {
+            @Override
+            public void test(final @NotNull Client client) throws Exception {
+                FTPListAnswerMessage answer = client.list(Paths.get("").toString());
 
-                    assertThat(answer.getContent(), is(contains(fileEntry(pathToRoot.relativize(pathToFile),
-                                                                                                    false))));
+                assertThat(answer.getContent(), is(contains(fileEntry(pathToRoot.relativize(pathToFile),
+                        false))));
             }
-    };
+        };
 
     @Test
     public void testFTPListMessage() throws Exception {
@@ -71,24 +70,20 @@ public class ServerTest {
         Server server = new Server(pathToRoot, port);
         server.start();
 
-        Socket socket = null;
-        while (socket == null) {
+        Client client = null;
+
+        while (client == null) {
             try {
-                socket = new Socket((String) null, port);
-            } catch (IOException e) {
+                client = new Client("localhost", port);
+            } catch (IOException ignore) {
             }
         }
 
         for (TestMessage testMessage : messages) {
-            socket.getOutputStream().write(prepareMessage(testMessage.getMessage()));
-
-            FTPMessage answer = SerializationUtils.deserialize(readMessage(socket.getInputStream()));
-
-            testMessage.check(answer);
+            testMessage.test(client);
         }
 
-        socket.close();
-
+        client.close();
         server.stop();
     }
 
@@ -127,17 +122,7 @@ public class ServerTest {
     }
 
     private static abstract class TestMessage {
-        private final @NotNull FTPMessage message;
-
-        public TestMessage(final @NotNull FTPMessage message) {
-            this.message = message;
-        }
-
-        public @NotNull FTPMessage getMessage() {
-            return message;
-        }
-
-        public abstract void check(final @NotNull FTPMessage answer) throws Exception;
+        public abstract void test(final @NotNull Client client) throws Exception;
     }
 
     private static class FileEntryMatcher extends BaseMatcher<FTPListAnswerMessage.Entry> {

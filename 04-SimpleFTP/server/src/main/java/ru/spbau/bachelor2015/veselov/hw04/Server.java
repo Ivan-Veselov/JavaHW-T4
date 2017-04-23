@@ -26,7 +26,6 @@ import java.util.Optional;
  * TODO: add javadocs to Server
  * TODO: add FTPMessageTransmitter test
  * TODO: add javadocs to exceptions
- * TODO: add method which allows wait until server is stopped (join) and use in server test
  */
 public class Server {
     private final static @NotNull Logger logger = LogManager.getLogger(Server.class.getCanonicalName());
@@ -37,68 +36,73 @@ public class Server {
 
     private final @NotNull Path trackedFolder;
 
+    private final @NotNull Thread serverThread;
+
     public Server(final @NotNull Path trackedFolder, final int port) {
         logger.info("New Server ({}) is created", this);
 
         this.trackedFolder = trackedFolder;
         this.port = port;
+
+        this.serverThread =
+            new Thread(
+                () -> {
+                    try (Selector selector = Selector.open();
+                         ServerSocketChannel serverSocketChannel = ServerSocketChannel.open()) {
+                        serverSocketChannel.socket().bind(new InetSocketAddress(port));
+                        serverSocketChannel.configureBlocking(false);
+                        serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
+
+                        logger.info("Server ({}) is started", this);
+
+                        while (shouldRun) {
+                            selector.select();
+
+                            for (SelectionKey key : selector.selectedKeys()) {
+                                try {
+                                    if (key.isAcceptable()) {
+                                        acceptNewConnection(selector, serverSocketChannel);
+                                    }
+
+                                    if (key.isReadable()) {
+                                        readMessage(key);
+                                    }
+
+                                    if (key.isWritable()) {
+                                        ((FTPChannelAttachment) key.attachment()).getTransmitter().write();
+                                    }
+                                } catch (InvalidMessageException | InvalidFTPMessageException e) {
+                                    logger.error("Server ({}) received an invalid message", this);
+
+                                    key.channel().close();
+                                } catch (IOException ignored) {
+                                    logger.error(
+                                    "IOException occurred during interaction of Server ({}) with a connection",
+                                    this);
+
+                                    key.channel().close();
+                                }
+                            }
+
+                            selector.selectedKeys().clear();
+                        }
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    } finally {
+                        logger.info("Server ({}) is stopped", this);
+                    }
+                }
+            );
     }
 
     public void start() {
         shouldRun = true;
-
-        new Thread(
-            () -> {
-                try (Selector selector = Selector.open();
-                     ServerSocketChannel serverSocketChannel = ServerSocketChannel.open()) {
-                    serverSocketChannel.socket().bind(new InetSocketAddress(port));
-                    serverSocketChannel.configureBlocking(false);
-                    serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
-
-                    logger.info("Server ({}) is started", this);
-
-                    while (shouldRun) {
-                        selector.select();
-
-                        for (SelectionKey key : selector.selectedKeys()) {
-                            try {
-                                if (key.isAcceptable()) {
-                                    acceptNewConnection(selector, serverSocketChannel);
-                                }
-
-                                if (key.isReadable()) {
-                                    readMessage(key);
-                                }
-
-                                if (key.isWritable()) {
-                                    ((FTPChannelAttachment) key.attachment()).getTransmitter().write();
-                                }
-                            } catch (InvalidMessageException | InvalidFTPMessageException e) {
-                                logger.error("Server ({}) received an invalid message", this);
-
-                                key.channel().close();
-                            } catch (IOException ignored) {
-                                logger.error(
-                                    "IOException occurred during interaction of Server ({}) with a connection",
-                                    this);
-
-                                key.channel().close();
-                            }
-                        }
-
-                        selector.selectedKeys().clear();
-                    }
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                } finally {
-                    logger.info("Server ({}) is stopped", this);
-                }
-            }
-        ).start();
+        serverThread.start();
     }
 
-    public void stop() {
+    public void stop() throws InterruptedException {
         shouldRun = false;
+        serverThread.join();
     }
 
     private void acceptNewConnection(final @NotNull Selector selector,

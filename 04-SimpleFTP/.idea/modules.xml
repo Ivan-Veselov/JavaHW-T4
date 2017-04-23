@@ -5,6 +5,9 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/console-client.iml" filepath="$PROJECT_DIR$/.idea/modules/console-client.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/console-client_main.iml" filepath="$PROJECT_DIR$/.idea/modules/console-client_main.iml" group="console-client" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/console-client_test.iml" filepath="$PROJECT_DIR$/.idea/modules/console-client_test.iml" group="console-client" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/integration-tests.iml" filepath="$PROJECT_DIR$/.idea/modules/integration-tests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/integration-tests_main.iml" filepath="$PROJECT_DIR$/.idea/modules/integration-tests_main.iml" group="integration-tests" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/integration-tests_test.iml" filepath="$PROJECT_DIR$/.idea/modules/integration-tests_test.iml" group="integration-tests" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/messages.iml" filepath="$PROJECT_DIR$/.idea/modules/messages.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/messages_main.iml" filepath="$PROJECT_DIR$/.idea/modules/messages_main.iml" group="messages" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/messages_test.iml" filepath="$PROJECT_DIR$/.idea/modules/messages_test.iml" group="messages" />

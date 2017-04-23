@@ -15,7 +15,7 @@ public class Main {
      * @param args arguments are ignored.
      * @throws IOException any IO exception which may occur during reading of commands.
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         Server server = new Server(Paths.get(""), 10000);
 
         boolean shouldRun = true;
