@@ -26,7 +26,7 @@ import java.util.Optional;
  * TODO: add javadocs to Server
  * TODO: add FTPMessageTransmitter test
  * TODO: add javadocs to exceptions
- * TODO: server arguments
+ * TODO: check if it is possible to see something outside of a tracked folder
  */
 public class Server {
     private final static @NotNull Logger logger = LogManager.getLogger(Server.class.getCanonicalName());

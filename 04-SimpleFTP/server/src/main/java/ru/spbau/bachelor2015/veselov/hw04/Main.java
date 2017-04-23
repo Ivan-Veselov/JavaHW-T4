@@ -16,7 +16,12 @@ public class Main {
      * @throws IOException any IO exception which may occur during reading of commands.
      */
     public static void main(String[] args) throws IOException, InterruptedException {
-        Server server = new Server(Paths.get(""), 10000);
+        if (args.length != 2) {
+            System.out.println("Two arguments expected");
+            return;
+        }
+
+        Server server = new Server(Paths.get(args[0]), Integer.parseInt(args[1]));
 
         boolean shouldRun = true;
 
