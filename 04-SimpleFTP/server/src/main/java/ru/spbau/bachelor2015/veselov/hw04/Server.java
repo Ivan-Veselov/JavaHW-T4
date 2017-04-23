@@ -28,7 +28,6 @@ import java.util.List;
  * TODO: add FTPMessageReader test
  * TODO: add javadocs to exceptions
  * TODO: check if it is possible to see something outside of a tracked folder
- * TODO: check what client will do if server closed connection
  */
 public class Server {
     private final static @NotNull Logger logger = LogManager.getLogger(Server.class.getCanonicalName());

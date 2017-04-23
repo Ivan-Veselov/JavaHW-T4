@@ -10,6 +10,7 @@ import java.nio.channels.SocketChannel;
 
 /**
  * A client class establishes a connection with ftp server and allows to send a request messages to it.
+ * TODO: client will freeze on write operation if server closed connection for some reason.
  */
 public class Client implements AutoCloseable {
     private final @NotNull SocketChannel channel;
