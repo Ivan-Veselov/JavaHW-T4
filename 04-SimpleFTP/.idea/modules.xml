@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/console-client.iml" filepath="$PROJECT_DIR$/.idea/modules/console-client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/console-client_main.iml" filepath="$PROJECT_DIR$/.idea/modules/console-client_main.iml" group="console-client" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/console-client_test.iml" filepath="$PROJECT_DIR$/.idea/modules/console-client_test.iml" group="console-client" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/messages.iml" filepath="$PROJECT_DIR$/.idea/modules/messages.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/messages_main.iml" filepath="$PROJECT_DIR$/.idea/modules/messages_main.iml" group="messages" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/messages_test.iml" filepath="$PROJECT_DIR$/.idea/modules/messages_test.iml" group="messages" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/server.iml" filepath="$PROJECT_DIR$/.idea/modules/server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/server_main.iml" filepath="$PROJECT_DIR$/.idea/modules/server_main.iml" group="server" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/server_test.iml" filepath="$PROJECT_DIR$/.idea/modules/server_test.iml" group="server" />
+    </modules>
+  </component>
+</project>

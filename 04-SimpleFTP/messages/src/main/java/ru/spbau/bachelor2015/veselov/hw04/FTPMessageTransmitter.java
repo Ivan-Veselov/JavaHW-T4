@@ -1,0 +1,62 @@
+package ru.spbau.bachelor2015.veselov.hw04;
+
+import org.apache.commons.lang3.SerializationUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
+import ru.spbau.bachelor2015.veselov.hw04.messages.MessageWriter;
+
+import java.io.IOException;
+import java.nio.channels.WritableByteChannel;
+import java.util.LinkedList;
+
+/**
+ * Ftp transmitter can write a queued sequence of ftp messages to a specified channel.
+ */
+public class FTPMessageTransmitter {
+    private final static @NotNull Logger logger = LogManager.getLogger(FTPMessageTransmitter.class.getCanonicalName());
+
+    private final @NotNull WritableByteChannel channel;
+
+    private final @NotNull LinkedList<MessageWriter> writers = new LinkedList<>();
+
+    /**
+     * Creates a new transmitter.
+     *
+     * @param channel a channel to which new transmitter will be writing messages.
+     */
+    public FTPMessageTransmitter(final @NotNull WritableByteChannel channel) {
+        logger.info("New ru.spbau.bachelor2015.veselov.hw04.FTPMessageTransmitter ({}) is created", this);
+
+        this.channel = channel;
+    }
+
+    /**
+     * Adds a new message to the queue.
+     *
+     * @param message a message to add.
+     */
+    public void addMessage(final @NotNull FTPMessage message) throws IOException {
+        logger.info("New message is added to ru.spbau.bachelor2015.veselov.hw04.FTPMessageTransmitter ({})", this);
+
+        writers.add(new MessageWriter(channel, SerializationUtils.serialize(message)));
+    }
+
+    /**
+     * Makes an attempt to write a message to a channel.
+     *
+     * @throws IOException if any IO exception occurs during writing.
+     */
+    public void write() throws IOException {
+        logger.debug("Write method of ru.spbau.bachelor2015.veselov.hw04.FTPMessageTransmitter ({}) is called", this);
+
+        if (writers.isEmpty()) {
+            return;
+        }
+
+        MessageWriter writer = writers.getFirst();
+        if (writer.write()) {
+            writers.poll();
+        }
+    }
+}
