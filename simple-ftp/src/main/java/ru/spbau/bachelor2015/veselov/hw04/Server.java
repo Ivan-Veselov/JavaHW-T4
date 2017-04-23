@@ -7,6 +7,9 @@ import org.jetbrains.annotations.NotNull;
 import ru.spbau.bachelor2015.veselov.hw04.ftpmessages.FTPListAnswerMessage;
 import ru.spbau.bachelor2015.veselov.hw04.ftpmessages.FTPListMessage;
 import ru.spbau.bachelor2015.veselov.hw04.ftpmessages.FTPMessage;
+import ru.spbau.bachelor2015.veselov.hw04.ftpmessages.exceptions.InvalidFTPMessageException;
+import ru.spbau.bachelor2015.veselov.hw04.ftpmessages.exceptions.InvalidPathException;
+import ru.spbau.bachelor2015.veselov.hw04.ftpmessages.exceptions.NoSuchMessageException;
 import ru.spbau.bachelor2015.veselov.hw04.messages.MessageReader;
 import ru.spbau.bachelor2015.veselov.hw04.messages.exceptions.InvalidMessageException;
 import ru.spbau.bachelor2015.veselov.hw04.messages.exceptions.MessageNotReadException;
@@ -74,16 +77,16 @@ public class Server {
                                 if (key.isWritable()) {
                                     ((FTPChannelAttachment) key.attachment()).getTransmitter().write();
                                 }
-                            } catch (InvalidMessageException e) {
+                            } catch (InvalidMessageException | InvalidFTPMessageException e) {
                                 logger.error("Server ({}) received an invalid message", this);
 
-                                closeConnection(key);
+                                key.channel().close();
                             } catch (IOException ignored) {
                                 logger.error(
                                     "IOException occurred during interaction of Server ({}) with a connection",
                                     this);
 
-                                closeConnection(key);
+                                key.channel().close();
                             }
                         }
 
@@ -119,11 +122,8 @@ public class Server {
                 new FTPChannelAttachment(new MessageReader(socketChannel), new FTPMessageTransmitter(socketChannel)));
     }
 
-    private void closeConnection(final @NotNull SelectionKey key) throws IOException {
-        key.channel().close();
-    }
-
-    private void readMessage(final @NotNull SelectionKey key) throws IOException, InvalidMessageException {
+    private void readMessage(final @NotNull SelectionKey key)
+            throws IOException, InvalidMessageException, InvalidFTPMessageException {
         MessageReader reader = ((FTPChannelAttachment) key.attachment()).getReader();
 
         if (!reader.read()) {
@@ -143,24 +143,23 @@ public class Server {
     }
 
     private void handleMessage(final @NotNull SelectionKey key, final @NotNull byte[] rawMessage)
-            throws IOException, InvalidMessageException {
+            throws IOException, InvalidFTPMessageException {
         FTPMessage message = SerializationUtils.deserialize(rawMessage);
 
         // TODO: use double dispatch
         if (message instanceof FTPListMessage) {
             handleMessage(key, (FTPListMessage) message);
         } else {
-            throw new InvalidMessageException();
+            throw new NoSuchMessageException();
         }
     }
 
     private void handleMessage(final @NotNull SelectionKey key, final @NotNull FTPListMessage message)
-            throws IOException {
+            throws IOException, InvalidFTPMessageException {
         Path path = Paths.get(message.getPath());
 
         if (path.isAbsolute()) {
-            logger.error("Server ({}) received a message with incorrect trackedFolder", this);
-            return;
+            throw new InvalidPathException();
         }
 
         File[] files = trackedFolder.resolve(path).toFile().listFiles();
