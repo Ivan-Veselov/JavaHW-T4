@@ -21,6 +21,7 @@ import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static ru.spbau.bachelor2015.veselov.hw04.messages.MessageReader.ReadingResult.READ;
 
 public class MessageReaderTest {
     @Test
@@ -30,7 +31,7 @@ public class MessageReaderTest {
 
         MessageReader reader = new MessageReader(channel);
 
-        assertThat(reader.read(), is(true));
+        assertThat(reader.read(), is(READ));
         assertThat(toObject(reader.getMessage()), is(emptyArray()));
     }
 
@@ -62,7 +63,7 @@ public class MessageReaderTest {
 
         MessageReader reader = new MessageReader(channel);
 
-        assertThat(reader.read(), is(true));
+        assertThat(reader.read(), is(READ));
         assertThat(toObject(reader.getMessage()), is(arrayContaining(toObject(data))));
     }
 
@@ -74,7 +75,7 @@ public class MessageReaderTest {
         when(channel.read(any())).thenAnswer(write(extrude(ArrayUtils.addAll(TestUtils.toLengthByteArray(3), data))));
 
         MessageReader reader = new MessageReader(channel);
-        while (!reader.read());
+        while (reader.read() != READ);
 
         assertThat(toObject(reader.getMessage()), is(arrayContaining(toObject(data))));
     }

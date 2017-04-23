@@ -7,6 +7,7 @@ import ru.spbau.bachelor2015.veselov.hw04.exceptions.InvalidFTPMessageException;
 import ru.spbau.bachelor2015.veselov.hw04.exceptions.InvalidPathException;
 import ru.spbau.bachelor2015.veselov.hw04.exceptions.NoSuchMessageException;
 import ru.spbau.bachelor2015.veselov.hw04.messages.exceptions.InvalidMessageException;
+import ru.spbau.bachelor2015.veselov.hw04.messages.exceptions.MessageNotReadException;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,14 +20,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * TODO: limit a length of an incoming message
  * TODO: add javadocs to Server
  * TODO: add FTPMessageTransmitter test
+ * TODO: add FTPMessageReader test
  * TODO: add javadocs to exceptions
  * TODO: check if it is possible to see something outside of a tracked folder
+ * TODO: check what client will do if server closed connection
  */
 public class Server {
     private final static @NotNull Logger logger = LogManager.getLogger(Server.class.getCanonicalName());
@@ -67,6 +69,9 @@ public class Server {
 
                                     if (key.isReadable()) {
                                         readMessage(key);
+                                        if (!key.isValid()) {
+                                            continue;
+                                        }
                                     }
 
                                     if (key.isWritable()) {
@@ -103,6 +108,7 @@ public class Server {
 
     public void stop() throws InterruptedException {
         shouldRun = false;
+        serverThread.interrupt();
         serverThread.join();
     }
 
@@ -127,14 +133,27 @@ public class Server {
             throws IOException, InvalidMessageException, InvalidFTPMessageException {
         FTPMessageReader reader = ((FTPChannelAttachment) key.attachment()).getReader();
 
-        Optional<FTPMessage> optional = reader.read();
-        if (!optional.isPresent()) {
-            return;
+        switch (reader.read()) {
+            case NOT_READ:
+                return;
+
+            case CLOSED:
+                key.channel().close();
+                return;
+
+            case READ:
+                break;
         }
 
         logger.info("Server ({}) received new message", this);
 
-        FTPMessage message = optional.get();
+        FTPMessage message;
+        try {
+            message = reader.getMessage();
+        } catch (MessageNotReadException e) {
+            throw new RuntimeException(e);
+        }
+
         if (message instanceof FTPListMessage) {
             handleMessage(key, (FTPListMessage) message);
         } else {

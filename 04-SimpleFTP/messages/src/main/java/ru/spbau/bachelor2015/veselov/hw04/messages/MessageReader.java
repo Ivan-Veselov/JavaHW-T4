@@ -35,15 +35,19 @@ public class MessageReader {
     /**
      * Makes an attempt to read a message from a channel.
      *
-     * @return true if the message was fully read, false otherwise.
+     * @return a result of reading. It might be READ if message is fully read, NOT_READ is the opposite result. It also
+     *         might be CLOSED if remote side closed the connection.
      * @throws IOException if any IO exception occurs during reading.
      * @throws MessageWithNegativeLengthException if the length of the message is negative.
      */
-    public boolean read() throws IOException, MessageWithNegativeLengthException {
+    public ReadingResult read() throws IOException, MessageWithNegativeLengthException {
         if (!isLengthRead) {
-            channel.read(lengthBuffer);
+            if (channel.read(lengthBuffer) == -1) {
+                return ReadingResult.CLOSED;
+            }
+
             if (lengthBuffer.hasRemaining()) {
-                return false;
+                return ReadingResult.NOT_READ;
             }
 
             isLengthRead = true;
@@ -58,8 +62,15 @@ public class MessageReader {
             messageBuffer = ByteBuffer.allocate(length);
         }
 
-        channel.read(messageBuffer);
-        return !messageBuffer.hasRemaining();
+        if (channel.read(messageBuffer) == -1) {
+            return ReadingResult.CLOSED;
+        }
+
+        if (messageBuffer.hasRemaining()) {
+            return ReadingResult.NOT_READ;
+        }
+
+        return ReadingResult.READ;
     }
 
     /**
@@ -83,4 +94,6 @@ public class MessageReader {
         lengthBuffer.clear();
         messageBuffer = null;
     }
+
+    public enum ReadingResult { READ, NOT_READ, CLOSED }
 }

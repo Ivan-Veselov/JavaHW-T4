@@ -2,13 +2,13 @@ package ru.spbau.bachelor2015.veselov.hw04;
 
 import org.apache.commons.lang3.SerializationUtils;
 import org.jetbrains.annotations.NotNull;
+import ru.spbau.bachelor2015.veselov.hw04.exceptions.ConnectionWasClosedException;
 import ru.spbau.bachelor2015.veselov.hw04.messages.MessageReader;
 import ru.spbau.bachelor2015.veselov.hw04.messages.exceptions.MessageNotReadException;
 import ru.spbau.bachelor2015.veselov.hw04.messages.exceptions.MessageWithNegativeLengthException;
 
 import java.io.IOException;
 import java.nio.channels.ReadableByteChannel;
-import java.util.Optional;
 
 /**
  * Ftp reader which allows transform sequence of bytes into ftp messages.
@@ -26,17 +26,15 @@ public class FTPMessageReader {
     }
 
     /**
-     * Returns read message or empty Optional if reader was unable to read the whole message.
+     * Makes an attempt to read a message from a channel.
      *
+     * @return a result of reading. It might be READ if message is fully read, NOT_READ is the opposite result. It also
+     *         might be CLOSED if remote side closed the connection.
      * @throws IOException if any IO exception occurs during reading.
      * @throws MessageWithNegativeLengthException if the length of the message is negative.
      */
-    public @NotNull Optional<FTPMessage> read() throws IOException, MessageWithNegativeLengthException {
-        if (!reader.read()) {
-            return Optional.empty();
-        }
-
-        return Optional.of(getMessage());
+    public @NotNull MessageReader.ReadingResult read() throws IOException, MessageWithNegativeLengthException {
+        return reader.read();
     }
 
     /**
@@ -45,22 +43,42 @@ public class FTPMessageReader {
      *
      * @throws IOException if any IO exception occurs during reading.
      * @throws MessageWithNegativeLengthException if the length of the message is negative.
+     * @throws ConnectionWasClosedException if remote side closed the connection.
      */
-    public @NotNull FTPMessage waitUntilRead() throws IOException, MessageWithNegativeLengthException {
-        while (!reader.read());
+    public @NotNull FTPMessage waitUntilRead()
+            throws IOException, MessageWithNegativeLengthException, ConnectionWasClosedException {
+        boolean shouldTry = true;
 
-        return getMessage();
-    }
+        while (shouldTry) {
+            switch (reader.read()) {
+                case READ:
+                    shouldTry = false;
+                    break;
 
-    private @NotNull FTPMessage getMessage() {
-        byte[] data;
+                case NOT_READ:
+                    break;
+
+                case CLOSED:
+                    throw new ConnectionWasClosedException();
+            }
+        }
+
         try {
-            data = reader.getMessage();
+            return getMessage();
         } catch (MessageNotReadException e) {
             throw new RuntimeException(e);
         }
+    }
 
+    /**
+     * Returns read message.
+     *
+     * @throws MessageNotReadException if message hasn't been read.
+     */
+    public @NotNull FTPMessage getMessage() throws MessageNotReadException {
+        byte[] data = reader.getMessage();
         reader.reset();
+
         return SerializationUtils.deserialize(data);
     }
 }

@@ -1,6 +1,7 @@
 package ru.spbau.bachelor2015.veselov.hw04;
 
 import org.jetbrains.annotations.NotNull;
+import ru.spbau.bachelor2015.veselov.hw04.exceptions.ConnectionWasClosedException;
 import ru.spbau.bachelor2015.veselov.hw04.messages.exceptions.MessageWithNegativeLengthException;
 
 import java.io.IOException;
@@ -48,8 +49,10 @@ public class Client implements AutoCloseable {
      * @param path a path to a directory which content is requested.
      * @return answer message.
      * @throws IOException if any IO exception occurs during interaction with server.
+     * @throws ConnectionWasClosedException if remote side closed the connection.
      */
-    public @NotNull FTPListAnswerMessage list(final @NotNull String path) throws IOException {
+    public @NotNull FTPListAnswerMessage list(final @NotNull String path)
+            throws IOException, ConnectionWasClosedException {
         FTPListMessage message = new FTPListMessage(path);
 
         transmitter.addMessage(message);
@@ -60,6 +63,9 @@ public class Client implements AutoCloseable {
         } catch (MessageWithNegativeLengthException e) {
             channel.close();
             throw new RuntimeException(e);
+        } catch (ConnectionWasClosedException e) {
+            channel.close();
+            throw e;
         }
     }
 }
