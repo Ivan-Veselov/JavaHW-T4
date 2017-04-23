@@ -26,7 +26,7 @@ import java.util.Optional;
  * TODO: add javadocs to Server
  * TODO: add FTPMessageTransmitter test
  * TODO: add javadocs to exceptions
- * TODO: add method which allows wait until server is stopped and use in server test
+ * TODO: add method which allows wait until server is stopped (join) and use in server test
  */
 public class Server {
     private final static @NotNull Logger logger = LogManager.getLogger(Server.class.getCanonicalName());

@@ -66,7 +66,11 @@ public class FTPListAnswerMessage implements FTPMessage {
          * Returns a string representation of this file entry.
          */
         public @NotNull String toString() {
-            return path + "[" + Boolean.toString(isDirectory) + "]";
+            if (isDirectory) {
+                return path + " [directory]";
+            }
+
+            return path;
         }
     }
 }
