@@ -16,6 +16,11 @@ public class Main {
      * @throws IOException any IO exception which may occur during reading of commands.
      */
     public static void main(String[] args) throws IOException {
+        if (args.length != 2) {
+            System.out.println("Two arguments expected");
+            return;
+        }
+
         try (Client client = new Client(args[0], Integer.parseInt(args[1]));
              InputStreamReader inputStreamReader = new InputStreamReader(System.in);
              BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
