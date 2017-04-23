@@ -1,11 +1,15 @@
-package ru.spbau.bachelor2015.veselov.hw04.ftpmessages;
+package ru.spbau.bachelor2015.veselov.hw04;
 
 import org.jetbrains.annotations.NotNull;
+import ru.spbau.bachelor2015.veselov.hw04.exceptions.InvalidFTPMessageException;
+
+import java.io.IOException;
+import java.nio.channels.SelectionKey;
 
 /**
  * A request ftp message. This message asks server to list the content of a specified folder.
  */
-public class FTPListMessage implements FTPMessage {
+public class FTPListMessage implements FTPRequestMessage {
     private final @NotNull String path;
 
     /**
@@ -22,5 +26,14 @@ public class FTPListMessage implements FTPMessage {
      */
     public @NotNull String getPath() {
         return path;
+    }
+
+    /**
+     * @see FTPRequestMessage#accept(Server, SelectionKey)
+     */
+    @Override
+    public void accept(final @NotNull Server server, final @NotNull SelectionKey key)
+            throws IOException, InvalidFTPMessageException {
+        server.handleMessage(key, this);
     }
 }

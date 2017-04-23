@@ -4,12 +4,9 @@ import org.apache.commons.lang3.SerializationUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
-import ru.spbau.bachelor2015.veselov.hw04.ftpmessages.FTPListAnswerMessage;
-import ru.spbau.bachelor2015.veselov.hw04.ftpmessages.FTPListMessage;
-import ru.spbau.bachelor2015.veselov.hw04.ftpmessages.FTPMessage;
-import ru.spbau.bachelor2015.veselov.hw04.ftpmessages.exceptions.InvalidFTPMessageException;
-import ru.spbau.bachelor2015.veselov.hw04.ftpmessages.exceptions.InvalidPathException;
-import ru.spbau.bachelor2015.veselov.hw04.ftpmessages.exceptions.NoSuchMessageException;
+import ru.spbau.bachelor2015.veselov.hw04.exceptions.InvalidFTPMessageException;
+import ru.spbau.bachelor2015.veselov.hw04.exceptions.InvalidPathException;
+import ru.spbau.bachelor2015.veselov.hw04.exceptions.NoSuchMessageException;
 import ru.spbau.bachelor2015.veselov.hw04.messages.MessageReader;
 import ru.spbau.bachelor2015.veselov.hw04.messages.exceptions.InvalidMessageException;
 import ru.spbau.bachelor2015.veselov.hw04.messages.exceptions.MessageNotReadException;
@@ -146,15 +143,14 @@ public class Server {
             throws IOException, InvalidFTPMessageException {
         FTPMessage message = SerializationUtils.deserialize(rawMessage);
 
-        // TODO: use double dispatch
-        if (message instanceof FTPListMessage) {
-            handleMessage(key, (FTPListMessage) message);
+        if (message instanceof FTPRequestMessage) {
+            ((FTPRequestMessage) message).accept(this, key);
         } else {
             throw new NoSuchMessageException();
         }
     }
 
-    private void handleMessage(final @NotNull SelectionKey key, final @NotNull FTPListMessage message)
+    void handleMessage(final @NotNull SelectionKey key, final @NotNull FTPListMessage message)
             throws IOException, InvalidFTPMessageException {
         Path path = Paths.get(message.getPath());
 

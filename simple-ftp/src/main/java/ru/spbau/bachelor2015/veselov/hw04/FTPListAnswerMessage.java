@@ -1,4 +1,4 @@
-package ru.spbau.bachelor2015.veselov.hw04.ftpmessages;
+package ru.spbau.bachelor2015.veselov.hw04;
 
 import org.jetbrains.annotations.NotNull;
 

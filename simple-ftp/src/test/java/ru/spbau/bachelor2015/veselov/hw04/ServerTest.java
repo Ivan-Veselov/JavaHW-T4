@@ -8,9 +8,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import ru.spbau.bachelor2015.veselov.hw04.ftpmessages.FTPListAnswerMessage;
-import ru.spbau.bachelor2015.veselov.hw04.ftpmessages.FTPListMessage;
-import ru.spbau.bachelor2015.veselov.hw04.ftpmessages.FTPMessage;
 import ru.spbau.bachelor2015.veselov.hw04.messages.Message;
 
 import java.io.IOException;
