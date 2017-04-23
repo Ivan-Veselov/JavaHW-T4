@@ -26,7 +26,7 @@ public class FTPMessageTransmitter {
      * @param channel a channel to which new transmitter will be writing messages.
      */
     public FTPMessageTransmitter(final @NotNull WritableByteChannel channel) {
-        logger.info("New FTPMessageTransmitter ({}) is created", this);
+        logger.debug("New FTPMessageTransmitter ({}) is created", this);
 
         this.channel = channel;
     }
@@ -37,7 +37,7 @@ public class FTPMessageTransmitter {
      * @param message a message to add.
      */
     public void addMessage(final @NotNull FTPMessage message) throws IOException {
-        logger.info("New message is added to FTPMessageTransmitter ({})", this);
+        logger.debug("New message is added to FTPMessageTransmitter ({})", this);
 
         writers.add(new MessageWriter(channel, SerializationUtils.serialize(message)));
     }

@@ -87,10 +87,10 @@ public class Server {
 
                             selector.selectedKeys().clear();
                         }
+
+                        logger.info("Server ({}) is stopped", this);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
-                    } finally {
-                        logger.info("Server ({}) is stopped", this);
                     }
                 }
             );
@@ -131,6 +131,8 @@ public class Server {
         if (!optional.isPresent()) {
             return;
         }
+
+        logger.info("Server ({}) received new message", this);
 
         FTPMessage message = optional.get();
         if (message instanceof FTPListMessage) {
