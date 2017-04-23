@@ -20,11 +20,10 @@ public class Main {
 
         boolean shouldRun = true;
 
-        while (shouldRun) {
-            try (InputStreamReader inputStreamReader = new InputStreamReader(System.in);
-                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
+        try (InputStreamReader inputStreamReader = new InputStreamReader(System.in);
+             BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
+            while (shouldRun) {
                 String command = bufferedReader.readLine();
-
                 switch (command) {
                     case "start":
                         server.start();
