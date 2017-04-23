@@ -4,6 +4,7 @@ import org.apache.commons.lang3.SerializationUtils;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.jetbrains.annotations.NotNull;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -29,13 +30,47 @@ public class ServerTest {
     @Rule
     public TemporaryFolder serverFolder = new TemporaryFolder();
 
+    private final String fileName = "file";
+
+    private Path pathToRoot;
+
+    private Path pathToFile;
+
+    @Before
+    public void folderInitialization() throws Exception {
+        pathToRoot = serverFolder.getRoot().toPath();
+        pathToFile = serverFolder.newFile(fileName).toPath();
+    }
+
+    private final TestMessage listTestMessage =
+            new TestMessage(new FTPListMessage(Paths.get("").toString())) {
+                @Override
+                public void check(@NotNull FTPMessage message) throws Exception {
+                    FTPListAnswerMessage answer = (FTPListAnswerMessage) message;
+
+                    assertThat(answer.getContent(), is(contains(fileEntry(pathToRoot.relativize(pathToFile),
+                                                                                                    false))));
+            }
+    };
+
     @Test
     public void testFTPListMessage() throws Exception {
-        Path pathToRoot = serverFolder.getRoot().toPath();
+        processMessages(new TestMessage[] { listTestMessage });
+    }
 
-        final String fileName = "file";
-        Path pathToFile = serverFolder.newFile(fileName).toPath();
+    @Test
+    public void testFTPListMessages() throws Exception {
+        final int numberOfMessages = 10;
 
+        TestMessage[] messages = new TestMessage[numberOfMessages];
+        for (int i = 0; i < numberOfMessages; i++) {
+            messages[i] = listTestMessage;
+        }
+
+        processMessages(messages);
+    }
+
+    private void processMessages(final @NotNull TestMessage[] messages) throws Exception {
         final int port = 10000;
         Server server = new Server(pathToRoot, port);
         server.start();
@@ -48,14 +83,15 @@ public class ServerTest {
             }
         }
 
-        FTPListMessage message = new FTPListMessage(Paths.get("").toString());
+        for (TestMessage testMessage : messages) {
+            socket.getOutputStream().write(prepareMessage(testMessage.getMessage()));
 
-        socket.getOutputStream().write(prepareMessage(message));
+            FTPMessage answer = SerializationUtils.deserialize(readMessage(socket.getInputStream()));
 
-        FTPListAnswerMessage answer = SerializationUtils.deserialize(readMessage(socket.getInputStream()));
+            testMessage.check(answer);
+        }
 
-        assertThat(answer.getContent(), is(contains(fileEntry(pathToRoot.relativize(pathToFile),
-                                                             false))));
+        socket.close();
     }
 
     private @NotNull byte[] prepareMessage(final @NotNull FTPMessage message) {
@@ -66,6 +102,7 @@ public class ServerTest {
 
     private @NotNull byte[] readMessage(final @NotNull InputStream inputStream) throws IOException {
         byte[] rawLength = new byte[Message.LENGTH_BYTES];
+
         if (inputStream.read(rawLength) != rawLength.length) {
             throw new RuntimeException();
         }
@@ -85,6 +122,20 @@ public class ServerTest {
     private @NotNull FileEntryMatcher fileEntry(final @NotNull Path path,
                                                 final boolean isDirectory) {
         return new FileEntryMatcher(path, isDirectory);
+    }
+
+    private static abstract class TestMessage {
+        private final @NotNull FTPMessage message;
+
+        public TestMessage(final @NotNull FTPMessage message) {
+            this.message = message;
+        }
+
+        public @NotNull FTPMessage getMessage() {
+            return message;
+        }
+
+        public abstract void check(final @NotNull FTPMessage answer) throws Exception;
     }
 
     private static class FileEntryMatcher extends BaseMatcher<FTPListAnswerMessage.Entry> {

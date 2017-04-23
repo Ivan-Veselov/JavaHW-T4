@@ -31,7 +31,8 @@ import java.util.Map;
  * TODO: limit a length of an incoming message
  * TODO: add javadocs to Server
  * TODO: add FTPMessageTransmitter test
- * TODO: add server test with multiple messages
+ * TODO: add javadocs to exceptions
+ * TODO: use special field instead of maps
  */
 public class Server {
     private final static @NotNull Logger logger = LogManager.getLogger(Server.class.getCanonicalName());
@@ -87,9 +88,14 @@ public class Server {
                                 }
                             } catch (InvalidMessageException e) {
                                 logger.error("Server ({}) received an invalid message", this);
+
+                                closeConnection(key);
                             } catch (IOException ignored) {
-                            } finally {
-                                key.channel().close();
+                                logger.error(
+                                    "IOException occurred during interaction of Server ({}) with a connection",
+                                    this);
+
+                                closeConnection(key);
                             }
                         }
 
@@ -127,6 +133,13 @@ public class Server {
                                                                SelectionKey.OP_READ | SelectionKey.OP_WRITE);
         messageReaders.put(socketChannelKey, new MessageReader(socketChannel));
         messageTransmitters.put(socketChannelKey, new FTPMessageTransmitter(socketChannel));
+    }
+
+    private void closeConnection(final @NotNull SelectionKey key) throws IOException {
+        messageTransmitters.remove(key);
+        messageReaders.remove(key);
+
+        key.channel().close();
     }
 
     private void readMessage(final @NotNull SelectionKey key) throws IOException, InvalidMessageException {
