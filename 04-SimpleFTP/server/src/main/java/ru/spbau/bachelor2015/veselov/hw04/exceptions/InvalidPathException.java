@@ -1,3 +1,5 @@
 package ru.spbau.bachelor2015.veselov.hw04.exceptions;
 
-public class InvalidPathException extends InvalidFTPMessageException {}
+import ru.spbau.bachelor2015.veselov.hw04.messages.util.exceptions.InvalidMessageException;
+
+public class InvalidPathException extends InvalidMessageException {}

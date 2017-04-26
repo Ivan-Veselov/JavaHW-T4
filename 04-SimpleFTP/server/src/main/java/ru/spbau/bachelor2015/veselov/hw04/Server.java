@@ -54,7 +54,7 @@ public class Server {
                 () -> {
                     try (Selector selector = Selector.open();
                          ServerSocketChannel serverSocketChannel = ServerSocketChannel.open()) {
-                        serverSocketChannel.socket().bind(new InetSocketAddress(port));
+                        serverSocketChannel.socket().bind(new InetSocketAddress(this.port));
                         serverSocketChannel.configureBlocking(false);
                         serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 
@@ -72,27 +72,31 @@ public class Server {
                                     }
 
                                     if (key.isReadable()) {
-                                        ((FTPChannelAttachment) key.attachment()).read();
-                                        if (!key.isValid()) {
+                                        try {
+                                            ((FTPChannelObserver) key.attachment()).read();
+                                        } catch (InvalidMessageException e) {
+                                            logger.error("Server ({}) received an invalid message", this);
+
+                                            key.channel().close();
+                                        }
+
+                                        if (!key.channel().isOpen()) {
                                             continue;
                                         }
                                     }
 
                                     if (key.isWritable()) {
                                         try {
-                                            ((FTPChannelAttachment) key.attachment()).write();
+                                            ((FTPChannelObserver) key.attachment()).write();
                                         } catch (NoDataWriterRegisteredException e) {
                                             throw new RuntimeException(e);
                                         }
                                     }
-                                } catch (InvalidMessageException e) {
-                                    logger.error("Server ({}) received an invalid message", this);
-
-                                    key.channel().close();
-                                } catch (IOException ignored) {
+                                } catch (IOException e) {
                                     logger.error(
-                                    "IOException occurred during interaction of Server ({}) with a connection",
-                                    this);
+                                    "IOException occurred during interaction of Server ({})" +
+                                            "with a connection.\n{}",
+                                    this, e);
 
                                     key.channel().close();
                                 }
@@ -104,6 +108,8 @@ public class Server {
                         logger.info("Server ({}) is stopped", this);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
+                    } finally {
+                        selector = null;
                     }
                 }
             );
@@ -127,11 +133,11 @@ public class Server {
         }
 
         logger.info("Server ({}) accepted new connection", this);
-        new FTPChannelAttachment(socketChannel, selector, this);
+        new FTPChannelObserver(socketChannel, selector, this);
     }
 
     void handleMessage(final @NotNull SocketChannel channel, final @NotNull FTPMessage message)
-            throws InvalidFTPMessageException, IOException {
+            throws InvalidMessageException, IOException {
         logger.info("Server ({}) received new message", this);
 
         if (message instanceof FTPListMessage) {
@@ -142,7 +148,7 @@ public class Server {
     }
 
     private void handleMessage(final @NotNull SelectionKey key, final @NotNull FTPListMessage message)
-            throws IOException, InvalidFTPMessageException {
+            throws IOException, InvalidMessageException {
         Path path = Paths.get(message.getPath());
 
         if (path.isAbsolute()) {
@@ -161,7 +167,7 @@ public class Server {
         }
 
         try {
-            ((FTPChannelAttachment) key.attachment()).registerMessageWriter(new FTPListAnswerMessage(entries));
+            ((FTPChannelObserver) key.attachment()).registerMessageWriter(new FTPListAnswerMessage(entries));
         } catch (RegisteringSecondDataWriterException e) {
             throw new RuntimeException(e);
         }

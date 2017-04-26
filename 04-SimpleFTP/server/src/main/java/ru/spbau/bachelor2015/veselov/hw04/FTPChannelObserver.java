@@ -2,7 +2,6 @@ package ru.spbau.bachelor2015.veselov.hw04;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.spbau.bachelor2015.veselov.hw04.exceptions.InvalidFTPMessageException;
 import ru.spbau.bachelor2015.veselov.hw04.exceptions.NoDataWriterRegisteredException;
 import ru.spbau.bachelor2015.veselov.hw04.exceptions.RegisteringSecondDataWriterException;
 import ru.spbau.bachelor2015.veselov.hw04.messages.FTPMessage;
@@ -10,6 +9,7 @@ import ru.spbau.bachelor2015.veselov.hw04.messages.util.DataWriter;
 import ru.spbau.bachelor2015.veselov.hw04.messages.util.FileTransmitter;
 import ru.spbau.bachelor2015.veselov.hw04.messages.util.FTPMessageReader;
 import ru.spbau.bachelor2015.veselov.hw04.messages.util.FTPMessageWriter;
+import ru.spbau.bachelor2015.veselov.hw04.messages.util.exceptions.InvalidMessageException;
 import ru.spbau.bachelor2015.veselov.hw04.messages.util.exceptions.MessageNotReadException;
 import ru.spbau.bachelor2015.veselov.hw04.messages.util.exceptions.MessageWithNonpositiveLengthException;
 
@@ -19,7 +19,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.nio.file.Path;
 
-public class FTPChannelAttachment {
+public class FTPChannelObserver {
     private final @NotNull SocketChannel channel;
 
     private final @NotNull SelectionKey selectionKey;
@@ -30,9 +30,9 @@ public class FTPChannelAttachment {
 
     private @Nullable DataWriter writer;
 
-    public FTPChannelAttachment(final @NotNull SocketChannel channel,
-                                final @NotNull Selector selector,
-                                final @NotNull Server server) throws IOException {
+    public FTPChannelObserver(final @NotNull SocketChannel channel,
+                              final @NotNull Selector selector,
+                              final @NotNull Server server) throws IOException {
         this.channel = channel;
         this.server = server;
 
@@ -80,7 +80,7 @@ public class FTPChannelAttachment {
 
                 try {
                     server.handleMessage(channel, message);
-                } catch (InvalidFTPMessageException e) {
+                } catch (InvalidMessageException e) {
                     channel.close();
                 }
 
@@ -99,7 +99,7 @@ public class FTPChannelAttachment {
 
         if (writer.write()) {
             writer = null;
-            selectionKey.interestOps(selectionKey.interestOps() ^ SelectionKey.OP_WRITE);
+            selectionKey.interestOps(selectionKey.interestOps() & ~SelectionKey.OP_WRITE);
         }
     }
 }
