@@ -1,24 +1,20 @@
 package ru.spbau.bachelor2015.veselov.hw04;
 
+import ru.spbau.bachelor2015.veselov.hw04.exceptions.ConnectionWasClosedException;
 import ru.spbau.bachelor2015.veselov.hw04.messages.FTPListAnswerMessage;
-import ru.spbau.bachelor2015.veselov.hw04.exceptions.ProtocolViolationException;
+import ru.spbau.bachelor2015.veselov.hw04.messages.util.exceptions.InvalidMessageException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Scanner;
+import java.util.List;
 
 /**
  * Entry point of a client program. This class allows to make requests to server.
  */
 public class Main {
-    /**
-     * Entry method.
-     *
-     * @param args first argument is a hostname, second argument is a port.
-     * @throws IOException any IO exception which may occur during reading of commands.
-     */
-    public static void main(String[] args) throws IOException, ProtocolViolationException {
+    public static void main(String[] args) throws IOException, ConnectionWasClosedException, InvalidMessageException {
         if (args.length != 2) {
             System.out.println("Two arguments expected");
             return;
@@ -48,8 +44,8 @@ public class Main {
                             break;
                         }
 
-                        FTPListAnswerMessage answer = client.list(scanner.next());
-                        for (FTPListAnswerMessage.Entry entry : answer.getContent()) {
+                        List<FTPListAnswerMessage.Entry> answer = client.list(scanner.next());
+                        for (FTPListAnswerMessage.Entry entry : answer) {
                             System.out.println(entry);
                         }
 

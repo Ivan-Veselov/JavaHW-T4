@@ -29,6 +29,7 @@ import java.util.List;
  * TODO: javadocs
  * TODO: tests
  * TODO: check in server tests that server thread stopped correctly
+ * TODO: logging
  */
 public class Server {
     private final static @NotNull Logger logger = LogManager.getLogger(Server.class.getCanonicalName());
@@ -94,7 +95,7 @@ public class Server {
                                     }
                                 } catch (IOException e) {
                                     logger.error(
-                                    "IOException occurred during interaction of Server ({})" +
+                                    "IOException occurred during interaction of Server ({}) " +
                                             "with a connection.\n{}",
                                     this, e);
 
@@ -110,6 +111,7 @@ public class Server {
                         throw new RuntimeException(e);
                     } finally {
                         selector = null;
+                        shouldRun = false;
                     }
                 }
             );
@@ -122,7 +124,7 @@ public class Server {
 
     public void stop() throws InterruptedException {
         shouldRun = false;
-        serverThread.interrupt();
+        selector.wakeup();
         serverThread.join();
     }
 
@@ -169,7 +171,7 @@ public class Server {
         try {
             ((FTPChannelObserver) key.attachment()).registerMessageWriter(new FTPListAnswerMessage(entries));
         } catch (RegisteringSecondDataWriterException e) {
-            throw new RuntimeException(e);
+            throw new InvalidMessageException(e);
         }
     }
 }
