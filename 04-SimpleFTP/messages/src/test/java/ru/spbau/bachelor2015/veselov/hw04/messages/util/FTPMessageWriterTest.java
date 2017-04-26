@@ -1,4 +1,4 @@
-package ru.spbau.bachelor2015.veselov.hw04.messages;
+package ru.spbau.bachelor2015.veselov.hw04.messages.util;
 
 import org.jetbrains.annotations.NotNull;
 import org.mockito.invocation.InvocationOnMock;
@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MessageWriterTest {
+public class FTPMessageWriterTest {
     private @NotNull Reader read(final @NotNull int... bytesToRead) {
         return new Reader(bytesToRead);
     }

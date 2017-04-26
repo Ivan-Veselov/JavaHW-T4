@@ -1,5 +1,6 @@
 package ru.spbau.bachelor2015.veselov.hw04;
 
+import ru.spbau.bachelor2015.veselov.hw04.messages.FTPListAnswerMessage;
 import ru.spbau.bachelor2015.veselov.hw04.exceptions.ProtocolViolationException;
 
 import java.io.BufferedReader;

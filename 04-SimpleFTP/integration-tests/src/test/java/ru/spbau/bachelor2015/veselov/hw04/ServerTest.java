@@ -8,8 +8,8 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import ru.spbau.bachelor2015.veselov.hw04.messages.Message;
-
+import ru.spbau.bachelor2015.veselov.hw04.messages.FTPListAnswerMessage;
+import ru.spbau.bachelor2015.veselov.hw04.messages.FTPMessage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -94,7 +94,7 @@ public class ServerTest {
     }
 
     private @NotNull byte[] readMessage(final @NotNull InputStream inputStream) throws IOException {
-        byte[] rawLength = new byte[Message.LENGTH_BYTES];
+        byte[] rawLength = new byte[Integer.BYTES];
 
         if (inputStream.read(rawLength) != rawLength.length) {
             throw new RuntimeException();
@@ -118,7 +118,7 @@ public class ServerTest {
     }
 
     public static @NotNull byte[] toLengthByteArray(int integer) {
-        return ByteBuffer.allocate(Message.LENGTH_BYTES).putInt(integer).array().clone();
+        return ByteBuffer.allocate(Integer.BYTES).putInt(integer).array().clone();
     }
 
     private static abstract class TestMessage {

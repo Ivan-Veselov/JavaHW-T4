@@ -1,4 +1,4 @@
-package ru.spbau.bachelor2015.veselov.hw04.messages;
+package ru.spbau.bachelor2015.veselov.hw04.messages.util;
 
 import org.jetbrains.annotations.NotNull;
 

@@ -5,7 +5,10 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.spbau.bachelor2015.veselov.hw04.exceptions.*;
-import ru.spbau.bachelor2015.veselov.hw04.messages.exceptions.InvalidMessageException;
+import ru.spbau.bachelor2015.veselov.hw04.messages.FTPListAnswerMessage;
+import ru.spbau.bachelor2015.veselov.hw04.messages.FTPListMessage;
+import ru.spbau.bachelor2015.veselov.hw04.messages.FTPMessage;
+import ru.spbau.bachelor2015.veselov.hw04.messages.util.exceptions.InvalidMessageException;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +28,7 @@ import java.util.List;
  * TODO: do refactoring
  * TODO: javadocs
  * TODO: tests
+ * TODO: check in server tests that server thread stopped correctly
  */
 public class Server {
     private final static @NotNull Logger logger = LogManager.getLogger(Server.class.getCanonicalName());

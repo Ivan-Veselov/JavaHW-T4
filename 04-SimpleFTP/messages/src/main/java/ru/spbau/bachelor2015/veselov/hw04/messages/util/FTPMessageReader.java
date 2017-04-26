@@ -1,30 +1,30 @@
-package ru.spbau.bachelor2015.veselov.hw04.messages;
+package ru.spbau.bachelor2015.veselov.hw04.messages.util;
 
 import org.apache.commons.lang3.SerializationUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.spbau.bachelor2015.veselov.hw04.FTPMessage;
-import ru.spbau.bachelor2015.veselov.hw04.messages.exceptions.MessageNotReadException;
-import ru.spbau.bachelor2015.veselov.hw04.messages.exceptions.MessageWithNegativeLengthException;
+import ru.spbau.bachelor2015.veselov.hw04.messages.FTPMessage;
+import ru.spbau.bachelor2015.veselov.hw04.messages.util.exceptions.MessageNotReadException;
+import ru.spbau.bachelor2015.veselov.hw04.messages.util.exceptions.MessageWithNonpositiveLengthException;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
 
-public class MessageReader {
+public class FTPMessageReader {
     private final @NotNull ReadableByteChannel channel;
 
     private boolean isLengthRead = false;
 
-    private @NotNull final ByteBuffer lengthBuffer = ByteBuffer.allocate(Message.LENGTH_BYTES);
+    private @NotNull final ByteBuffer lengthBuffer = ByteBuffer.allocate(Integer.BYTES);
 
     private @Nullable ByteBuffer messageBuffer;
 
-    public MessageReader(final @NotNull ReadableByteChannel channel) {
+    public FTPMessageReader(final @NotNull ReadableByteChannel channel) {
         this.channel = channel;
     }
 
-    public ReadingResult read() throws IOException, MessageWithNegativeLengthException {
+    public ReadingResult read() throws IOException, MessageWithNonpositiveLengthException {
         if (!isLengthRead) {
             if (channel.read(lengthBuffer) == -1) {
                 return ReadingResult.CLOSED;
@@ -39,8 +39,8 @@ public class MessageReader {
             lengthBuffer.flip();
             int length = lengthBuffer.getInt();
 
-            if (length < 0) {
-                throw new MessageWithNegativeLengthException();
+            if (length <= 0) {
+                throw new MessageWithNonpositiveLengthException();
             }
 
             messageBuffer = ByteBuffer.allocate(length);

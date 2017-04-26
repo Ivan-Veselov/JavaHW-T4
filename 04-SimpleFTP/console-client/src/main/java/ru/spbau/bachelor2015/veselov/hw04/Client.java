@@ -1,11 +1,13 @@
 package ru.spbau.bachelor2015.veselov.hw04;
 
 import org.jetbrains.annotations.NotNull;
+import ru.spbau.bachelor2015.veselov.hw04.messages.FTPListAnswerMessage;
+import ru.spbau.bachelor2015.veselov.hw04.messages.FTPListMessage;
 import ru.spbau.bachelor2015.veselov.hw04.exceptions.ProtocolViolationException;
-import ru.spbau.bachelor2015.veselov.hw04.messages.MessageReader;
-import ru.spbau.bachelor2015.veselov.hw04.messages.MessageWriter;
-import ru.spbau.bachelor2015.veselov.hw04.messages.exceptions.MessageNotReadException;
-import ru.spbau.bachelor2015.veselov.hw04.messages.exceptions.MessageWithNegativeLengthException;
+import ru.spbau.bachelor2015.veselov.hw04.messages.util.FTPMessageReader;
+import ru.spbau.bachelor2015.veselov.hw04.messages.util.FTPMessageWriter;
+import ru.spbau.bachelor2015.veselov.hw04.messages.util.exceptions.MessageNotReadException;
+import ru.spbau.bachelor2015.veselov.hw04.messages.util.exceptions.MessageWithNonpositiveLengthException;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -23,7 +25,7 @@ public class Client implements AutoCloseable {
 
     private final @NotNull Selector selector;
 
-    private final @NotNull MessageReader reader;
+    private final @NotNull FTPMessageReader reader;
 
     /**
      * Establishes a connection.
@@ -41,7 +43,7 @@ public class Client implements AutoCloseable {
 
         channel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
 
-        reader = new MessageReader(channel);
+        reader = new FTPMessageReader(channel);
     }
 
     /**
@@ -67,7 +69,7 @@ public class Client implements AutoCloseable {
             throws IOException, ProtocolViolationException {
         FTPListMessage message = new FTPListMessage(path);
 
-        MessageWriter writer = new MessageWriter(channel, message);
+        FTPMessageWriter writer = new FTPMessageWriter(channel, message);
 
         while (true) {
             selector.select();
@@ -92,23 +94,27 @@ public class Client implements AutoCloseable {
             SelectionKey key = channel.keyFor(selector);
 
             if (key.isReadable()) {
-                switch (reader.read()) {
-                    case NOT_READ:
-                        break;
+                try {
+                    switch (reader.read()) {
+                        case NOT_READ:
+                            break;
 
-                    case READ:
-                        FTPListAnswerMessage answer;
+                        case READ:
+                            FTPListAnswerMessage answer;
 
-                        try {
-                            answer = (FTPListAnswerMessage) reader.getMessage();
-                        } catch (MessageNotReadException e) {
-                            throw new RuntimeException(e);
-                        }
+                            try {
+                                answer = (FTPListAnswerMessage) reader.getMessage();
+                            } catch (MessageNotReadException e) {
+                                throw new RuntimeException(e);
+                            }
 
-                        return answer;
+                            return answer;
 
-                    case CLOSED:
-                        throw new ProtocolViolationException();
+                        case CLOSED:
+                            throw new ProtocolViolationException();
+                    }
+                } catch (MessageWithNonpositiveLengthException e) {
+                    throw new ProtocolViolationException(e);
                 }
             }
 

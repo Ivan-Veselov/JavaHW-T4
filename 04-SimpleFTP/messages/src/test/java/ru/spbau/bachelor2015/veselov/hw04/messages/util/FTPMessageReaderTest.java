@@ -1,12 +1,12 @@
-package ru.spbau.bachelor2015.veselov.hw04.messages;
+package ru.spbau.bachelor2015.veselov.hw04.messages.util;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import ru.spbau.bachelor2015.veselov.hw04.TestUtils;
-import ru.spbau.bachelor2015.veselov.hw04.messages.exceptions.MessageNotReadException;
-import ru.spbau.bachelor2015.veselov.hw04.messages.exceptions.MessageWithNegativeLengthException;
+import ru.spbau.bachelor2015.veselov.hw04.messages.util.exceptions.MessageNotReadException;
+import ru.spbau.bachelor2015.veselov.hw04.messages.util.exceptions.MessageWithNonpositiveLengthException;
 
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
@@ -18,13 +18,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class MessageReaderTest {
-    @Test(expected = MessageWithNegativeLengthException.class)
+public class FTPMessageReaderTest {
+    @Test(expected = MessageWithNonpositiveLengthException.class)
     public void testNegativeLengthMessage() throws Exception {
         ReadableByteChannel channel = mock(ReadableByteChannel.class);
         when(channel.read(any())).thenAnswer(write(TestUtils.toLengthByteArray(-1)));
 
-        MessageReader reader = new MessageReader(channel);
+        FTPMessageReader reader = new FTPMessageReader(channel);
 
         reader.read();
     }
@@ -33,7 +33,7 @@ public class MessageReaderTest {
     public void testGettingOfUnreadMessage() throws Exception {
         ReadableByteChannel channel = mock(ReadableByteChannel.class);
 
-        MessageReader reader = new MessageReader(channel);
+        FTPMessageReader reader = new FTPMessageReader(channel);
 
         reader.getMessage();
     }
