@@ -9,7 +9,6 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.file.Path;
 
-// TODO: add length writing
 public class FileTransmitter implements DataWriter {
     private static final int CHUNK_SIZE = 4096;
 
@@ -19,13 +18,14 @@ public class FileTransmitter implements DataWriter {
 
     private final @NotNull ByteBuffer buffer = ByteBuffer.allocate(CHUNK_SIZE);
 
-    public FileTransmitter(final @NotNull WritableByteChannel channel, final @NotNull Path path)
-            throws IOException {
+    public FileTransmitter(final @NotNull WritableByteChannel channel, final @NotNull Path path) throws IOException {
         this.channel = channel;
 
-        fileChannel = new RandomAccessFile(path.toFile(), "r").getChannel();
+        RandomAccessFile file = new RandomAccessFile(path.toFile(), "r");
+        fileChannel = file.getChannel();
 
-        fillBuffer();
+        buffer.putLong(file.length());
+        buffer.flip();
     }
 
     public boolean write() throws IOException {
