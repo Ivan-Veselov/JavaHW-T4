@@ -1,9 +1,9 @@
-package ru.spbau.bachelor2015.veselov.hw04;
+package ru.spbau.bachelor2015.veselov.hw04.client;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
-import ru.spbau.bachelor2015.veselov.hw04.exceptions.ConnectionWasClosedException;
+import ru.spbau.bachelor2015.veselov.hw04.client.exceptions.ConnectionWasClosedException;
 import ru.spbau.bachelor2015.veselov.hw04.messages.FTPGetMessage;
 import ru.spbau.bachelor2015.veselov.hw04.messages.FTPListAnswerMessage;
 import ru.spbau.bachelor2015.veselov.hw04.messages.FTPListMessage;

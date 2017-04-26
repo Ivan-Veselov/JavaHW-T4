@@ -9,8 +9,10 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import ru.spbau.bachelor2015.veselov.hw04.exceptions.ConnectionWasClosedException;
+import ru.spbau.bachelor2015.veselov.hw04.client.Client;
+import ru.spbau.bachelor2015.veselov.hw04.client.exceptions.ConnectionWasClosedException;
 import ru.spbau.bachelor2015.veselov.hw04.messages.FTPListAnswerMessage;
+import ru.spbau.bachelor2015.veselov.hw04.server.Server;
 
 import java.io.IOException;
 import java.nio.file.Files;

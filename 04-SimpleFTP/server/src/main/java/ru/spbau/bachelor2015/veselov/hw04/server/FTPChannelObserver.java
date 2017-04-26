@@ -1,9 +1,9 @@
-package ru.spbau.bachelor2015.veselov.hw04;
+package ru.spbau.bachelor2015.veselov.hw04.server;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.spbau.bachelor2015.veselov.hw04.exceptions.NoDataWriterRegisteredException;
-import ru.spbau.bachelor2015.veselov.hw04.exceptions.RegisteringSecondDataWriterException;
+import ru.spbau.bachelor2015.veselov.hw04.server.exceptions.NoDataWriterRegisteredException;
+import ru.spbau.bachelor2015.veselov.hw04.server.exceptions.RegisteringSecondDataWriterException;
 import ru.spbau.bachelor2015.veselov.hw04.messages.FTPMessage;
 import ru.spbau.bachelor2015.veselov.hw04.messages.util.DataWriter;
 import ru.spbau.bachelor2015.veselov.hw04.messages.util.FTPMessageReader;

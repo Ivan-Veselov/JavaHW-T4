@@ -1,13 +1,13 @@
-package ru.spbau.bachelor2015.veselov.hw04;
+package ru.spbau.bachelor2015.veselov.hw04.server;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.spbau.bachelor2015.veselov.hw04.exceptions.InvalidPathException;
-import ru.spbau.bachelor2015.veselov.hw04.exceptions.NoDataWriterRegisteredException;
-import ru.spbau.bachelor2015.veselov.hw04.exceptions.NoSuchMessageException;
-import ru.spbau.bachelor2015.veselov.hw04.exceptions.RegisteringSecondDataWriterException;
+import ru.spbau.bachelor2015.veselov.hw04.server.exceptions.InvalidPathException;
+import ru.spbau.bachelor2015.veselov.hw04.server.exceptions.NoDataWriterRegisteredException;
+import ru.spbau.bachelor2015.veselov.hw04.server.exceptions.NoSuchMessageException;
+import ru.spbau.bachelor2015.veselov.hw04.server.exceptions.RegisteringSecondDataWriterException;
 import ru.spbau.bachelor2015.veselov.hw04.messages.FTPGetMessage;
 import ru.spbau.bachelor2015.veselov.hw04.messages.FTPListAnswerMessage;
 import ru.spbau.bachelor2015.veselov.hw04.messages.FTPListMessage;
@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO: split everything on packages
  * TODO: javadocs
  * TODO: logging
  * TODO: do refactoring

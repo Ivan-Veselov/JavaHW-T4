@@ -1,4 +1,4 @@
-package ru.spbau.bachelor2015.veselov.hw04.exceptions;
+package ru.spbau.bachelor2015.veselov.hw04.server.exceptions;
 
 import ru.spbau.bachelor2015.veselov.hw04.messages.util.exceptions.InvalidMessageException;
 

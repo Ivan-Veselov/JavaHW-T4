@@ -1,6 +1,6 @@
-package ru.spbau.bachelor2015.veselov.hw04;
+package ru.spbau.bachelor2015.veselov.hw04.client;
 
-import ru.spbau.bachelor2015.veselov.hw04.exceptions.ConnectionWasClosedException;
+import ru.spbau.bachelor2015.veselov.hw04.client.exceptions.ConnectionWasClosedException;
 import ru.spbau.bachelor2015.veselov.hw04.messages.FTPListAnswerMessage;
 
 import java.io.BufferedReader;
