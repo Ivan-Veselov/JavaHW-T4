@@ -1,48 +1,15 @@
 package ru.spbau.bachelor2015.veselov.hw04.messages;
 
 import org.jetbrains.annotations.NotNull;
-import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import ru.spbau.bachelor2015.veselov.hw04.TestUtils;
 
 import java.nio.ByteBuffer;
-import java.nio.channels.WritableByteChannel;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 public class MessageWriterTest {
-    @Test
-    public void testSingleWriting() throws Exception {
-        final byte[] data = new byte[] {1, 2, 3};
-
-        WritableByteChannel channel = mock(WritableByteChannel.class);
-        when(channel.write(any())).thenAnswer(read(data.length + Message.LENGTH_BYTES));
-
-        MessageWriter writer = new MessageWriter(channel, data);
-
-        assertThat(writer.write(), is(true));
-    }
-
-    @Test
-    public void testMultipleWritings() throws Exception {
-        final byte[] data = new byte[] {1, 2, 3};
-
-        WritableByteChannel channel = mock(WritableByteChannel.class);
-        when(channel.write(any())).thenAnswer(read(TestUtils.intArrayOfOnes(data.length + Message.LENGTH_BYTES)));
-
-        MessageWriter writer = new MessageWriter(channel, data);
-
-        while (!writer.write());
-    }
-
     private @NotNull Reader read(final @NotNull int... bytesToRead) {
         return new Reader(bytesToRead);
     }

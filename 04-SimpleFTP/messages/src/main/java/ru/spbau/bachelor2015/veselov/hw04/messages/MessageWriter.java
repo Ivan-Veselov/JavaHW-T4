@@ -1,28 +1,22 @@
 package ru.spbau.bachelor2015.veselov.hw04.messages;
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.jetbrains.annotations.NotNull;
+import ru.spbau.bachelor2015.veselov.hw04.FTPMessage;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
 
-/**
- * A writer object must be created for writing messages of specific format to a WritableByteChannel. Message format is
- * the same as in MessageReader class.
- */
-public class MessageWriter {
+public class MessageWriter implements DataWriter {
     private final @NotNull WritableByteChannel channel;
 
     private final @NotNull ByteBuffer buffer;
 
-    /**
-     * Creates a new MessageWriter which will write to a specified channel.
-     *
-     * @param channel a channel to write to.
-     * @param data a data which will be written.
-     */
-    public MessageWriter(final @NotNull WritableByteChannel channel, final @NotNull byte[] data) {
+    public MessageWriter(final @NotNull WritableByteChannel channel, final @NotNull FTPMessage message) {
         this.channel = channel;
+
+        byte[] data = SerializationUtils.serialize(message);
 
         buffer = ByteBuffer.allocate(Message.LENGTH_BYTES + data.length);
         buffer.putInt(data.length);
@@ -30,12 +24,6 @@ public class MessageWriter {
         buffer.flip();
     }
 
-    /**
-     * Makes an attempt to write a message to a channel.
-     *
-     * @return true if the message was fully written, false otherwise.
-     * @throws IOException if any IO exception occurs during writing.
-     */
     public boolean write() throws IOException {
         channel.write(buffer);
         return !buffer.hasRemaining();

@@ -3,11 +3,9 @@ package ru.spbau.bachelor2015.veselov.hw04;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
-import ru.spbau.bachelor2015.veselov.hw04.exceptions.InvalidFTPMessageException;
-import ru.spbau.bachelor2015.veselov.hw04.exceptions.InvalidPathException;
-import ru.spbau.bachelor2015.veselov.hw04.exceptions.NoSuchMessageException;
+import org.jetbrains.annotations.Nullable;
+import ru.spbau.bachelor2015.veselov.hw04.exceptions.*;
 import ru.spbau.bachelor2015.veselov.hw04.messages.exceptions.InvalidMessageException;
-import ru.spbau.bachelor2015.veselov.hw04.messages.exceptions.MessageNotReadException;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,11 +21,10 @@ import java.util.List;
 
 /**
  * TODO: limit a length of an incoming message
- * TODO: add javadocs to Server
- * TODO: add FTPMessageTransmitter test
- * TODO: add FTPMessageReader test
- * TODO: add javadocs to exceptions
  * TODO: check if it is possible to see something outside of a tracked folder
+ * TODO: do refactoring
+ * TODO: javadocs
+ * TODO: tests
  */
 public class Server {
     private final static @NotNull Logger logger = LogManager.getLogger(Server.class.getCanonicalName());
@@ -39,6 +36,8 @@ public class Server {
     private final @NotNull Path trackedFolder;
 
     private final @NotNull Thread serverThread;
+
+    private @Nullable Selector selector;
 
     public Server(final @NotNull Path trackedFolder, final int port) {
         logger.info("New Server ({}) is created", this);
@@ -55,6 +54,8 @@ public class Server {
                         serverSocketChannel.configureBlocking(false);
                         serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 
+                        this.selector = selector;
+
                         logger.info("Server ({}) is started", this);
 
                         while (shouldRun) {
@@ -63,20 +64,24 @@ public class Server {
                             for (SelectionKey key : selector.selectedKeys()) {
                                 try {
                                     if (key.isAcceptable()) {
-                                        acceptNewConnection(selector, serverSocketChannel);
+                                        acceptNewConnection(serverSocketChannel);
                                     }
 
                                     if (key.isReadable()) {
-                                        readMessage(key);
+                                        ((FTPChannelAttachment) key.attachment()).read();
                                         if (!key.isValid()) {
                                             continue;
                                         }
                                     }
 
                                     if (key.isWritable()) {
-                                        ((FTPChannelAttachment) key.attachment()).getTransmitter().write();
+                                        try {
+                                            ((FTPChannelAttachment) key.attachment()).write();
+                                        } catch (NoDataWriterRegisteredException e) {
+                                            throw new RuntimeException(e);
+                                        }
                                     }
-                                } catch (InvalidMessageException | InvalidFTPMessageException e) {
+                                } catch (InvalidMessageException e) {
                                     logger.error("Server ({}) received an invalid message", this);
 
                                     key.channel().close();
@@ -111,50 +116,22 @@ public class Server {
         serverThread.join();
     }
 
-    private void acceptNewConnection(final @NotNull Selector selector,
-                                     final @NotNull ServerSocketChannel serverSocketChannel) throws IOException {
+    private void acceptNewConnection(final @NotNull ServerSocketChannel serverSocketChannel) throws IOException {
         SocketChannel socketChannel = serverSocketChannel.accept();
         if (socketChannel == null) {
             return;
         }
 
         logger.info("Server ({}) accepted new connection", this);
-
-        socketChannel.configureBlocking(false);
-
-        socketChannel.register(
-                selector,
-               SelectionKey.OP_READ | SelectionKey.OP_WRITE,
-                new FTPChannelAttachment(new FTPMessageReader(socketChannel), new FTPMessageTransmitter(socketChannel)));
+        new FTPChannelAttachment(socketChannel, selector, this);
     }
 
-    private void readMessage(final @NotNull SelectionKey key)
-            throws IOException, InvalidMessageException, InvalidFTPMessageException {
-        FTPMessageReader reader = ((FTPChannelAttachment) key.attachment()).getReader();
-
-        switch (reader.read()) {
-            case NOT_READ:
-                return;
-
-            case CLOSED:
-                key.channel().close();
-                return;
-
-            case READ:
-                break;
-        }
-
+    void handleMessage(final @NotNull SocketChannel channel, final @NotNull FTPMessage message)
+            throws InvalidFTPMessageException, IOException {
         logger.info("Server ({}) received new message", this);
 
-        FTPMessage message;
-        try {
-            message = reader.getMessage();
-        } catch (MessageNotReadException e) {
-            throw new RuntimeException(e);
-        }
-
         if (message instanceof FTPListMessage) {
-            handleMessage(key, (FTPListMessage) message);
+            handleMessage(channel.keyFor(selector), (FTPListMessage) message);
         } else {
             throw new NoSuchMessageException();
         }
@@ -179,6 +156,10 @@ public class Server {
             }
         }
 
-        ((FTPChannelAttachment) key.attachment()).getTransmitter().addMessage(new FTPListAnswerMessage(entries));
+        try {
+            ((FTPChannelAttachment) key.attachment()).registerMessageWriter(new FTPListAnswerMessage(entries));
+        } catch (RegisteringSecondDataWriterException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -1,6 +1,5 @@
 package ru.spbau.bachelor2015.veselov.hw04.messages;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
@@ -15,26 +14,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.apache.commons.lang3.ArrayUtils.toObject;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static ru.spbau.bachelor2015.veselov.hw04.messages.MessageReader.ReadingResult.READ;
 
 public class MessageReaderTest {
-    @Test
-    public void testZeroLengthMessage() throws Exception {
-        ReadableByteChannel channel = mock(ReadableByteChannel.class);
-        when(channel.read(any())).thenAnswer(write(TestUtils.toLengthByteArray(0)));
-
-        MessageReader reader = new MessageReader(channel);
-
-        assertThat(reader.read(), is(READ));
-        assertThat(toObject(reader.getMessage()), is(emptyArray()));
-    }
-
     @Test(expected = MessageWithNegativeLengthException.class)
     public void testNegativeLengthMessage() throws Exception {
         ReadableByteChannel channel = mock(ReadableByteChannel.class);
@@ -52,32 +36,6 @@ public class MessageReaderTest {
         MessageReader reader = new MessageReader(channel);
 
         reader.getMessage();
-    }
-
-    @Test
-    public void testCorrectnessOneReading() throws Exception {
-        final byte[] data = new byte[] {1, 2, 3};
-
-        ReadableByteChannel channel = mock(ReadableByteChannel.class);
-        when(channel.read(any())).thenAnswer(write(ArrayUtils.addAll(TestUtils.toLengthByteArray(3), data)));
-
-        MessageReader reader = new MessageReader(channel);
-
-        assertThat(reader.read(), is(READ));
-        assertThat(toObject(reader.getMessage()), is(arrayContaining(toObject(data))));
-    }
-
-    @Test
-    public void testCorrectnessMultipleReading() throws Exception {
-        final byte[] data = new byte[] {1, 2, 3};
-
-        ReadableByteChannel channel = mock(ReadableByteChannel.class);
-        when(channel.read(any())).thenAnswer(write(extrude(ArrayUtils.addAll(TestUtils.toLengthByteArray(3), data))));
-
-        MessageReader reader = new MessageReader(channel);
-        while (reader.read() != READ);
-
-        assertThat(toObject(reader.getMessage()), is(arrayContaining(toObject(data))));
     }
 
     private @NotNull byte[][] extrude(final @NotNull byte[] array) {

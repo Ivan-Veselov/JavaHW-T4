@@ -1,6 +1,6 @@
 package ru.spbau.bachelor2015.veselov.hw04;
 
-import ru.spbau.bachelor2015.veselov.hw04.exceptions.ConnectionWasClosedException;
+import ru.spbau.bachelor2015.veselov.hw04.exceptions.ProtocolViolationException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,7 +17,7 @@ public class Main {
      * @param args first argument is a hostname, second argument is a port.
      * @throws IOException any IO exception which may occur during reading of commands.
      */
-    public static void main(String[] args) throws IOException, ConnectionWasClosedException {
+    public static void main(String[] args) throws IOException, ProtocolViolationException {
         if (args.length != 2) {
             System.out.println("Two arguments expected");
             return;
