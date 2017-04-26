@@ -1,72 +1,67 @@
 package ru.spbau.bachelor2015.veselov.hw04;
 
-import org.apache.commons.lang3.SerializationUtils;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 import org.jetbrains.annotations.NotNull;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import ru.spbau.bachelor2015.veselov.hw04.exceptions.ConnectionWasClosedException;
 import ru.spbau.bachelor2015.veselov.hw04.messages.FTPListAnswerMessage;
-import ru.spbau.bachelor2015.veselov.hw04.messages.FTPMessage;
+
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import static org.apache.commons.lang3.ArrayUtils.addAll;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 
 public class ServerTest {
     @Rule
-    public TemporaryFolder serverFolder = new TemporaryFolder();
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-    private final int directoriesInRootFolder = 10;
+    private final String trackedFolderName = "tracked";
+
+    private final int foldersInRootFolder = 10;
 
     private final String fileNamePrefix = "file";
 
-    private final String directoryNamePrefix = "dir";
+    private final String folderNamePrefix = "dir";
 
-    private Path pathToRoot;
+    private Path[] relativePathToFolderInRoot;
 
-    @Before
-    public void folderInitialization() throws Exception {
-        pathToRoot = serverFolder.getRoot().toPath();
+    private Path pathToTrackedFolder;
 
-        for (int i = 0; i < directoriesInRootFolder; i++) {
-            String stringedIndex = Integer.toString(i);
-            Path path = serverFolder.newFolder(directoryNamePrefix + stringedIndex).toPath();
-            Files.createFile(path.resolve(fileNamePrefix + stringedIndex));
+    private final int port = 10000;
+
+    private Server server;
+
+    private Client client;
+
+    private void folderInitialization() throws Exception {
+        pathToTrackedFolder = temporaryFolder.newFolder(trackedFolderName).toPath();
+
+        relativePathToFolderInRoot = new Path[foldersInRootFolder];
+        for (int i = 0; i < foldersInRootFolder; i++) {
+            Path path = Files.createDirectory(pathToTrackedFolder.resolve(folderNamePrefix + i));
+            Files.createFile(path.resolve(fileNamePrefix + i));
+
+            relativePathToFolderInRoot[i] = pathToTrackedFolder.relativize(path);
         }
     }
 
-    @Test
-    public void testFTPListMessage() throws Exception {
-        processMessages(new MessageTest[] { new SubDirTest(0) });
-    }
-
-    @Test
-    public void testFTPListMessages() throws Exception {
-        MessageTest[] messages = new MessageTest[directoriesInRootFolder];
-        for (int i = 0; i < directoriesInRootFolder; i++) {
-            messages[i] = new SubDirTest(i);
-        }
-
-        processMessages(messages);
-    }
-
-    private void processMessages(final @NotNull MessageTest[] messages) throws Exception {
-        final int port = 10000;
-        Server server = new Server(pathToRoot, port);
+    private void serverInitialization() {
+        server = new Server(pathToTrackedFolder, port);
         server.start();
+    }
 
-        Client client = null;
+    private void clientInitialization() {
+        client = null;
 
         while (client == null) {
             try {
@@ -74,38 +69,49 @@ public class ServerTest {
             } catch (IOException ignore) {
             }
         }
+    }
 
-        for (MessageTest testMessage : messages) {
-            testMessage.test(client);
-        }
+    @Before
+    public void before() throws Exception {
+        folderInitialization();
+        serverInitialization();
+        clientInitialization();
+    }
 
+    @After
+    public void after() throws IOException, InterruptedException {
         client.close();
         server.stop();
     }
 
-    private @NotNull byte[] prepareMessage(final @NotNull FTPMessage message) {
-        byte[] content = SerializationUtils.serialize(message);
-
-        return addAll(toLengthByteArray(content.length), content);
+    @Test
+    public void testFTPListMessage() throws Exception {
+        new SubDirTestMessage(0).test(client);
     }
 
-    private @NotNull byte[] readMessage(final @NotNull InputStream inputStream) throws IOException {
-        byte[] rawLength = new byte[Integer.BYTES];
+    @Test
+    public void testFTPListMessages() throws Exception {
+        for (int i = 0; i < foldersInRootFolder; i++) {
+            new SubDirTestMessage(i).test(client);
+        }
+    }
 
-        if (inputStream.read(rawLength) != rawLength.length) {
-            throw new RuntimeException();
+    @Test
+    public void testListRequestOfRootFolder() throws Exception {
+        List<FTPListAnswerMessage.Entry> entries = this.client.list(
+                pathToTrackedFolder.relativize(pathToTrackedFolder).toString());
+
+        Matcher<FTPListAnswerMessage.Entry>[] matchers = new Matcher[foldersInRootFolder];
+        for (int i = 0; i < foldersInRootFolder; i++) {
+            matchers[i] = fileEntry(relativePathToFolderInRoot[i], true);
         }
 
-        ByteBuffer buffer = ByteBuffer.allocate(rawLength.length);
-        buffer.put(rawLength).flip();
-        int length = buffer.getInt();
+        assertThat(entries, containsInAnyOrder(matchers));
+    }
 
-        byte[] message = new byte[length];
-        if (inputStream.read(message) != message.length) {
-            throw new RuntimeException();
-        }
-
-        return message;
+    @Test(expected = ConnectionWasClosedException.class)
+    public void testListRequestOfForbiddenFolder() throws Exception {
+        client.list(pathToTrackedFolder.relativize(temporaryFolder.getRoot().toPath()).toString());
     }
 
     private @NotNull FileEntryMatcher fileEntry(final @NotNull Path path,
@@ -113,35 +119,22 @@ public class ServerTest {
         return new FileEntryMatcher(path, isDirectory);
     }
 
-    public static @NotNull byte[] toLengthByteArray(int integer) {
-        return ByteBuffer.allocate(Integer.BYTES).putInt(integer).array().clone();
-    }
-
-    private class SubDirTest implements MessageTest {
+    private class SubDirTestMessage {
         private final int subDirIndex;
 
-        public SubDirTest(final int index) {
+        public SubDirTestMessage(final int index) {
             subDirIndex = index;
         }
 
-        @Override
         public void test(final @NotNull Client client) throws Exception {
-            String stringedIndex = Integer.toString(subDirIndex);
-            String directoryName = directoryNamePrefix + stringedIndex;
-            String fileName = fileNamePrefix + stringedIndex;
+            String fileName = fileNamePrefix + subDirIndex;
 
             List<FTPListAnswerMessage.Entry> answer =
-                    client.list(Paths.get("").resolve(directoryName).toString());
+                client.list(relativePathToFolderInRoot[subDirIndex].toString());
 
             assertThat(answer, is(contains(
-                                    fileEntry(pathToRoot.relativize(pathToRoot.resolve(directoryName)
-                                                                              .resolve(fileName)),
-                    false))));
+                fileEntry(relativePathToFolderInRoot[subDirIndex].resolve(fileName), false))));
         }
-    }
-
-    private interface MessageTest {
-        void test(final @NotNull Client client) throws Exception;
     }
 
     private static class FileEntryMatcher extends BaseMatcher<FTPListAnswerMessage.Entry> {

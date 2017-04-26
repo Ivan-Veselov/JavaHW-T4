@@ -23,11 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO: check if it is possible to see something outside of a tracked folder
- * TODO: do refactoring
  * TODO: javadocs
  * TODO: tests
  * TODO: logging
+ * TODO: do refactoring
  */
 public class Server {
     private final static @NotNull Logger logger = LogManager.getLogger(Server.class.getCanonicalName());
@@ -149,7 +148,12 @@ public class Server {
             throw new InvalidPathException();
         }
 
-        File[] files = trackedFolder.resolve(path).toFile().listFiles();
+        path = trackedFolder.resolve(path).normalize();
+        if (!trackedFolder.equals(path) && trackedFolder.startsWith(path)) {
+            throw new InvalidPathException();
+        }
+
+        File[] files = path.toFile().listFiles();
 
         List<FTPListAnswerMessage.Entry> entries = new ArrayList<>();
 

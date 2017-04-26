@@ -65,6 +65,10 @@ public class Client implements AutoCloseable {
         selector.close();
     }
 
+    public boolean isOpen() {
+        return channel.isOpen();
+    }
+
     public @NotNull List<FTPListAnswerMessage.Entry> list(final @NotNull String path)
             throws IOException, InvalidMessageException, ConnectionWasClosedException {
         writeMessage(new FTPListMessage(path));
