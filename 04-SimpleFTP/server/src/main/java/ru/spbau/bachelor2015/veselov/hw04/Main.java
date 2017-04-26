@@ -17,7 +17,7 @@ public class Main {
      */
     public static void main(String[] args) throws IOException, InterruptedException {
         if (args.length != 2) {
-            System.out.println("Two arguments expected");
+            System.out.println("Two arguments expected: <tracked folder> <port>");
             return;
         }
 
@@ -43,7 +43,7 @@ public class Main {
                         break;
 
                     default:
-                        System.out.println("Unknown command");
+                        System.out.println("Unknown command: " + command);
                 }
             }
         }

@@ -27,12 +27,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO: add friendly user interface
+ * TODO: split everything on packages
  * TODO: javadocs
- * TODO: tests
  * TODO: logging
  * TODO: do refactoring
+ * TODO: tests
  * TODO: remove logging in client interface
+ * TODO: look at gradle files
  */
 public class Server {
     private final static @NotNull Logger logger = LogManager.getLogger(Server.class.getCanonicalName());
@@ -143,8 +144,7 @@ public class Server {
         new FTPChannelObserver(socketChannel, selector, this);
     }
 
-    void handleMessage(final @NotNull SocketChannel channel, final @NotNull FTPMessage message)
-            throws InvalidMessageException, IOException {
+    void handleMessage(final @NotNull SocketChannel channel, final @NotNull FTPMessage message) throws IOException {
         logger.info("Server ({}) received new message", this);
 
         // TODO: add double dispatch
@@ -158,7 +158,7 @@ public class Server {
     }
 
     private void handleMessage(final @NotNull SelectionKey key, final @NotNull FTPListMessage message)
-            throws IOException, InvalidMessageException {
+            throws IOException {
         Path path = realPath(Paths.get(message.getPath()));
 
         File[] files = path.toFile().listFiles();

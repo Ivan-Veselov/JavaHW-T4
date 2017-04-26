@@ -16,7 +16,7 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) throws IOException, ConnectionWasClosedException {
         if (args.length != 2) {
-            System.out.println("Two arguments expected");
+            System.out.println("Two arguments expected: <host> <port>");
             return;
         }
 
@@ -40,7 +40,7 @@ public class Main {
 
                     case "list":
                         if (!scanner.hasNext()) {
-                            System.out.println("Argument expected");
+                            System.out.println("Argument expected: <path>");
                             break;
                         }
 
@@ -53,14 +53,14 @@ public class Main {
 
                     case "get":
                         if (!scanner.hasNext()) {
-                            System.out.println("Two arguments expected");
+                            System.out.println("Two arguments expected: <path on server> <local path>");
                             break;
                         }
 
                         String source = scanner.next();
 
                         if (!scanner.hasNext()) {
-                            System.out.println("Two arguments expected");
+                            System.out.println("Two arguments expected: <path on server> <local path>");
                             break;
                         }
 
