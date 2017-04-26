@@ -25,17 +25,12 @@ public class FileReceiver implements DataReader {
 
     private final @NotNull ByteBuffer buffer = ByteBuffer.allocate(CHUNK_SIZE);
 
-    public FileReceiver(final @NotNull ReadableByteChannel channel, final @NotNull Path path) {
+    public FileReceiver(final @NotNull ReadableByteChannel channel, final @NotNull Path path)
+            throws FileNotFoundException {
         this.channel = channel;
 
-        try {
-            fileChannel = new RandomAccessFile(path.toString(), "w").getChannel();
-        } catch (FileNotFoundException e) {
-            /* Documentation for RandomAccessFile claims that FileNotFoundException might be thrown only if mode
-               contains 'r'.
-             */
-            throw new RuntimeException(e);
-        }
+        fileChannel = new RandomAccessFile(path.toString(), "rw").getChannel();
+
     }
 
     public @NotNull DataReader.ReadingResult read() throws IOException {
@@ -48,18 +43,24 @@ public class FileReceiver implements DataReader {
                 return DataReader.ReadingResult.NOT_READ;
             }
 
+            lengthBuffer.flip();
             bytesLeft = lengthBuffer.getLong();
+
+            // TODO: handle negative length
+
             isLengthRead = true;
         }
 
         while (bytesLeft > 0) {
             int bytesRead = channel.read(buffer);
+
             if (bytesRead == -1) {
                 return DataReader.ReadingResult.CLOSED;
             }
 
             bytesLeft -= bytesRead;
-            if (buffer.hasRemaining() && bytesRead > 0) {
+
+            if (buffer.hasRemaining() && bytesLeft > 0) {
                 return DataReader.ReadingResult.NOT_READ;
             }
 

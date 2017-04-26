@@ -144,25 +144,22 @@ public class Client implements AutoCloseable {
 
         while (true) {
             selector.select();
-            SelectionKey key = channel.keyFor(selector);
 
-            if (key.isReadable()) {
-                try {
-                    switch (reader.read()) {
-                        case NOT_READ:
-                            break;
+            try {
+                switch (reader.read()) {
+                    case NOT_READ:
+                        break;
 
-                        case READ:
-                            return;
+                    case READ:
+                        return;
 
-                        case CLOSED:
-                            throw new ConnectionWasClosedException();
-                    }
-                } catch (InvalidMessageException | ConnectionWasClosedException e) {
-                    channel.close();
-
-                    throw e;
+                    case CLOSED:
+                        throw new ConnectionWasClosedException();
                 }
+            } catch (InvalidMessageException | ConnectionWasClosedException e) {
+                channel.close();
+
+                throw e;
             }
 
             selector.selectedKeys().clear();

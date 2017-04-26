@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * TODO: remove logging in client interface
+ * TODO: add friendly user interface
  * TODO: javadocs
  * TODO: tests
  * TODO: logging
@@ -43,7 +45,7 @@ public class Server {
 
     private final @NotNull Thread serverThread;
 
-    private @Nullable Selector selector;
+    private volatile @Nullable Selector selector;
 
     public Server(final @NotNull Path trackedFolder, final int port) {
         logger.info("New Server ({}) is created", this);
@@ -170,7 +172,7 @@ public class Server {
     }
 
     private void handleMessage(final @NotNull SelectionKey key, final @NotNull FTPGetMessage message)
-            throws InvalidMessageException, IOException {
+            throws IOException {
         Path path = realPath(Paths.get(message.getPath()));
 
         try {

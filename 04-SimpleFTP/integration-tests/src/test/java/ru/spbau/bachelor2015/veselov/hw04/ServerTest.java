@@ -21,6 +21,7 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
+// TODO: add timeouts
 public class ServerTest {
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
@@ -35,6 +36,8 @@ public class ServerTest {
 
     private Path[] relativePathToFolderInRoot;
 
+    private Path[] relativePathToFilesInRootSubFolders;
+
     private Path pathToTrackedFolder;
 
     private final int port = 10000;
@@ -47,11 +50,15 @@ public class ServerTest {
         pathToTrackedFolder = temporaryFolder.newFolder(trackedFolderName).toPath();
 
         relativePathToFolderInRoot = new Path[foldersInRootFolder];
-        for (int i = 0; i < foldersInRootFolder; i++) {
-            Path path = Files.createDirectory(pathToTrackedFolder.resolve(folderNamePrefix + i));
-            Files.createFile(path.resolve(fileNamePrefix + i));
+        relativePathToFilesInRootSubFolders = new Path[foldersInRootFolder];
 
-            relativePathToFolderInRoot[i] = pathToTrackedFolder.relativize(path);
+        for (int i = 0; i < foldersInRootFolder; i++) {
+            Path pathToFolder = Files.createDirectory(pathToTrackedFolder.resolve(folderNamePrefix + i));
+            Path pathToFile = Files.createFile(pathToFolder.resolve(fileNamePrefix + i));
+            Files.write(pathToFile, new byte[] { (byte) i });
+
+            relativePathToFolderInRoot[i] = pathToTrackedFolder.relativize(pathToFolder);
+            relativePathToFilesInRootSubFolders[i] = pathToTrackedFolder.relativize(pathToFile);
         }
     }
 
@@ -114,6 +121,16 @@ public class ServerTest {
         client.list(pathToTrackedFolder.relativize(temporaryFolder.getRoot().toPath()).toString());
     }
 
+    @Test
+    public void testGetRequestOnSmallFile() throws Exception {
+        final Path pathToDestination = temporaryFolder.newFile().toPath();
+
+        client.get(relativePathToFilesInRootSubFolders[0].toString(), pathToDestination);
+
+        assertThat(Files.readAllBytes(pathToTrackedFolder.resolve(relativePathToFilesInRootSubFolders[0])),
+                   is(equalTo(Files.readAllBytes(pathToDestination))));
+    }
+
     private @NotNull FileEntryMatcher fileEntry(final @NotNull Path path,
                                                 final boolean isDirectory) {
         return new FileEntryMatcher(path, isDirectory);
@@ -127,13 +144,11 @@ public class ServerTest {
         }
 
         public void test(final @NotNull Client client) throws Exception {
-            String fileName = fileNamePrefix + subDirIndex;
-
             List<FTPListAnswerMessage.Entry> answer =
                 client.list(relativePathToFolderInRoot[subDirIndex].toString());
 
             assertThat(answer, is(contains(
-                fileEntry(relativePathToFolderInRoot[subDirIndex].resolve(fileName), false))));
+                fileEntry(relativePathToFilesInRootSubFolders[subDirIndex], false))));
         }
     }
 
