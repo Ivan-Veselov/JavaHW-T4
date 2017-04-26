@@ -26,7 +26,6 @@ import java.util.List;
 
 /**
  * A client class establishes a connection with ftp server and allows to send a request messages to it.
- * TODO: client will freeze on write operation if server closed connection for some reason.
  * TODO: some exceptions look weired
  */
 public class Client implements AutoCloseable {
@@ -110,17 +109,18 @@ public class Client implements AutoCloseable {
         SelectionKey key = channel.keyFor(selector);
         key.interestOps(key.interestOps() | SelectionKey.OP_WRITE);
 
-        while (true) {
+        boolean shouldRun = true;
+        while (shouldRun) {
             selector.select();
 
             if (key.isWritable()) {
                 if (writer.write()) {
-                    break;
+                    shouldRun = false;
                 }
             }
 
-            if (key.isReadable()) {
-                int bytesRead = channel.read((ByteBuffer) null);
+            if (shouldRun && key.isReadable()) {
+                int bytesRead = channel.read(ByteBuffer.allocate(1));
 
                 close();
 
@@ -142,7 +142,8 @@ public class Client implements AutoCloseable {
             throws IOException, ConnectionWasClosedException {
         logger.info("Client ({}) began waiting data from server", this);
 
-        while (true) {
+        boolean shouldRun = true;
+        while (shouldRun) {
             selector.select();
 
             try {
@@ -151,7 +152,8 @@ public class Client implements AutoCloseable {
                         break;
 
                     case READ:
-                        return;
+                        shouldRun = false;
+                        break;
 
                     case CLOSED:
                         throw new ConnectionWasClosedException();

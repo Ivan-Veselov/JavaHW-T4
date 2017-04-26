@@ -131,6 +131,13 @@ public class ServerTest {
                    is(equalTo(Files.readAllBytes(pathToDestination))));
     }
 
+    @Test(expected = ConnectionWasClosedException.class, timeout = 1000)
+    public void serverDisconnects() throws Exception {
+        server.stop();
+
+        client.list(pathToTrackedFolder.relativize(pathToTrackedFolder).toString());
+    }
+
     private @NotNull FileEntryMatcher fileEntry(final @NotNull Path path,
                                                 final boolean isDirectory) {
         return new FileEntryMatcher(path, isDirectory);

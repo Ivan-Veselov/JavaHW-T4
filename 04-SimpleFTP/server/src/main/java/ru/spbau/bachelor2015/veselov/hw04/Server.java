@@ -27,12 +27,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO: remove logging in client interface
  * TODO: add friendly user interface
  * TODO: javadocs
  * TODO: tests
  * TODO: logging
  * TODO: do refactoring
+ * TODO: remove logging in client interface
  */
 public class Server {
     private final static @NotNull Logger logger = LogManager.getLogger(Server.class.getCanonicalName());
@@ -103,6 +103,10 @@ public class Server {
                             selector.selectedKeys().clear();
                         }
 
+                        for (SelectionKey key : selector.keys()) {
+                            key.channel().close();
+                        }
+
                         logger.info("Server ({}) is stopped", this);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
@@ -120,6 +124,10 @@ public class Server {
     }
 
     public void stop() throws InterruptedException {
+        if (!serverThread.isAlive()) {
+            return;
+        }
+
         shouldRun = false;
         selector.wakeup();
         serverThread.join();
