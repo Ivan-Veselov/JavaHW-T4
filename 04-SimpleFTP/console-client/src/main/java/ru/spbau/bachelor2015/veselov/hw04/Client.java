@@ -4,11 +4,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import ru.spbau.bachelor2015.veselov.hw04.exceptions.ConnectionWasClosedException;
+import ru.spbau.bachelor2015.veselov.hw04.messages.FTPGetMessage;
 import ru.spbau.bachelor2015.veselov.hw04.messages.FTPListAnswerMessage;
 import ru.spbau.bachelor2015.veselov.hw04.messages.FTPListMessage;
 import ru.spbau.bachelor2015.veselov.hw04.messages.FTPMessage;
+import ru.spbau.bachelor2015.veselov.hw04.messages.util.DataReader;
 import ru.spbau.bachelor2015.veselov.hw04.messages.util.FTPMessageReader;
 import ru.spbau.bachelor2015.veselov.hw04.messages.util.FTPMessageWriter;
+import ru.spbau.bachelor2015.veselov.hw04.messages.util.FileReceiver;
 import ru.spbau.bachelor2015.veselov.hw04.messages.util.exceptions.InvalidMessageException;
 import ru.spbau.bachelor2015.veselov.hw04.messages.util.exceptions.MessageNotReadException;
 
@@ -18,11 +21,13 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
+import java.nio.file.Path;
 import java.util.List;
 
 /**
  * A client class establishes a connection with ftp server and allows to send a request messages to it.
  * TODO: client will freeze on write operation if server closed connection for some reason.
+ * TODO: some exceptions look weired
  */
 public class Client implements AutoCloseable {
     private final static @NotNull Logger logger = LogManager.getLogger(Client.class.getCanonicalName());
@@ -31,7 +36,7 @@ public class Client implements AutoCloseable {
 
     private final @NotNull Selector selector;
 
-    private final @NotNull FTPMessageReader reader;
+    private final @NotNull FTPMessageReader messageReader;
 
     /**
      * Establishes a connection.
@@ -49,7 +54,7 @@ public class Client implements AutoCloseable {
 
         channel.register(selector, SelectionKey.OP_READ);
 
-        reader = new FTPMessageReader(channel);
+        messageReader = new FTPMessageReader(channel);
 
         logger.info("Client ({}) established a connection with a server on {}:{}", this, host, port);
     }
@@ -65,19 +70,39 @@ public class Client implements AutoCloseable {
         selector.close();
     }
 
-    public boolean isOpen() {
-        return channel.isOpen();
-    }
-
     public @NotNull List<FTPListAnswerMessage.Entry> list(final @NotNull String path)
-            throws IOException, InvalidMessageException, ConnectionWasClosedException {
+            throws IOException, ConnectionWasClosedException {
         writeMessage(new FTPListMessage(path));
 
-        return ((FTPListAnswerMessage) readMessage()).getContent();
+        read(messageReader);
+
+        FTPMessage answer;
+
+        try {
+            answer = messageReader.getMessage();
+        } catch (MessageNotReadException e) {
+            throw new RuntimeException(e);
+        }
+
+        messageReader.reset();
+
+        logger.info("Client ({}) received a message from server", this);
+
+        return ((FTPListAnswerMessage) answer).getContent();
     }
 
-    private void writeMessage(final @NotNull FTPListMessage message)
-            throws IOException, InvalidMessageException, ConnectionWasClosedException {
+    public void get(final @NotNull String pathToSource, final @NotNull Path pathToDestination)
+            throws ConnectionWasClosedException, IOException {
+        writeMessage(new FTPGetMessage(pathToSource));
+
+        FileReceiver receiver = new FileReceiver(channel, pathToDestination);
+        read(receiver);
+
+        logger.info("Client ({}) received a file from server", this);
+    }
+
+    private void writeMessage(final @NotNull FTPMessage message)
+            throws IOException, ConnectionWasClosedException {
         logger.info("Client ({}) began sending a message to server", this);
 
         FTPMessageWriter writer = new FTPMessageWriter(channel, message);
@@ -113,9 +138,9 @@ public class Client implements AutoCloseable {
         logger.info("Client ({}) sent a message to server", this);
     }
 
-    private @NotNull FTPMessage readMessage()
-            throws IOException, InvalidMessageException, ConnectionWasClosedException {
-        logger.info("Client ({}) began waiting a message from server", this);
+    private void read(final @NotNull DataReader reader)
+            throws IOException, ConnectionWasClosedException {
+        logger.info("Client ({}) began waiting data from server", this);
 
         while (true) {
             selector.select();
@@ -128,18 +153,7 @@ public class Client implements AutoCloseable {
                             break;
 
                         case READ:
-                            FTPMessage answer;
-
-                            try {
-                                answer = reader.getMessage();
-                            } catch (MessageNotReadException e) {
-                                throw new RuntimeException(e);
-                            }
-
-                            reader.reset();
-
-                            logger.info("Client ({}) received a message from server", this);
-                            return answer;
+                            return;
 
                         case CLOSED:
                             throw new ConnectionWasClosedException();

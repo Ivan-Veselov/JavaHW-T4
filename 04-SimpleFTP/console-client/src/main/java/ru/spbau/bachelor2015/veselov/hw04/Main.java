@@ -2,19 +2,19 @@ package ru.spbau.bachelor2015.veselov.hw04;
 
 import ru.spbau.bachelor2015.veselov.hw04.exceptions.ConnectionWasClosedException;
 import ru.spbau.bachelor2015.veselov.hw04.messages.FTPListAnswerMessage;
-import ru.spbau.bachelor2015.veselov.hw04.messages.util.exceptions.InvalidMessageException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Scanner;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  * Entry point of a client program. This class allows to make requests to server.
  */
 public class Main {
-    public static void main(String[] args) throws IOException, ConnectionWasClosedException, InvalidMessageException {
+    public static void main(String[] args) throws IOException, ConnectionWasClosedException {
         if (args.length != 2) {
             System.out.println("Two arguments expected");
             return;
@@ -48,6 +48,25 @@ public class Main {
                         for (FTPListAnswerMessage.Entry entry : answer) {
                             System.out.println(entry);
                         }
+
+                        break;
+
+                    case "get":
+                        if (!scanner.hasNext()) {
+                            System.out.println("Two arguments expected");
+                            break;
+                        }
+
+                        String source = scanner.next();
+
+                        if (!scanner.hasNext()) {
+                            System.out.println("Two arguments expected");
+                            break;
+                        }
+
+                        String destination = scanner.next();
+
+                        client.get(source, Paths.get(destination));
 
                         break;
 

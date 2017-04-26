@@ -4,7 +4,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.spbau.bachelor2015.veselov.hw04.exceptions.*;
+import ru.spbau.bachelor2015.veselov.hw04.exceptions.InvalidPathException;
+import ru.spbau.bachelor2015.veselov.hw04.exceptions.NoDataWriterRegisteredException;
+import ru.spbau.bachelor2015.veselov.hw04.exceptions.NoSuchMessageException;
+import ru.spbau.bachelor2015.veselov.hw04.exceptions.RegisteringSecondDataWriterException;
+import ru.spbau.bachelor2015.veselov.hw04.messages.FTPGetMessage;
 import ru.spbau.bachelor2015.veselov.hw04.messages.FTPListAnswerMessage;
 import ru.spbau.bachelor2015.veselov.hw04.messages.FTPListMessage;
 import ru.spbau.bachelor2015.veselov.hw04.messages.FTPMessage;
@@ -133,8 +137,11 @@ public class Server {
             throws InvalidMessageException, IOException {
         logger.info("Server ({}) received new message", this);
 
+        // TODO: add double dispatch
         if (message instanceof FTPListMessage) {
             handleMessage(channel.keyFor(selector), (FTPListMessage) message);
+        } else if (message instanceof FTPGetMessage) {
+            handleMessage(channel.keyFor(selector), (FTPGetMessage) message);
         } else {
             throw new NoSuchMessageException();
         }
@@ -142,16 +149,7 @@ public class Server {
 
     private void handleMessage(final @NotNull SelectionKey key, final @NotNull FTPListMessage message)
             throws IOException, InvalidMessageException {
-        Path path = Paths.get(message.getPath());
-
-        if (path.isAbsolute()) {
-            throw new InvalidPathException();
-        }
-
-        path = trackedFolder.resolve(path).normalize();
-        if (!trackedFolder.equals(path) && trackedFolder.startsWith(path)) {
-            throw new InvalidPathException();
-        }
+        Path path = realPath(Paths.get(message.getPath()));
 
         File[] files = path.toFile().listFiles();
 
@@ -169,5 +167,29 @@ public class Server {
         } catch (RegisteringSecondDataWriterException e) {
             throw new InvalidMessageException(e);
         }
+    }
+
+    private void handleMessage(final @NotNull SelectionKey key, final @NotNull FTPGetMessage message)
+            throws InvalidMessageException, IOException {
+        Path path = realPath(Paths.get(message.getPath()));
+
+        try {
+            ((FTPChannelObserver) key.attachment()).registerFileTransmitter(path);
+        } catch (RegisteringSecondDataWriterException e) {
+            throw new InvalidMessageException(e);
+        }
+    }
+
+    private @NotNull Path realPath(final @NotNull Path path) throws InvalidPathException {
+        if (path.isAbsolute()) {
+            throw new InvalidPathException();
+        }
+
+        Path real = trackedFolder.resolve(path).normalize();
+        if (!trackedFolder.equals(real) && trackedFolder.startsWith(real)) {
+            throw new InvalidPathException();
+        }
+
+        return real;
     }
 }
