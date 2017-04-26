@@ -4,6 +4,8 @@ import org.apache.commons.lang3.SerializationUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.spbau.bachelor2015.veselov.hw04.messages.FTPMessage;
+import ru.spbau.bachelor2015.veselov.hw04.messages.util.exceptions.InvalidMessageException;
+import ru.spbau.bachelor2015.veselov.hw04.messages.util.exceptions.LongMessageException;
 import ru.spbau.bachelor2015.veselov.hw04.messages.util.exceptions.MessageNotReadException;
 import ru.spbau.bachelor2015.veselov.hw04.messages.util.exceptions.MessageWithNonpositiveLengthException;
 
@@ -24,7 +26,7 @@ public class FTPMessageReader {
         this.channel = channel;
     }
 
-    public ReadingResult read() throws IOException, MessageWithNonpositiveLengthException {
+    public ReadingResult read() throws IOException, InvalidMessageException {
         if (!isLengthRead) {
             if (channel.read(lengthBuffer) == -1) {
                 return ReadingResult.CLOSED;
@@ -41,6 +43,10 @@ public class FTPMessageReader {
 
             if (length <= 0) {
                 throw new MessageWithNonpositiveLengthException();
+            }
+
+            if (length > FTPMessage.MAXIMAL_MESSAGE_LENGTH) {
+                throw new LongMessageException();
             }
 
             messageBuffer = ByteBuffer.allocate(length);

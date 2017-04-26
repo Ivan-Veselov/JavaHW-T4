@@ -6,12 +6,12 @@ import ru.spbau.bachelor2015.veselov.hw04.exceptions.NoDataWriterRegisteredExcep
 import ru.spbau.bachelor2015.veselov.hw04.exceptions.RegisteringSecondDataWriterException;
 import ru.spbau.bachelor2015.veselov.hw04.messages.FTPMessage;
 import ru.spbau.bachelor2015.veselov.hw04.messages.util.DataWriter;
-import ru.spbau.bachelor2015.veselov.hw04.messages.util.FileTransmitter;
 import ru.spbau.bachelor2015.veselov.hw04.messages.util.FTPMessageReader;
 import ru.spbau.bachelor2015.veselov.hw04.messages.util.FTPMessageWriter;
+import ru.spbau.bachelor2015.veselov.hw04.messages.util.FileTransmitter;
 import ru.spbau.bachelor2015.veselov.hw04.messages.util.exceptions.InvalidMessageException;
+import ru.spbau.bachelor2015.veselov.hw04.messages.util.exceptions.LongMessageException;
 import ru.spbau.bachelor2015.veselov.hw04.messages.util.exceptions.MessageNotReadException;
-import ru.spbau.bachelor2015.veselov.hw04.messages.util.exceptions.MessageWithNonpositiveLengthException;
 
 import java.io.IOException;
 import java.nio.channels.SelectionKey;
@@ -43,7 +43,8 @@ public class FTPChannelObserver {
         reader = new FTPMessageReader(channel);
     }
 
-    public void registerMessageWriter(final @NotNull FTPMessage message) throws RegisteringSecondDataWriterException {
+    public void registerMessageWriter(final @NotNull FTPMessage message)
+            throws RegisteringSecondDataWriterException, LongMessageException {
         if (writer != null) {
             throw new RegisteringSecondDataWriterException();
         }
@@ -62,33 +63,37 @@ public class FTPChannelObserver {
         writer = new FileTransmitter(channel, path);
     }
 
-    public void read() throws IOException, MessageWithNonpositiveLengthException {
-        switch (reader.read()) {
-            case NOT_READ:
-                return;
+    public void read() throws IOException {
+        try {
+            switch (reader.read()) {
+                case NOT_READ:
+                    return;
 
-            case READ:
-                FTPMessage message;
+                case READ:
+                    FTPMessage message;
 
-                try {
-                    message = reader.getMessage();
-                } catch (MessageNotReadException e) {
-                    throw new RuntimeException(e);
-                }
+                    try {
+                        message = reader.getMessage();
+                    } catch (MessageNotReadException e) {
+                        throw new RuntimeException(e);
+                    }
 
-                reader.reset();
+                    reader.reset();
 
-                try {
-                    server.handleMessage(channel, message);
-                } catch (InvalidMessageException e) {
+                    try {
+                        server.handleMessage(channel, message);
+                    } catch (InvalidMessageException e) {
+                        channel.close();
+                    }
+
+                    break;
+
+                case CLOSED:
                     channel.close();
-                }
-
-                break;
-
-            case CLOSED:
-                channel.close();
-                break;
+                    break;
+            }
+        } catch (InvalidMessageException e) {
+            channel.close();
         }
     }
 

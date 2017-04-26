@@ -23,12 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO: limit a length of an incoming message
  * TODO: check if it is possible to see something outside of a tracked folder
  * TODO: do refactoring
  * TODO: javadocs
  * TODO: tests
- * TODO: check in server tests that server thread stopped correctly
  * TODO: logging
  */
 public class Server {
@@ -73,13 +71,7 @@ public class Server {
                                     }
 
                                     if (key.isReadable()) {
-                                        try {
-                                            ((FTPChannelObserver) key.attachment()).read();
-                                        } catch (InvalidMessageException e) {
-                                            logger.error("Server ({}) received an invalid message", this);
-
-                                            key.channel().close();
-                                        }
+                                        ((FTPChannelObserver) key.attachment()).read();
 
                                         if (!key.channel().isOpen()) {
                                             continue;
