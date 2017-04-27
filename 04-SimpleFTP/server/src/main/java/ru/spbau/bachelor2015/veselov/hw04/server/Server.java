@@ -27,12 +27,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO: javadocs
+ * Server class can accept a connections and deal with them by answering on requests.
+ * 
+ * TODO: edit access rights
  * TODO: logging
  * TODO: do refactoring
  * TODO: tests
  * TODO: remove logging in client interface
  * TODO: look at gradle files
+ * TODO: travis
  */
 public class Server {
     private final static @NotNull Logger logger = LogManager.getLogger(Server.class.getCanonicalName());
@@ -47,6 +50,12 @@ public class Server {
 
     private volatile @Nullable Selector selector;
 
+    /**
+     * Creates a new server.
+     *
+     * @param trackedFolder a folder which is tracked by this new server. Server can give content only of this folder.
+     * @param port a port which this server will be bound to.
+     */
     public Server(final @NotNull Path trackedFolder, final int port) {
         logger.info("New Server ({}) is created", this);
 
@@ -118,11 +127,19 @@ public class Server {
             );
     }
 
+    /**
+     * Starts this server in a new thread.
+     */
     public void start() {
         shouldRun = true;
         serverThread.start();
     }
 
+    /**
+     * Stops this server thread.
+     *
+     * @throws InterruptedException if this thread was interrupted while waiting for server thread to join.
+     */
     public void stop() throws InterruptedException {
         if (!serverThread.isAlive()) {
             return;
@@ -140,7 +157,7 @@ public class Server {
         }
 
         logger.info("Server ({}) accepted new connection", this);
-        new FTPChannelObserver(socketChannel, selector, this);
+        new FTPChannelObserver(socketChannel, this, selector);
     }
 
     void handleMessage(final @NotNull SocketChannel channel, final @NotNull FTPMessage message) throws IOException {

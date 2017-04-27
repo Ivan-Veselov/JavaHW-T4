@@ -1,6 +1,7 @@
 package ru.spbau.bachelor2015.veselov.hw04.messages.util;
 
 import org.jetbrains.annotations.NotNull;
+import ru.spbau.bachelor2015.veselov.hw04.messages.util.exceptions.FileWithNegativeLengthException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -10,6 +11,9 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Path;
 
+/**
+ * File receiver is a data reader which is responsible for reading a content of a file from channel to a specified file.
+ */
 public class FileReceiver implements DataReader {
     private static final int CHUNK_SIZE = 4096;
 
@@ -25,6 +29,13 @@ public class FileReceiver implements DataReader {
 
     private final @NotNull ByteBuffer buffer = ByteBuffer.allocate(CHUNK_SIZE);
 
+    /**
+     * Creates a new file receiver.
+     *
+     * @param channel a channel from which file receiver will be reading content of a file.
+     * @param path a path in a local file system where file receiver will be writing received data.
+     * @throws FileNotFoundException if opening of a file has failed.
+     */
     public FileReceiver(final @NotNull ReadableByteChannel channel, final @NotNull Path path)
             throws FileNotFoundException {
         this.channel = channel;
@@ -33,6 +44,12 @@ public class FileReceiver implements DataReader {
 
     }
 
+    /**
+     * Makes an attempt to read a content of a file.
+     *
+     * @return the result of reading.
+     * @throws IOException if any IO exception occurs during reading process or if an invalid data was received.
+     */
     public @NotNull DataReader.ReadingResult read() throws IOException {
         if (!isLengthRead) {
             if (channel.read(lengthBuffer) == -1) {
@@ -46,7 +63,10 @@ public class FileReceiver implements DataReader {
             lengthBuffer.flip();
             bytesLeft = lengthBuffer.getLong();
 
-            // TODO: handle negative length
+            if (bytesLeft < 0) {
+                fileChannel.close();
+                throw new FileWithNegativeLengthException();
+            }
 
             isLengthRead = true;
         }

@@ -9,6 +9,10 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.file.Path;
 
+/**
+ * File transmitter is a data writer which is responsible for writing a content of a specified file to a specified
+ * channel.
+ */
 public class FileTransmitter implements DataWriter {
     private static final int CHUNK_SIZE = 4096;
 
@@ -18,6 +22,13 @@ public class FileTransmitter implements DataWriter {
 
     private final @NotNull ByteBuffer buffer = ByteBuffer.allocate(CHUNK_SIZE);
 
+    /**
+     * Creates a new file transmitter.
+     *
+     * @param channel a channel to which this transmitter will be writing.
+     * @param path a path to a file which content transmitter will be writing.
+     * @throws IOException if any IO exception occurs during file opening.
+     */
     public FileTransmitter(final @NotNull WritableByteChannel channel, final @NotNull Path path) throws IOException {
         this.channel = channel;
 
@@ -28,6 +39,12 @@ public class FileTransmitter implements DataWriter {
         buffer.flip();
     }
 
+    /**
+     * Makes an attempt to write file content to channel.
+     *
+     * @return true if file content was fully written.
+     * @throws IOException if any IO exception occurs during writing process.
+     */
     public boolean write() throws IOException {
         while (!isTransmitted()) {
             channel.write(buffer);

@@ -25,8 +25,8 @@ import java.nio.file.Path;
 import java.util.List;
 
 /**
- * A client class establishes a connection with ftp server and allows to send a request messages to it.
- * TODO: some exceptions look weired
+ * A client class establishes a connection with ftp server and allows to send a request messages to it and receive
+ * responses.
  */
 public class Client implements AutoCloseable {
     private final static @NotNull Logger logger = LogManager.getLogger(Client.class.getCanonicalName());
@@ -42,7 +42,7 @@ public class Client implements AutoCloseable {
      *
      * @param host a host to connect to.
      * @param port a port to connect to.
-     * @throws IOException if any IO exception occurs during establishment of connection.
+     * @throws IOException if any IO exception occurs during establishment of the connection.
      */
     public Client(final @NotNull String host, final int port) throws IOException {
         selector = Selector.open();
@@ -69,6 +69,14 @@ public class Client implements AutoCloseable {
         selector.close();
     }
 
+    /**
+     * Performs a list request. This request asks a content of a specified folder.
+     *
+     * @param path a path to a folder which content is requested.
+     * @return a list of entries which denotes a requested content.
+     * @throws IOException if any IO exception occurs during client interaction with a server.
+     * @throws ConnectionWasClosedException if in the middle of the process connection was closed.
+     */
     public @NotNull List<FTPListAnswerMessage.Entry> list(final @NotNull String path)
             throws IOException, ConnectionWasClosedException {
         writeMessage(new FTPListMessage(path));
@@ -90,8 +98,16 @@ public class Client implements AutoCloseable {
         return ((FTPListAnswerMessage) answer).getContent();
     }
 
+    /**
+     * Performs a get request. This request asks a content of a specified file.
+     *
+     * @param pathToSource a string representation of a path to a file which content is requested.
+     * @param pathToDestination a path to a file in which downloaded data will be written.
+     * @throws IOException if any IO exception occurs during client interaction with a server.
+     * @throws ConnectionWasClosedException if in the middle of the process connection was closed.
+     */
     public void get(final @NotNull String pathToSource, final @NotNull Path pathToDestination)
-            throws ConnectionWasClosedException, IOException {
+            throws IOException, ConnectionWasClosedException {
         writeMessage(new FTPGetMessage(pathToSource));
 
         FileReceiver receiver = new FileReceiver(channel, pathToDestination);

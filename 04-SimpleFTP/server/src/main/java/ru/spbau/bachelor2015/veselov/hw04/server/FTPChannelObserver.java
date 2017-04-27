@@ -19,6 +19,9 @@ import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.nio.file.Path;
 
+/**
+ * Channel observer handles all operations on a particular socket channel and manages this socket channel lifecycle.
+ */
 public class FTPChannelObserver {
     private final @NotNull SocketChannel channel;
 
@@ -30,9 +33,17 @@ public class FTPChannelObserver {
 
     private @Nullable DataWriter writer;
 
+    /**
+     * Creates a new observer.
+     *
+     * @param channel a channel for which a new observer will be created.
+     * @param server a server which established a connection this channel represents.
+     * @param selector a selector of a server.
+     * @throws IOException if any IO exception occurs during observer creation.
+     */
     public FTPChannelObserver(final @NotNull SocketChannel channel,
-                              final @NotNull Selector selector,
-                              final @NotNull Server server) throws IOException {
+                              final @NotNull Server server,
+                              final @NotNull Selector selector) throws IOException {
         this.channel = channel;
         this.server = server;
 
@@ -43,6 +54,13 @@ public class FTPChannelObserver {
         reader = new FTPMessageReader(channel);
     }
 
+    /**
+     * Registers a message writer for stored channel.
+     *
+     * @param message a message which this writer will be writing.
+     * @throws RegisteringSecondDataWriterException if there is already a registered writer.
+     * @throws LongMessageException if a message is too long.
+     */
     public void registerMessageWriter(final @NotNull FTPMessage message)
             throws RegisteringSecondDataWriterException, LongMessageException {
         if (writer != null) {
@@ -53,6 +71,13 @@ public class FTPChannelObserver {
         writer = new FTPMessageWriter(channel, message);
     }
 
+    /**
+     * Registers a file transmitter for stored channel.
+     *
+     * @param path a path to a file which content will be transmitted.
+     * @throws RegisteringSecondDataWriterException if there is already a registered writer.
+     * @throws IOException if any IO exception occurs during file opening.
+     */
     public void registerFileTransmitter(final @NotNull Path path)
             throws RegisteringSecondDataWriterException, IOException {
         if (writer != null) {
@@ -63,6 +88,11 @@ public class FTPChannelObserver {
         writer = new FileTransmitter(channel, path);
     }
 
+    /**
+     * Makes an attempt to read a message from stored channel.
+     *
+     * @throws IOException if any IO exception occurs during reading process.
+     */
     public void read() throws IOException {
         try {
             switch (reader.read()) {
@@ -97,6 +127,12 @@ public class FTPChannelObserver {
         }
     }
 
+    /**
+     * Makes an attempt to write something with registered writer.
+     *
+     * @throws IOException if any IO exception occurs during writing process.
+     * @throws NoDataWriterRegisteredException if there is no data writer registered.
+     */
     public void write() throws IOException, NoDataWriterRegisteredException {
         if (writer == null) {
             throw new NoDataWriterRegisteredException();

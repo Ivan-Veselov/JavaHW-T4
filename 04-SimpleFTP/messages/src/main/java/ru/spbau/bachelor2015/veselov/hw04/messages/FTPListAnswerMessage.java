@@ -40,7 +40,7 @@ public class FTPListAnswerMessage implements FTPMessage {
         /**
          * Creates an entry.
          *
-         * @param path a string representation of a file.
+         * @param path a string representation of a path to a file.
          * @param isDirectory a flag which tells whether or not this entry represents a directory.
          */
         public Entry(final @NotNull String path, final boolean isDirectory) {
@@ -49,7 +49,7 @@ public class FTPListAnswerMessage implements FTPMessage {
         }
 
         /**
-         * Returns a string representation of a file.
+         * Returns a string representation of a path to a file.
          */
         public @NotNull String getPath() {
             return path;

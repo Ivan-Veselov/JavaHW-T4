@@ -6,14 +6,16 @@ import java.io.InputStreamReader;
 import java.nio.file.Paths;
 
 /**
- * Entry point of a program. This class allows to start and stop server through a console.
+ * Entry point of a server application. This class allows to start and stop server through a console.
  */
 public class Main {
     /**
      * Entry method.
      *
-     * @param args arguments are ignored.
+     * @param args two arguments are expected. First is a path to a folder which will be tracked by server, second is a
+     *             port which the server will be bound to.
      * @throws IOException any IO exception which may occur during reading of commands.
+     * @throws InterruptedException if main thread was interrupted.
      */
     public static void main(String[] args) throws IOException, InterruptedException {
         if (args.length != 2) {

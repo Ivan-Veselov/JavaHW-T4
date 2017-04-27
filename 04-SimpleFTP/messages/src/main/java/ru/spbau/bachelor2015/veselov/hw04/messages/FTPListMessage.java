@@ -18,7 +18,7 @@ public class FTPListMessage implements FTPMessage {
     }
 
     /**
-     * Returns string representation of a path to a folder.
+     * Returns string representation of a path to a folder which content will be requested.
      */
     public @NotNull String getPath() {
         return path;
