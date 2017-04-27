@@ -23,18 +23,11 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-// TODO: add timeouts
 public class ServerTest {
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-    private final String trackedFolderName = "tracked";
-
     private final int foldersInRootFolder = 10;
-
-    private final String fileNamePrefix = "file";
-
-    private final String folderNamePrefix = "dir";
 
     private Path[] relativePathToFolderInRoot;
 
@@ -49,6 +42,10 @@ public class ServerTest {
     private Client client;
 
     private void folderInitialization() throws Exception {
+        String trackedFolderName = "tracked";
+        String folderNamePrefix = "dir";
+        String fileNamePrefix = "file";
+
         pathToTrackedFolder = temporaryFolder.newFolder(trackedFolderName).toPath();
 
         relativePathToFolderInRoot = new Path[foldersInRootFolder];
@@ -93,19 +90,19 @@ public class ServerTest {
         server.stop();
     }
 
-    @Test
+    @Test(timeout = 1000)
     public void testFTPListMessage() throws Exception {
         new SubDirTestMessage(0).test(client);
     }
 
-    @Test
+    @Test(timeout = 2000)
     public void testFTPListMessages() throws Exception {
         for (int i = 0; i < foldersInRootFolder; i++) {
             new SubDirTestMessage(i).test(client);
         }
     }
 
-    @Test
+    @Test(timeout = 1000)
     public void testListRequestOfRootFolder() throws Exception {
         List<FTPListAnswerMessage.Entry> entries = this.client.list(
                 pathToTrackedFolder.relativize(pathToTrackedFolder).toString());
@@ -118,19 +115,32 @@ public class ServerTest {
         assertThat(entries, containsInAnyOrder(matchers));
     }
 
-    @Test(expected = ConnectionWasClosedException.class)
+    @Test(expected = ConnectionWasClosedException.class, timeout = 1000)
     public void testListRequestOfForbiddenFolder() throws Exception {
         client.list(pathToTrackedFolder.relativize(temporaryFolder.getRoot().toPath()).toString());
     }
 
-    @Test
+    @Test(timeout = 1000)
     public void testGetRequestOnSmallFile() throws Exception {
-        final Path pathToDestination = temporaryFolder.newFile().toPath();
+        testGetOnFile(relativePathToFilesInRootSubFolders[0]);
+    }
 
-        client.get(relativePathToFilesInRootSubFolders[0].toString(), pathToDestination);
+    @Test(timeout = 4000)
+    public void testGetRequestOnBigFile() throws Exception {
+        final String fileName = "big-file";
 
-        assertThat(Files.readAllBytes(pathToTrackedFolder.resolve(relativePathToFilesInRootSubFolders[0])),
-                   is(equalTo(Files.readAllBytes(pathToDestination))));
+        Path pathToFile = pathToTrackedFolder.resolve(fileName);
+
+        Files.createFile(pathToFile);
+
+        byte[] data = new byte[1024 * 1024 * 10]; // 10 Mb
+        for (int i = 0; i < data.length; i++) {
+            data[i] = (byte) i;
+        }
+
+        Files.write(pathToFile, data);
+
+        testGetOnFile(pathToTrackedFolder.relativize(pathToFile));
     }
 
     @Test(expected = ConnectionWasClosedException.class, timeout = 1000)
@@ -138,6 +148,15 @@ public class ServerTest {
         server.stop();
 
         client.list(pathToTrackedFolder.relativize(pathToTrackedFolder).toString());
+    }
+
+    private void testGetOnFile(final @NotNull Path pathToSource) throws Exception {
+        final Path pathToDestination = temporaryFolder.newFile().toPath();
+
+        client.get(pathToSource.toString(), pathToDestination);
+
+        assertThat(Files.readAllBytes(pathToTrackedFolder.resolve(pathToSource)),
+                is(equalTo(Files.readAllBytes(pathToDestination))));
     }
 
     private @NotNull FileEntryMatcher fileEntry(final @NotNull Path path,

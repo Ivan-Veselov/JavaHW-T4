@@ -1,5 +1,7 @@
 package ru.spbau.bachelor2015.veselov.hw04.server;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.spbau.bachelor2015.veselov.hw04.server.exceptions.NoDataWriterRegisteredException;
@@ -23,6 +25,8 @@ import java.nio.file.Path;
  * Channel observer handles all operations on a particular socket channel and manages this socket channel lifecycle.
  */
 public class FTPChannelObserver {
+    private final static @NotNull Logger logger = LogManager.getLogger(FTPChannelObserver.class.getCanonicalName());
+
     private final @NotNull SocketChannel channel;
 
     private final @NotNull SelectionKey selectionKey;
@@ -44,6 +48,8 @@ public class FTPChannelObserver {
     public FTPChannelObserver(final @NotNull SocketChannel channel,
                               final @NotNull Server server,
                               final @NotNull Selector selector) throws IOException {
+        logger.info("A new FTPChannelObserver ({}) has been created", this);
+
         this.channel = channel;
         this.server = server;
 
@@ -67,6 +73,8 @@ public class FTPChannelObserver {
             throw new RegisteringSecondDataWriterException();
         }
 
+        logger.info("A new FTPMessageWriter has been registered in {}", this);
+
         selectionKey.interestOps(selectionKey.interestOps() | SelectionKey.OP_WRITE);
         writer = new FTPMessageWriter(channel, message);
     }
@@ -83,6 +91,8 @@ public class FTPChannelObserver {
         if (writer != null) {
             throw new RegisteringSecondDataWriterException();
         }
+
+        logger.info("A new FileTransmitter has been registered in {}", this);
 
         selectionKey.interestOps(selectionKey.interestOps() | SelectionKey.OP_WRITE);
         writer = new FileTransmitter(channel, path);
@@ -110,12 +120,7 @@ public class FTPChannelObserver {
 
                     reader.reset();
 
-                    try {
-                        server.handleMessage(channel, message);
-                    } catch (InvalidMessageException e) {
-                        channel.close();
-                    }
-
+                    server.handleMessage(channel, message);
                     break;
 
                 case CLOSED:
@@ -123,6 +128,8 @@ public class FTPChannelObserver {
                     break;
             }
         } catch (InvalidMessageException e) {
+            logger.info("{} has read an invalid message", this);
+
             channel.close();
         }
     }
@@ -139,6 +146,8 @@ public class FTPChannelObserver {
         }
 
         if (writer.write()) {
+            logger.info("{} has written data to a channel", this);
+
             writer = null;
             selectionKey.interestOps(selectionKey.interestOps() & ~SelectionKey.OP_WRITE);
         }
