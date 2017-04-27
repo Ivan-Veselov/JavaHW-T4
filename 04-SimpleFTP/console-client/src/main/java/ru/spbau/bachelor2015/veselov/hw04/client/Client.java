@@ -55,7 +55,7 @@ public class Client implements AutoCloseable {
 
         messageReader = new FTPMessageReader(channel);
 
-        logger.info("Client ({}) established a connection with a server on {}:{}", this, host, port);
+        logger.info("A new client has established a connection with a server on {}:{}", host, port);
     }
 
     /**
@@ -93,7 +93,7 @@ public class Client implements AutoCloseable {
 
         messageReader.reset();
 
-        logger.info("Client ({}) received a message from server", this);
+        logger.info("Client has received a message from server");
 
         return ((FTPListAnswerMessage) answer).getContent();
     }
@@ -113,13 +113,11 @@ public class Client implements AutoCloseable {
         FileReceiver receiver = new FileReceiver(channel, pathToDestination);
         read(receiver);
 
-        logger.info("Client ({}) received a file from server", this);
+        logger.info("Client has received a file from server");
     }
 
     private void writeMessage(final @NotNull FTPMessage message)
             throws IOException, ConnectionWasClosedException {
-        logger.info("Client ({}) began sending a message to server", this);
-
         FTPMessageWriter writer = new FTPMessageWriter(channel, message);
 
         SelectionKey key = channel.keyFor(selector);
@@ -151,13 +149,11 @@ public class Client implements AutoCloseable {
         }
 
         key.interestOps(key.interestOps() & ~SelectionKey.OP_WRITE);
-        logger.info("Client ({}) sent a message to server", this);
+        logger.info("Client has sent a message to server");
     }
 
     private void read(final @NotNull DataReader reader)
             throws IOException, ConnectionWasClosedException {
-        logger.info("Client ({}) began waiting data from server", this);
-
         boolean shouldRun = true;
         while (shouldRun) {
             selector.select();

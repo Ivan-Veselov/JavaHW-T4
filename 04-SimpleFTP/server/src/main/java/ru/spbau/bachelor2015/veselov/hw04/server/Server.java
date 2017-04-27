@@ -28,9 +28,7 @@ import java.util.List;
 
 /**
  * Server class can accept a connections and deal with them by answering on requests.
- * 
- * TODO: edit access rights
- * TODO: logging
+ *
  * TODO: do refactoring
  * TODO: tests
  * TODO: remove logging in client interface
@@ -57,7 +55,7 @@ public class Server {
      * @param port a port which this server will be bound to.
      */
     public Server(final @NotNull Path trackedFolder, final int port) {
-        logger.info("New Server ({}) is created", this);
+        logger.info("New Server has been created");
 
         this.trackedFolder = trackedFolder;
         this.port = port;
@@ -73,7 +71,7 @@ public class Server {
 
                         this.selector = selector;
 
-                        logger.info("Server ({}) is started", this);
+                        logger.info("Server has been started");
 
                         while (shouldRun) {
                             selector.select();
@@ -101,9 +99,8 @@ public class Server {
                                     }
                                 } catch (IOException e) {
                                     logger.error(
-                                    "IOException occurred during interaction of Server ({}) " +
-                                            "with a connection.\n{}",
-                                    this, e);
+                                    "IOException has occurred during interaction of Server " +
+                                            "with a connection.\n{}", e);
 
                                     key.channel().close();
                                 }
@@ -116,7 +113,7 @@ public class Server {
                             key.channel().close();
                         }
 
-                        logger.info("Server ({}) is stopped", this);
+                        logger.info("Server has been stopped");
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     } finally {
@@ -156,12 +153,12 @@ public class Server {
             return;
         }
 
-        logger.info("Server ({}) accepted new connection", this);
+        logger.info("Server has accepted a new connection");
         new FTPChannelObserver(socketChannel, this, selector);
     }
 
     void handleMessage(final @NotNull SocketChannel channel, final @NotNull FTPMessage message) throws IOException {
-        logger.info("Server ({}) received new message", this);
+        logger.info("Server has received a new message");
 
         // TODO: add double dispatch
         if (message instanceof FTPListMessage) {
