@@ -29,7 +29,6 @@ import java.util.List;
 /**
  * Server class can accept a connections and deal with them by answering on requests.
  *
- * TODO: remove logging in client interface
  * TODO: look at gradle files
  * TODO: travis
  */

@@ -22,7 +22,7 @@ dependencies {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'ru.spbau.bachelor2015.veselov.hw04.Main'
+        attributes 'Main-Class': 'ru.spbau.bachelor2015.veselov.hw04.client.Main'
     }
 
     from {
