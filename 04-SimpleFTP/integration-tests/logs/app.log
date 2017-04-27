@@ -1,0 +1,580 @@
+05:09:32.564 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - New Server has been created
+05:09:32.568 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been started
+05:09:32.569 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has accepted a new connection
+05:09:32.571 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - A new client has established a connection with a server on localhost:10000
+05:09:32.571 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPChannelObserver (ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@2e5c3328) has been created
+05:09:32.575 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:09:32.576 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:09:32.577 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@2e5c3328
+05:09:32.579 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@2e5c3328 has written data to a channel
+05:09:32.580 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:09:32.583 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:09:32.583 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:09:32.583 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@2e5c3328
+05:09:32.584 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@2e5c3328 has written data to a channel
+05:09:32.584 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:09:32.584 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:09:32.584 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:09:32.585 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@2e5c3328
+05:09:32.585 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@2e5c3328 has written data to a channel
+05:09:32.585 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:09:32.586 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:09:32.586 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:09:32.586 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@2e5c3328
+05:09:32.586 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@2e5c3328 has written data to a channel
+05:09:32.587 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:09:32.587 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:09:32.588 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:09:32.588 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@2e5c3328
+05:09:32.588 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@2e5c3328 has written data to a channel
+05:09:32.589 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:09:32.589 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:09:32.589 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:09:32.589 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@2e5c3328
+05:09:32.589 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@2e5c3328 has written data to a channel
+05:09:32.590 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:09:32.590 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:09:32.590 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:09:32.590 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@2e5c3328
+05:09:32.591 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@2e5c3328 has written data to a channel
+05:09:32.591 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:09:32.592 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:09:32.592 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:09:32.592 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@2e5c3328
+05:09:32.592 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@2e5c3328 has written data to a channel
+05:09:32.593 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:09:32.593 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:09:32.593 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:09:32.593 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@2e5c3328
+05:09:32.594 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@2e5c3328 has written data to a channel
+05:09:32.594 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:09:32.594 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:09:32.594 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:09:32.595 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@2e5c3328
+05:09:32.595 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@2e5c3328 has written data to a channel
+05:09:32.595 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:09:32.596 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been stopped
+05:09:32.601 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - New Server has been created
+05:09:32.605 [Thread-6] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been started
+05:09:32.606 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - A new client has established a connection with a server on localhost:10000
+05:09:32.606 [Thread-6] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has accepted a new connection
+05:09:32.606 [Thread-6] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPChannelObserver (ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@4ce67198) has been created
+05:09:32.608 [Thread-6] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:09:32.608 [Thread-7] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:09:32.608 [Thread-6] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@4ce67198 has read an invalid message
+05:09:32.609 [Thread-6] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been stopped
+05:09:32.614 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - New Server has been created
+05:09:32.615 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - A new client has established a connection with a server on localhost:10000
+05:09:32.615 [Thread-8] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been started
+05:09:32.615 [Thread-8] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has accepted a new connection
+05:09:32.615 [Thread-8] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPChannelObserver (ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@66ac188e) has been created
+05:09:32.616 [Thread-9] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:09:32.616 [Thread-8] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:09:32.616 [Thread-8] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FileTransmitter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@66ac188e
+05:09:32.617 [Thread-8] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@66ac188e has written data to a channel
+05:09:32.617 [Thread-9] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a file from server
+05:09:32.618 [Thread-8] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been stopped
+05:09:32.621 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - New Server has been created
+05:09:32.621 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - A new client has established a connection with a server on localhost:10000
+05:09:32.621 [Thread-10] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been started
+05:09:32.622 [Thread-10] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has accepted a new connection
+05:09:32.622 [Thread-10] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPChannelObserver (ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@38c2b0fb) has been created
+05:09:32.622 [Thread-11] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:09:32.622 [Thread-10] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:09:32.623 [Thread-10] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@38c2b0fb
+05:09:32.623 [Thread-10] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@38c2b0fb has written data to a channel
+05:09:32.624 [Thread-11] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:09:32.625 [Thread-10] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been stopped
+05:09:32.629 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - New Server has been created
+05:09:32.629 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - A new client has established a connection with a server on localhost:10000
+05:09:32.629 [Thread-12] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been started
+05:09:32.630 [Thread-12] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has accepted a new connection
+05:09:32.630 [Thread-12] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPChannelObserver (ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@13ade816) has been created
+05:09:32.630 [Thread-13] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:09:32.630 [Thread-12] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:09:32.631 [Thread-12] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@13ade816
+05:09:32.631 [Thread-12] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@13ade816 has written data to a channel
+05:09:32.631 [Thread-13] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:09:32.631 [Thread-12] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been stopped
+05:09:32.637 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - New Server has been created
+05:09:32.638 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - A new client has established a connection with a server on localhost:10000
+05:09:32.638 [Thread-14] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been started
+05:09:32.638 [Thread-14] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has accepted a new connection
+05:09:32.638 [Thread-14] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPChannelObserver (ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@2b79de86) has been created
+05:09:32.638 [Thread-14] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been stopped
+05:09:32.639 [Thread-15] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:09:32.642 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - New Server has been created
+05:09:32.642 [Thread-16] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been started
+05:09:32.642 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - A new client has established a connection with a server on localhost:10000
+05:09:32.643 [Thread-16] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has accepted a new connection
+05:09:32.643 [Thread-16] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPChannelObserver (ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@4ed7f418) has been created
+05:09:32.679 [Thread-17] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:09:32.679 [Thread-16] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:09:32.679 [Thread-16] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FileTransmitter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@4ed7f418
+05:09:32.700 [Thread-16] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@4ed7f418 has written data to a channel
+05:09:32.703 [Thread-17] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a file from server
+05:09:34.313 [Thread-16] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been stopped
+05:10:30.576 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - New Server has been created
+05:10:30.653 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been started
+05:10:30.656 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - A new client has established a connection with a server on localhost:10000
+05:10:30.658 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has accepted a new connection
+05:10:30.659 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPChannelObserver (ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa) has been created
+05:10:30.666 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:10:30.665 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:10:30.668 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa
+05:10:30.672 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:10:30.677 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa has written data to a channel
+05:10:30.687 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:10:30.687 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:10:30.688 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa
+05:10:30.688 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa has written data to a channel
+05:10:30.689 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:10:30.689 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:10:30.695 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:10:30.696 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa
+05:10:30.696 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa has written data to a channel
+05:10:30.697 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:10:30.697 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:10:30.699 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:10:30.700 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa
+05:10:30.700 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:10:30.701 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:10:30.703 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa has written data to a channel
+05:10:30.704 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:10:30.704 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa
+05:10:30.704 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa has written data to a channel
+05:10:30.705 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:10:30.705 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:10:30.705 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:10:30.706 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa
+05:10:30.706 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa has written data to a channel
+05:10:30.706 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:10:30.707 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:10:30.707 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:10:30.707 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa
+05:10:30.708 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa has written data to a channel
+05:10:30.708 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:10:30.708 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:10:30.709 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:10:30.709 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa
+05:10:30.709 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa has written data to a channel
+05:10:30.710 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:10:30.710 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:10:30.710 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:10:30.711 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa
+05:10:30.711 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa has written data to a channel
+05:10:30.711 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:10:30.712 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:10:30.714 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:10:30.715 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa
+05:10:30.715 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa has written data to a channel
+05:10:30.716 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:10:30.716 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been stopped
+05:10:30.723 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - New Server has been created
+05:10:30.734 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - A new client has established a connection with a server on localhost:10000
+05:10:30.734 [Thread-6] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been started
+05:10:30.735 [Thread-6] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has accepted a new connection
+05:10:30.735 [Thread-6] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPChannelObserver (ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@493f12af) has been created
+05:10:30.735 [Thread-7] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:10:30.737 [Thread-6] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:10:30.738 [Thread-6] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@493f12af has read an invalid message
+05:10:30.739 [Thread-6] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been stopped
+05:10:30.744 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - New Server has been created
+05:10:30.744 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - A new client has established a connection with a server on localhost:10000
+05:10:30.744 [Thread-8] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been started
+05:10:30.744 [Thread-8] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has accepted a new connection
+05:10:30.744 [Thread-8] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPChannelObserver (ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@17236143) has been created
+05:10:30.746 [Thread-8] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:10:30.746 [Thread-9] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:10:30.746 [Thread-8] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FileTransmitter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@17236143
+05:10:30.747 [Thread-8] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@17236143 has written data to a channel
+05:10:30.747 [Thread-9] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a file from server
+05:10:30.749 [Thread-8] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been stopped
+05:10:30.769 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - New Server has been created
+05:10:30.772 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - A new client has established a connection with a server on localhost:10000
+05:10:30.772 [Thread-10] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been started
+05:10:30.772 [Thread-10] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has accepted a new connection
+05:10:30.772 [Thread-10] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPChannelObserver (ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@42d98494) has been created
+05:10:30.773 [Thread-10] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:10:30.773 [Thread-10] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@42d98494
+05:10:30.773 [Thread-11] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:10:30.775 [Thread-10] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@42d98494 has written data to a channel
+05:10:30.776 [Thread-11] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:10:30.778 [Thread-10] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been stopped
+05:10:30.782 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - New Server has been created
+05:10:30.809 [Thread-12] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been started
+05:10:30.809 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - A new client has established a connection with a server on localhost:10000
+05:10:30.810 [Thread-12] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has accepted a new connection
+05:10:30.810 [Thread-12] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPChannelObserver (ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@65812148) has been created
+05:10:30.810 [Thread-13] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:10:30.811 [Thread-12] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:10:30.811 [Thread-12] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@65812148
+05:10:30.812 [Thread-12] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@65812148 has written data to a channel
+05:10:30.818 [Thread-13] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:10:30.819 [Thread-12] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been stopped
+05:10:30.823 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - New Server has been created
+05:10:30.836 [Thread-14] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been started
+05:10:30.836 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - A new client has established a connection with a server on localhost:10000
+05:10:30.837 [Thread-14] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has accepted a new connection
+05:10:30.837 [Thread-14] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPChannelObserver (ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@d088afc) has been created
+05:10:30.838 [Thread-14] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been stopped
+05:10:30.838 [Thread-15] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:10:30.847 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - New Server has been created
+05:10:30.853 [Thread-16] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been started
+05:10:30.854 [Thread-16] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has accepted a new connection
+05:10:30.854 [Thread-16] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPChannelObserver (ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@2af3094b) has been created
+05:10:30.853 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - A new client has established a connection with a server on localhost:10000
+05:10:30.930 [Thread-16] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:10:30.929 [Thread-17] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:10:30.930 [Thread-16] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FileTransmitter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@2af3094b
+05:10:30.982 [Thread-16] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@2af3094b has written data to a channel
+05:10:30.986 [Thread-17] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a file from server
+05:10:34.572 [Thread-16] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been stopped
+05:11:33.925 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - New Server has been created
+05:11:33.930 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been started
+05:11:33.930 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has accepted a new connection
+05:11:33.932 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - A new client has established a connection with a server on localhost:10000
+05:11:33.932 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPChannelObserver (ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa) has been created
+05:11:33.936 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:11:33.937 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:11:33.937 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa
+05:11:33.940 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa has written data to a channel
+05:11:33.940 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:11:33.943 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:11:33.943 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:11:33.944 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa
+05:11:33.944 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa has written data to a channel
+05:11:33.944 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:11:33.944 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:11:33.945 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:11:33.945 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa
+05:11:33.945 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa has written data to a channel
+05:11:33.945 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:11:33.946 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:11:33.946 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:11:33.946 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa
+05:11:33.946 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa has written data to a channel
+05:11:33.947 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:11:33.947 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:11:33.947 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:11:33.947 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa
+05:11:33.948 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa has written data to a channel
+05:11:33.948 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:11:33.948 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:11:33.949 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:11:33.949 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa
+05:11:33.949 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa has written data to a channel
+05:11:33.949 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:11:33.950 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:11:33.950 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:11:33.950 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa
+05:11:33.950 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa has written data to a channel
+05:11:33.951 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:11:33.951 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:11:33.951 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:11:33.951 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa
+05:11:33.952 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa has written data to a channel
+05:11:33.952 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:11:33.952 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:11:33.953 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:11:33.953 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa
+05:11:33.953 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa has written data to a channel
+05:11:33.953 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:11:33.954 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:11:33.954 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:11:33.954 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa
+05:11:33.954 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@3aad1caa has written data to a channel
+05:11:33.954 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:11:33.955 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been stopped
+05:11:33.964 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - New Server has been created
+05:11:33.966 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - A new client has established a connection with a server on localhost:10000
+05:11:33.966 [Thread-6] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been started
+05:11:33.966 [Thread-6] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has accepted a new connection
+05:11:33.966 [Thread-6] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPChannelObserver (ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@f42c8d2) has been created
+05:11:33.967 [Thread-7] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:11:33.967 [Thread-6] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:11:33.967 [Thread-6] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@f42c8d2 has read an invalid message
+05:11:33.967 [Thread-6] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been stopped
+05:11:33.973 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - New Server has been created
+05:11:33.973 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - A new client has established a connection with a server on localhost:10000
+05:11:33.973 [Thread-8] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been started
+05:11:33.974 [Thread-8] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has accepted a new connection
+05:11:33.974 [Thread-8] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPChannelObserver (ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@4ce67198) has been created
+05:11:33.975 [Thread-9] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:11:33.975 [Thread-8] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:11:33.975 [Thread-8] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FileTransmitter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@4ce67198
+05:11:33.976 [Thread-8] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@4ce67198 has written data to a channel
+05:11:33.976 [Thread-9] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a file from server
+05:11:33.977 [Thread-8] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been stopped
+05:11:33.981 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - New Server has been created
+05:11:33.981 [Thread-10] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been started
+05:11:33.981 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - A new client has established a connection with a server on localhost:10000
+05:11:33.981 [Thread-10] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has accepted a new connection
+05:11:33.981 [Thread-10] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPChannelObserver (ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@7f5d03f) has been created
+05:11:33.982 [Thread-10] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:11:33.982 [Thread-11] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:11:33.982 [Thread-10] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@7f5d03f
+05:11:33.983 [Thread-10] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@7f5d03f has written data to a channel
+05:11:33.983 [Thread-11] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:11:33.985 [Thread-10] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been stopped
+05:11:33.989 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - New Server has been created
+05:11:33.989 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - A new client has established a connection with a server on localhost:10000
+05:11:33.989 [Thread-12] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been started
+05:11:33.990 [Thread-12] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has accepted a new connection
+05:11:33.990 [Thread-12] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPChannelObserver (ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@41e06730) has been created
+05:11:33.990 [Thread-13] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:11:33.990 [Thread-12] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:11:33.990 [Thread-12] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@41e06730
+05:11:33.991 [Thread-12] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@41e06730 has written data to a channel
+05:11:33.991 [Thread-13] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:11:33.991 [Thread-12] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been stopped
+05:11:33.995 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - New Server has been created
+05:11:33.995 [Thread-14] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been started
+05:11:33.995 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - A new client has established a connection with a server on localhost:10000
+05:11:33.995 [Thread-14] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has accepted a new connection
+05:11:33.995 [Thread-14] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPChannelObserver (ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@13ade816) has been created
+05:11:33.996 [Thread-14] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been stopped
+05:11:33.996 [Thread-15] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:11:34.001 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - New Server has been created
+05:11:34.002 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - A new client has established a connection with a server on localhost:10000
+05:11:34.001 [Thread-16] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been started
+05:11:34.002 [Thread-16] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has accepted a new connection
+05:11:34.002 [Thread-16] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPChannelObserver (ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@2b79de86) has been created
+05:11:34.042 [Thread-16] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:11:34.042 [Thread-17] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:11:34.042 [Thread-16] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FileTransmitter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@2b79de86
+05:11:34.065 [Thread-16] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@2b79de86 has written data to a channel
+05:11:34.068 [Thread-17] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a file from server
+05:11:35.658 [Thread-16] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been stopped
+05:11:58.559 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - New Server has been created
+05:11:58.564 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been started
+05:11:58.564 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has accepted a new connection
+05:11:58.565 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - A new client has established a connection with a server on localhost:10000
+05:11:58.565 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPChannelObserver (ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be7147c) has been created
+05:11:58.569 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:11:58.570 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:11:58.571 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be7147c
+05:11:58.573 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be7147c has written data to a channel
+05:11:58.574 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:11:58.577 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:11:58.577 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:11:58.578 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be7147c
+05:11:58.578 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be7147c has written data to a channel
+05:11:58.578 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:11:58.579 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:11:58.579 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:11:58.579 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be7147c
+05:11:58.579 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be7147c has written data to a channel
+05:11:58.580 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:11:58.580 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:11:58.580 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:11:58.580 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be7147c
+05:11:58.581 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be7147c has written data to a channel
+05:11:58.581 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:11:58.581 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:11:58.582 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:11:58.582 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be7147c
+05:11:58.582 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be7147c has written data to a channel
+05:11:58.583 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:11:58.583 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:11:58.583 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:11:58.583 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be7147c
+05:11:58.583 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be7147c has written data to a channel
+05:11:58.584 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:11:58.584 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:11:58.584 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:11:58.584 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be7147c
+05:11:58.585 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be7147c has written data to a channel
+05:11:58.585 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:11:58.585 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:11:58.585 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:11:58.586 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be7147c
+05:11:58.586 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be7147c has written data to a channel
+05:11:58.586 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:11:58.586 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:11:58.587 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:11:58.587 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be7147c
+05:11:58.587 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be7147c has written data to a channel
+05:11:58.587 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:11:58.588 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:11:58.588 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:11:58.588 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be7147c
+05:11:58.589 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be7147c has written data to a channel
+05:11:58.589 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:11:58.589 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been stopped
+05:11:58.594 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - New Server has been created
+05:11:58.595 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - A new client has established a connection with a server on localhost:10000
+05:11:58.595 [Thread-6] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been started
+05:11:58.595 [Thread-6] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has accepted a new connection
+05:11:58.595 [Thread-6] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPChannelObserver (ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@66ac188e) has been created
+05:11:58.596 [Thread-7] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:11:58.596 [Thread-6] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:11:58.597 [Thread-6] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@66ac188e has read an invalid message
+05:11:58.597 [Thread-6] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been stopped
+05:11:58.601 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - New Server has been created
+05:11:58.601 [Thread-8] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been started
+05:11:58.604 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - A new client has established a connection with a server on localhost:10000
+05:11:58.604 [Thread-8] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has accepted a new connection
+05:11:58.604 [Thread-8] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPChannelObserver (ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@2ea5098e) has been created
+05:11:58.605 [Thread-9] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:11:58.605 [Thread-8] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:11:58.605 [Thread-8] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FileTransmitter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@2ea5098e
+05:11:58.606 [Thread-8] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@2ea5098e has written data to a channel
+05:11:58.606 [Thread-9] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a file from server
+05:11:58.607 [Thread-8] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been stopped
+05:11:58.610 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - New Server has been created
+05:11:58.610 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - A new client has established a connection with a server on localhost:10000
+05:11:58.610 [Thread-10] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been started
+05:11:58.611 [Thread-10] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has accepted a new connection
+05:11:58.611 [Thread-10] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPChannelObserver (ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@359644e4) has been created
+05:11:58.611 [Thread-11] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:11:58.611 [Thread-10] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:11:58.612 [Thread-10] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@359644e4
+05:11:58.612 [Thread-10] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@359644e4 has written data to a channel
+05:11:58.613 [Thread-11] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:11:58.614 [Thread-10] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been stopped
+05:11:58.618 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - New Server has been created
+05:11:58.619 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - A new client has established a connection with a server on localhost:10000
+05:11:58.619 [Thread-12] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been started
+05:11:58.620 [Thread-12] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has accepted a new connection
+05:11:58.620 [Thread-12] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPChannelObserver (ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@2af3094b) has been created
+05:11:58.620 [Thread-12] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:11:58.620 [Thread-12] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@2af3094b
+05:11:58.621 [Thread-12] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@2af3094b has written data to a channel
+05:11:58.621 [Thread-13] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:11:58.624 [Thread-13] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:11:58.624 [Thread-12] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been stopped
+05:11:58.627 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - New Server has been created
+05:11:58.628 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - A new client has established a connection with a server on localhost:10000
+05:11:58.628 [Thread-14] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been started
+05:11:58.628 [Thread-14] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has accepted a new connection
+05:11:58.628 [Thread-14] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPChannelObserver (ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@55a9788f) has been created
+05:11:58.628 [Thread-14] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been stopped
+05:11:58.629 [Thread-15] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:11:58.632 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - New Server has been created
+05:11:58.632 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - A new client has established a connection with a server on localhost:10000
+05:11:58.632 [Thread-16] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been started
+05:11:58.633 [Thread-16] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has accepted a new connection
+05:11:58.641 [Thread-16] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPChannelObserver (ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@73d8ce4d) has been created
+05:11:58.666 [Thread-16] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:11:58.666 [Thread-17] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:11:58.666 [Thread-16] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FileTransmitter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@73d8ce4d
+05:11:58.687 [Thread-16] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@73d8ce4d has written data to a channel
+05:11:58.694 [Thread-17] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a file from server
+05:12:00.263 [Thread-16] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been stopped
+05:12:35.436 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - New Server has been created
+05:12:35.442 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been started
+05:12:35.442 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has accepted a new connection
+05:12:35.444 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - A new client has established a connection with a server on localhost:10000
+05:12:35.444 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPChannelObserver (ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be9e6fa) has been created
+05:12:35.447 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:12:35.448 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:12:35.449 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be9e6fa
+05:12:35.451 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be9e6fa has written data to a channel
+05:12:35.452 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:12:35.456 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:12:35.456 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:12:35.456 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be9e6fa
+05:12:35.457 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be9e6fa has written data to a channel
+05:12:35.457 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:12:35.457 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:12:35.457 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:12:35.457 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be9e6fa
+05:12:35.458 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be9e6fa has written data to a channel
+05:12:35.458 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:12:35.458 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:12:35.458 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:12:35.458 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be9e6fa
+05:12:35.459 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be9e6fa has written data to a channel
+05:12:35.459 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:12:35.459 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:12:35.459 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:12:35.460 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be9e6fa
+05:12:35.460 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be9e6fa has written data to a channel
+05:12:35.460 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:12:35.460 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:12:35.461 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:12:35.461 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be9e6fa
+05:12:35.461 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be9e6fa has written data to a channel
+05:12:35.461 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:12:35.461 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:12:35.462 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:12:35.462 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be9e6fa
+05:12:35.462 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be9e6fa has written data to a channel
+05:12:35.462 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:12:35.463 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:12:35.463 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:12:35.463 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be9e6fa
+05:12:35.463 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be9e6fa has written data to a channel
+05:12:35.463 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:12:35.464 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:12:35.464 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:12:35.464 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be9e6fa
+05:12:35.464 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be9e6fa has written data to a channel
+05:12:35.465 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:12:35.465 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:12:35.465 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:12:35.465 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be9e6fa
+05:12:35.465 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@be9e6fa has written data to a channel
+05:12:35.466 [Thread-5] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:12:35.466 [Thread-4] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been stopped
+05:12:35.470 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - New Server has been created
+05:12:35.471 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - A new client has established a connection with a server on localhost:10000
+05:12:35.471 [Thread-6] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been started
+05:12:35.471 [Thread-6] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has accepted a new connection
+05:12:35.471 [Thread-6] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPChannelObserver (ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@2428e0cf) has been created
+05:12:35.471 [Thread-6] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:12:35.471 [Thread-7] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:12:35.472 [Thread-6] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@2428e0cf has read an invalid message
+05:12:35.472 [Thread-6] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been stopped
+05:12:35.475 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - New Server has been created
+05:12:35.475 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - A new client has established a connection with a server on localhost:10000
+05:12:35.475 [Thread-8] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been started
+05:12:35.476 [Thread-8] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has accepted a new connection
+05:12:35.476 [Thread-8] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPChannelObserver (ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@53c93789) has been created
+05:12:35.477 [Thread-8] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:12:35.477 [Thread-9] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:12:35.477 [Thread-8] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FileTransmitter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@53c93789
+05:12:35.478 [Thread-9] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a file from server
+05:12:35.478 [Thread-8] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@53c93789 has written data to a channel
+05:12:35.479 [Thread-8] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been stopped
+05:12:35.482 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - New Server has been created
+05:12:35.482 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - A new client has established a connection with a server on localhost:10000
+05:12:35.482 [Thread-10] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been started
+05:12:35.483 [Thread-10] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has accepted a new connection
+05:12:35.483 [Thread-10] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPChannelObserver (ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@449d5c5a) has been created
+05:12:35.483 [Thread-11] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:12:35.483 [Thread-10] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:12:35.484 [Thread-10] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@449d5c5a
+05:12:35.484 [Thread-10] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@449d5c5a has written data to a channel
+05:12:35.485 [Thread-11] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:12:35.486 [Thread-10] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been stopped
+05:12:35.490 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - New Server has been created
+05:12:35.490 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - A new client has established a connection with a server on localhost:10000
+05:12:35.490 [Thread-12] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been started
+05:12:35.491 [Thread-12] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has accepted a new connection
+05:12:35.491 [Thread-12] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPChannelObserver (ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@42ec44fb) has been created
+05:12:35.491 [Thread-12] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:12:35.491 [Thread-13] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:12:35.491 [Thread-12] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPMessageWriter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@42ec44fb
+05:12:35.492 [Thread-12] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@42ec44fb has written data to a channel
+05:12:35.493 [Thread-13] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a message from server
+05:12:35.493 [Thread-12] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been stopped
+05:12:35.496 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - New Server has been created
+05:12:35.497 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - A new client has established a connection with a server on localhost:10000
+05:12:35.497 [Thread-14] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been started
+05:12:35.497 [Thread-14] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has accepted a new connection
+05:12:35.497 [Thread-14] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPChannelObserver (ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@5ccf7fa0) has been created
+05:12:35.497 [Thread-14] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been stopped
+05:12:35.498 [Thread-15] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:12:35.501 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - New Server has been created
+05:12:35.502 [Test worker] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - A new client has established a connection with a server on localhost:10000
+05:12:35.502 [Thread-16] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been started
+05:12:35.502 [Thread-16] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has accepted a new connection
+05:12:35.502 [Thread-16] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FTPChannelObserver (ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@6532d10d) has been created
+05:12:35.536 [Thread-17] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has sent a message to server
+05:12:35.536 [Thread-16] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has received a new message
+05:12:35.537 [Thread-16] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - A new FileTransmitter has been registered in ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@6532d10d
+05:12:35.558 [Thread-16] INFO  ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver - ru.spbau.bachelor2015.veselov.hw04.server.FTPChannelObserver@6532d10d has written data to a channel
+05:12:35.564 [Thread-17] INFO  ru.spbau.bachelor2015.veselov.hw04.client.Client - Client has received a file from server
+05:12:37.108 [Thread-16] INFO  ru.spbau.bachelor2015.veselov.hw04.server.Server - Server has been stopped
