@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.spbau.bachelor2015.veselov.hw04.gclient.ui.MainSceneProducer;
 
 public class ClientApplication extends Application {
     private @Nullable String host;
