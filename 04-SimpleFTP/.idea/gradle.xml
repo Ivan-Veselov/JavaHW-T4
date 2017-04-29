@@ -10,7 +10,9 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/client" />
             <option value="$PROJECT_DIR$/console-client" />
+            <option value="$PROJECT_DIR$/graphic-client" />
             <option value="$PROJECT_DIR$/integration-tests" />
             <option value="$PROJECT_DIR$/messages" />
             <option value="$PROJECT_DIR$/server" />

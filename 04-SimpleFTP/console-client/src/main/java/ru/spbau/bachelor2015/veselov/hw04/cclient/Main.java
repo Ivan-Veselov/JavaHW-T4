@@ -1,5 +1,6 @@
-package ru.spbau.bachelor2015.veselov.hw04.client;
+package ru.spbau.bachelor2015.veselov.hw04.cclient;
 
+import ru.spbau.bachelor2015.veselov.hw04.client.Client;
 import ru.spbau.bachelor2015.veselov.hw04.client.exceptions.ConnectionWasClosedException;
 import ru.spbau.bachelor2015.veselov.hw04.messages.FTPListAnswerMessage;
 

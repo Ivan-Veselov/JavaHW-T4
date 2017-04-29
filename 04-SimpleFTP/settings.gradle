@@ -3,4 +3,7 @@ include 'messages'
 include 'server'
 include 'console-client'
 include 'integration-tests'
+include 'graphic-client'
+include 'client'
+include 'client'
 

@@ -4,8 +4,12 @@
     <bytecodeTargetLevel>
       <module name="04-SimpleFTP_main" target="1.8" />
       <module name="04-SimpleFTP_test" target="1.8" />
+      <module name="client_main" target="1.8" />
+      <module name="client_test" target="1.8" />
       <module name="console-client_main" target="1.8" />
       <module name="console-client_test" target="1.8" />
+      <module name="graphic-client_main" target="1.8" />
+      <module name="graphic-client_test" target="1.8" />
       <module name="integration-tests_main" target="1.8" />
       <module name="integration-tests_test" target="1.8" />
       <module name="messages_main" target="1.8" />
