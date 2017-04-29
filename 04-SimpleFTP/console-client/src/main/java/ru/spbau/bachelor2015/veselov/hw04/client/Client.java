@@ -127,13 +127,7 @@ public class Client implements AutoCloseable {
         while (shouldRun) {
             selector.select();
 
-            if (key.isWritable()) {
-                if (writer.write()) {
-                    shouldRun = false;
-                }
-            }
-
-            if (shouldRun && key.isReadable()) {
+            if (key.isReadable()) {
                 int bytesRead = channel.read(ByteBuffer.allocate(1));
 
                 close();
@@ -142,6 +136,12 @@ public class Client implements AutoCloseable {
                     throw new ConnectionWasClosedException();
                 } else {
                     throw new InvalidMessageException();
+                }
+            }
+
+            if (key.isWritable()) {
+                if (writer.write()) {
+                    shouldRun = false;
                 }
             }
 
