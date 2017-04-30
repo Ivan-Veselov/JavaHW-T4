@@ -16,7 +16,7 @@ public final class ToolBarProducer {
         Button chooseServerButton = new Button("Choose server");
         chooseServerButton.setOnAction(event -> {
             Optional<InetSocketAddress> result = dialog.showAndWait();
-            // ...
+            result.ifPresent(state::setServerAddress);
         });
 
         ToolBar toolBar = new ToolBar(chooseServerButton);

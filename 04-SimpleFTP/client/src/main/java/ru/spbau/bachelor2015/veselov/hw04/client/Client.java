@@ -4,7 +4,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import ru.spbau.bachelor2015.veselov.hw04.client.exceptions.ConnectionWasClosedException;
-import ru.spbau.bachelor2015.veselov.hw04.messages.*;
+import ru.spbau.bachelor2015.veselov.hw04.messages.FTPGetMessage;
+import ru.spbau.bachelor2015.veselov.hw04.messages.FTPListAnswerMessage;
+import ru.spbau.bachelor2015.veselov.hw04.messages.FTPListMessage;
+import ru.spbau.bachelor2015.veselov.hw04.messages.FTPMessage;
 import ru.spbau.bachelor2015.veselov.hw04.messages.util.*;
 import ru.spbau.bachelor2015.veselov.hw04.messages.util.exceptions.InvalidMessageException;
 import ru.spbau.bachelor2015.veselov.hw04.messages.util.exceptions.MessageNotReadException;
@@ -30,6 +33,40 @@ public class Client implements AutoCloseable {
     private final @NotNull Selector selector;
 
     private final @NotNull FTPMessageReader messageReader;
+
+    /**
+     * Connects to a server, makes a list request and immediately closes the connection.
+     *
+     * @param address address of server to connect to.
+     * @param path a path to a folder which content is requested.
+     * @return a list of entries which denotes a requested content.
+     * @throws IOException if any IO exception occurs during client interaction with a server.
+     * @throws ConnectionWasClosedException if in the middle of the process connection was closed.
+     */
+    public static @NotNull List<FileEntry> list(final @NotNull InetSocketAddress address, final @NotNull Path path)
+            throws IOException, ConnectionWasClosedException {
+        try (Client client = new Client(address.getHostName(), address.getPort())) {
+            return client.list(path);
+        }
+    }
+
+    /**
+     * Connects to a server, makes a get request and immediately closes the connection.
+     *
+     * @param address address of server to connect to.
+     * @param pathToSource a path to a file which content is requested.
+     * @param pathToDestination a path to a file in which downloaded data will be written.
+     * @throws IOException if any IO exception occurs during client interaction with a server.
+     * @throws ConnectionWasClosedException if in the middle of the process connection was closed.
+     */
+    public static void get(final @NotNull InetSocketAddress address,
+                           final @NotNull Path pathToSource,
+                           final @NotNull Path pathToDestination)
+            throws IOException, ConnectionWasClosedException {
+        try (Client client = new Client(address.getHostName(), address.getPort())) {
+            client.get(pathToSource, pathToDestination);
+        }
+    }
 
     /**
      * Establishes a connection.
