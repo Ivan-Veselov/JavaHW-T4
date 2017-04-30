@@ -2,7 +2,7 @@ package ru.spbau.bachelor2015.veselov.hw04.cclient;
 
 import ru.spbau.bachelor2015.veselov.hw04.client.Client;
 import ru.spbau.bachelor2015.veselov.hw04.client.exceptions.ConnectionWasClosedException;
-import ru.spbau.bachelor2015.veselov.hw04.messages.FTPListAnswerMessage;
+import ru.spbau.bachelor2015.veselov.hw04.messages.util.FileEntry;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -52,8 +52,8 @@ public class Main {
                             break;
                         }
 
-                        List<FTPListAnswerMessage.Entry> answer = client.list(scanner.next());
-                        for (FTPListAnswerMessage.Entry entry : answer) {
+                        List<FileEntry> answer = client.list(Paths.get(scanner.next()));
+                        for (FileEntry entry : answer) {
                             System.out.println(entry);
                         }
 
@@ -74,7 +74,7 @@ public class Main {
 
                         String destination = scanner.next();
 
-                        client.get(source, Paths.get(destination));
+                        client.get(Paths.get(source), Paths.get(destination));
 
                         break;
 

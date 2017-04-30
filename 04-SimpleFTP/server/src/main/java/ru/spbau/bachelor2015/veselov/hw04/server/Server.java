@@ -4,15 +4,16 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.spbau.bachelor2015.veselov.hw04.server.exceptions.InvalidPathException;
-import ru.spbau.bachelor2015.veselov.hw04.server.exceptions.NoDataWriterRegisteredException;
-import ru.spbau.bachelor2015.veselov.hw04.server.exceptions.NoSuchMessageException;
-import ru.spbau.bachelor2015.veselov.hw04.server.exceptions.RegisteringSecondDataWriterException;
 import ru.spbau.bachelor2015.veselov.hw04.messages.FTPGetMessage;
 import ru.spbau.bachelor2015.veselov.hw04.messages.FTPListAnswerMessage;
 import ru.spbau.bachelor2015.veselov.hw04.messages.FTPListMessage;
 import ru.spbau.bachelor2015.veselov.hw04.messages.FTPMessage;
+import ru.spbau.bachelor2015.veselov.hw04.messages.util.FileEntry;
 import ru.spbau.bachelor2015.veselov.hw04.messages.util.exceptions.InvalidMessageException;
+import ru.spbau.bachelor2015.veselov.hw04.server.exceptions.InvalidPathException;
+import ru.spbau.bachelor2015.veselov.hw04.server.exceptions.NoDataWriterRegisteredException;
+import ru.spbau.bachelor2015.veselov.hw04.server.exceptions.NoSuchMessageException;
+import ru.spbau.bachelor2015.veselov.hw04.server.exceptions.RegisteringSecondDataWriterException;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +23,6 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -168,16 +168,16 @@ public class Server {
 
     private void handleMessage(final @NotNull SelectionKey key, final @NotNull FTPListMessage message)
             throws IOException {
-        Path path = realPath(Paths.get(message.getPath()));
+        Path path = realPath(message.getPath());
 
         File[] files = path.toFile().listFiles();
 
-        List<FTPListAnswerMessage.Entry> entries = new ArrayList<>();
+        List<FileEntry> entries = new ArrayList<>();
 
         if (files != null) {
             for (File file : files) {
-                entries.add(new FTPListAnswerMessage.Entry(trackedFolder.relativize(file.toPath()).toString(),
-                                                           file.isDirectory()));
+                entries.add(new FileEntry(trackedFolder.relativize(file.toPath()),
+                                          file.isDirectory()));
             }
         }
 
@@ -190,7 +190,7 @@ public class Server {
 
     private void handleMessage(final @NotNull SelectionKey key, final @NotNull FTPGetMessage message)
             throws IOException {
-        Path path = realPath(Paths.get(message.getPath()));
+        Path path = realPath(message.getPath());
 
         try {
             ((FTPChannelObserver) key.attachment()).registerFileTransmitter(path);

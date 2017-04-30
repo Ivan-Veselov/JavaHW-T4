@@ -4,14 +4,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import ru.spbau.bachelor2015.veselov.hw04.client.exceptions.ConnectionWasClosedException;
-import ru.spbau.bachelor2015.veselov.hw04.messages.FTPGetMessage;
-import ru.spbau.bachelor2015.veselov.hw04.messages.FTPListAnswerMessage;
-import ru.spbau.bachelor2015.veselov.hw04.messages.FTPListMessage;
-import ru.spbau.bachelor2015.veselov.hw04.messages.FTPMessage;
-import ru.spbau.bachelor2015.veselov.hw04.messages.util.DataReader;
-import ru.spbau.bachelor2015.veselov.hw04.messages.util.FTPMessageReader;
-import ru.spbau.bachelor2015.veselov.hw04.messages.util.FTPMessageWriter;
-import ru.spbau.bachelor2015.veselov.hw04.messages.util.FileReceiver;
+import ru.spbau.bachelor2015.veselov.hw04.messages.*;
+import ru.spbau.bachelor2015.veselov.hw04.messages.util.*;
 import ru.spbau.bachelor2015.veselov.hw04.messages.util.exceptions.InvalidMessageException;
 import ru.spbau.bachelor2015.veselov.hw04.messages.util.exceptions.MessageNotReadException;
 
@@ -77,7 +71,7 @@ public class Client implements AutoCloseable {
      * @throws IOException if any IO exception occurs during client interaction with a server.
      * @throws ConnectionWasClosedException if in the middle of the process connection was closed.
      */
-    public @NotNull List<FTPListAnswerMessage.Entry> list(final @NotNull String path)
+    public @NotNull List<FileEntry> list(final @NotNull Path path)
             throws IOException, ConnectionWasClosedException {
         writeMessage(new FTPListMessage(path));
 
@@ -101,12 +95,12 @@ public class Client implements AutoCloseable {
     /**
      * Performs a get request. This request asks a content of a specified file.
      *
-     * @param pathToSource a string representation of a path to a file which content is requested.
+     * @param pathToSource a path to a file which content is requested.
      * @param pathToDestination a path to a file in which downloaded data will be written.
      * @throws IOException if any IO exception occurs during client interaction with a server.
      * @throws ConnectionWasClosedException if in the middle of the process connection was closed.
      */
-    public void get(final @NotNull String pathToSource, final @NotNull Path pathToDestination)
+    public void get(final @NotNull Path pathToSource, final @NotNull Path pathToDestination)
             throws IOException, ConnectionWasClosedException {
         writeMessage(new FTPGetMessage(pathToSource));
 

@@ -11,13 +11,12 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import ru.spbau.bachelor2015.veselov.hw04.client.Client;
 import ru.spbau.bachelor2015.veselov.hw04.client.exceptions.ConnectionWasClosedException;
-import ru.spbau.bachelor2015.veselov.hw04.messages.FTPListAnswerMessage;
+import ru.spbau.bachelor2015.veselov.hw04.messages.util.FileEntry;
 import ru.spbau.bachelor2015.veselov.hw04.server.Server;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -104,10 +103,9 @@ public class ServerTest {
 
     @Test(timeout = 1000)
     public void testListRequestOfRootFolder() throws Exception {
-        List<FTPListAnswerMessage.Entry> entries = this.client.list(
-                pathToTrackedFolder.relativize(pathToTrackedFolder).toString());
+        List<FileEntry> entries = this.client.list(pathToTrackedFolder.relativize(pathToTrackedFolder));
 
-        Matcher<FTPListAnswerMessage.Entry>[] matchers = new Matcher[foldersInRootFolder];
+        Matcher<FileEntry>[] matchers = new Matcher[foldersInRootFolder];
         for (int i = 0; i < foldersInRootFolder; i++) {
             matchers[i] = fileEntry(relativePathToFolderInRoot[i], true);
         }
@@ -117,7 +115,7 @@ public class ServerTest {
 
     @Test(expected = ConnectionWasClosedException.class, timeout = 1000)
     public void testListRequestOfForbiddenFolder() throws Exception {
-        client.list(pathToTrackedFolder.relativize(temporaryFolder.getRoot().toPath()).toString());
+        client.list(pathToTrackedFolder.relativize(temporaryFolder.getRoot().toPath()));
     }
 
     @Test(timeout = 1000)
@@ -147,13 +145,13 @@ public class ServerTest {
     public void serverDisconnects() throws Exception {
         server.stop();
 
-        client.list(pathToTrackedFolder.relativize(pathToTrackedFolder).toString());
+        client.list(pathToTrackedFolder.relativize(pathToTrackedFolder));
     }
 
     private void testGetOnFile(final @NotNull Path pathToSource) throws Exception {
         final Path pathToDestination = temporaryFolder.newFile().toPath();
 
-        client.get(pathToSource.toString(), pathToDestination);
+        client.get(pathToSource, pathToDestination);
 
         assertThat(Files.readAllBytes(pathToTrackedFolder.resolve(pathToSource)),
                 is(equalTo(Files.readAllBytes(pathToDestination))));
@@ -172,15 +170,15 @@ public class ServerTest {
         }
 
         public void test(final @NotNull Client client) throws Exception {
-            List<FTPListAnswerMessage.Entry> answer =
-                client.list(relativePathToFolderInRoot[subDirIndex].toString());
+            List<FileEntry> answer =
+                client.list(relativePathToFolderInRoot[subDirIndex]);
 
             assertThat(answer, is(contains(
                 fileEntry(relativePathToFilesInRootSubFolders[subDirIndex], false))));
         }
     }
 
-    private static class FileEntryMatcher extends BaseMatcher<FTPListAnswerMessage.Entry> {
+    private static class FileEntryMatcher extends BaseMatcher<FileEntry> {
         private final @NotNull Path path;
 
         private final boolean isDirectory;
@@ -192,13 +190,13 @@ public class ServerTest {
 
         @Override
         public boolean matches(final @NotNull Object item) {
-            if (!(item instanceof FTPListAnswerMessage.Entry)) {
+            if (!(item instanceof FileEntry)) {
                 return false;
             }
 
-            FTPListAnswerMessage.Entry entry = (FTPListAnswerMessage.Entry) item;
+            FileEntry entry = (FileEntry) item;
 
-            return Paths.get(entry.getPath()).equals(path) && entry.isDirectory() == isDirectory;
+            return entry.getPath().equals(path) && entry.isDirectory() == isDirectory;
         }
 
         @Override
