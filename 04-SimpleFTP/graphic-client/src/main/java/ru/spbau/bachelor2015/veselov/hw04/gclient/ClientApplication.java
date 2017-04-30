@@ -12,7 +12,7 @@ public class ClientApplication extends Application {
         primaryStage.setWidth(800);
         primaryStage.setHeight(600);
 
-        primaryStage.setScene(MainSceneProducer.produce(new ApplicationState()));
+        primaryStage.setScene(MainSceneProducer.produce(new ApplicationModel(primaryStage)));
         primaryStage.show();
     }
 

@@ -3,6 +3,7 @@ package ru.spbau.bachelor2015.veselov.hw04.gclient;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
+import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.spbau.bachelor2015.veselov.hw04.client.Client;
@@ -19,7 +20,9 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
-public final class ApplicationState {
+public final class ApplicationModel {
+    private @NotNull Stage mainStage;
+
     private @Nullable InetSocketAddress serverAddress;
 
     private @Nullable Path currentFolder;
@@ -32,7 +35,12 @@ public final class ApplicationState {
         new FileEntry(Paths.get("root/file3"), false)
     );
 
-    public ApplicationState() {
+    public ApplicationModel(final @NotNull Stage mainStage) {
+        this.mainStage = mainStage;
+    }
+
+    public @NotNull Stage getMainStage() {
+        return mainStage;
     }
 
     public @Nullable InetSocketAddress getServerAddress() {

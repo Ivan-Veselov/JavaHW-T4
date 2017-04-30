@@ -39,6 +39,13 @@ public class FileEntry implements Serializable {
     }
 
     /**
+     * Returns a string representation of file name.
+     */
+    public @NotNull String getFileName() {
+        return getPath().getFileName().toString();
+    }
+
+    /**
      * Returns a string representation of this file entry.
      */
     public @NotNull String toString() {
