@@ -1,15 +1,18 @@
 package ru.spbau.bachelor2015.veselov.hw04.gclient.ui;
 
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import org.jetbrains.annotations.NotNull;
+import ru.spbau.bachelor2015.veselov.hw04.gclient.ApplicationState;
 
 import java.net.InetSocketAddress;
 
+// TODO: change button text to OK
 public final class ServerChoiceDialogProducer {
-    public static @NotNull Dialog<InetSocketAddress> produce() {
+    public static @NotNull Dialog<InetSocketAddress> produce(final @NotNull ApplicationState state) {
         Dialog<InetSocketAddress> dialog = new Dialog<>();
         dialog.setTitle("Server Choice Dialog");
         dialog.setHeaderText("Enter address of a server");
@@ -32,6 +35,8 @@ public final class ServerChoiceDialogProducer {
         grid.add(textFields.getPortTextField(), 1, 1);
 
         dialog.getDialogPane().setContent(grid);
+
+        Platform.runLater(() -> textFields.getHostTextField().requestFocus());
 
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == chooseButtonType) {

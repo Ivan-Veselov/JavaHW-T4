@@ -3,18 +3,16 @@ package ru.spbau.bachelor2015.veselov.hw04.gclient;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import ru.spbau.bachelor2015.veselov.hw04.gclient.ui.MainSceneProducer;
 
 public class ClientApplication extends Application {
-    private @Nullable String host;
-
-    private int port;
-
     @Override
     public void start(final @NotNull Stage primaryStage) throws Exception {
         primaryStage.setTitle("FTP client");
-        primaryStage.setScene(MainSceneProducer.produce());
+        primaryStage.setWidth(800);
+        primaryStage.setHeight(600);
+
+        primaryStage.setScene(MainSceneProducer.produce(new ApplicationState()));
         primaryStage.show();
     }
 
