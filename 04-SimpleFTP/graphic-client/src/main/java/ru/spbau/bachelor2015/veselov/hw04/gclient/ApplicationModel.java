@@ -19,6 +19,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public final class ApplicationModel {
     private @NotNull Stage mainStage;
@@ -27,12 +28,12 @@ public final class ApplicationModel {
 
     private @Nullable Path currentFolder;
 
-    private final @NotNull ObservableList<FileEntry> currentFolderObservable = FXCollections.observableArrayList(
-        new FileEntry(Paths.get("root/folder1"), true),
-        new FileEntry(Paths.get("root/folder2"), true),
-        new FileEntry(Paths.get("root/file1"), false),
-        new FileEntry(Paths.get("root/file2"), false),
-        new FileEntry(Paths.get("root/file3"), false)
+    private final @NotNull ObservableList<FileEntryWrapper> currentFolderObservable = FXCollections.observableArrayList(
+        new FileEntryWrapper(new FileEntry(Paths.get("root/folder1"), true)),
+        new FileEntryWrapper(new FileEntry(Paths.get("root/folder2"), true)),
+        new FileEntryWrapper(new FileEntry(Paths.get("root/file1"), false)),
+        new FileEntryWrapper(new FileEntry(Paths.get("root/file2"), false)),
+        new FileEntryWrapper(new FileEntry(Paths.get("root/file3"), false))
     );
 
     public ApplicationModel(final @NotNull Stage mainStage) {
@@ -69,11 +70,21 @@ public final class ApplicationModel {
             currentFolder = path;
 
             currentFolderObservable.clear();
+
+            if (!path.equals(Paths.get(""))) {
+                Path parent = path.getParent();
+                if (parent == null) {
+                    parent = Paths.get("");
+                }
+
+                currentFolderObservable.add(new FileEntryWrapper(new FileEntry(parent, true), ".."));
+            }
+
             currentFolderObservable.addAll(entries);
         });
     }
 
-    public @NotNull ObservableList<FileEntry> getCurrentFolderObservable() {
+    public @NotNull ObservableList<FileEntryWrapper> getCurrentFolderObservable() {
         return currentFolderObservable;
     }
 
@@ -93,10 +104,12 @@ public final class ApplicationModel {
         }
     }
 
-    private @NotNull Optional<List<FileEntry>> loadFolderContent(final @NotNull InetSocketAddress serverAddress,
+    private @NotNull Optional<List<FileEntryWrapper>> loadFolderContent(final @NotNull InetSocketAddress serverAddress,
                                                                  final @NotNull Path folder) {
         try {
-            return Optional.of(Client.list(serverAddress, folder));
+            return Optional.of(Client.list(serverAddress, folder).stream()
+                                                                 .map(FileEntryWrapper::new)
+                                                                 .collect(Collectors.toList()));
         } catch (IOException |
                 UnresolvedAddressException |
                 UnsupportedAddressTypeException |
