@@ -1,0 +1,9 @@
+rootProject.name = '04-SimpleFTP'
+include 'messages'
+include 'server'
+include 'console-client'
+include 'integration-tests'
+include 'graphic-client'
+include 'client'
+include 'client'
+

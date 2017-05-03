@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/04-SimpleFTP.iml" filepath="$PROJECT_DIR$/.idea/modules/04-SimpleFTP.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/04-SimpleFTP_main.iml" filepath="$PROJECT_DIR$/.idea/modules/04-SimpleFTP_main.iml" group="04-SimpleFTP" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/04-SimpleFTP_test.iml" filepath="$PROJECT_DIR$/.idea/modules/04-SimpleFTP_test.iml" group="04-SimpleFTP" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/client/client.iml" filepath="$PROJECT_DIR$/.idea/modules/client/client.iml" group="client" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/client/client_main.iml" filepath="$PROJECT_DIR$/.idea/modules/client/client_main.iml" group="client" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/client/client_test.iml" filepath="$PROJECT_DIR$/.idea/modules/client/client_test.iml" group="client" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/console-client/console-client.iml" filepath="$PROJECT_DIR$/.idea/modules/console-client/console-client.iml" group="console-client" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/console-client/console-client_main.iml" filepath="$PROJECT_DIR$/.idea/modules/console-client/console-client_main.iml" group="console-client" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/console-client/console-client_test.iml" filepath="$PROJECT_DIR$/.idea/modules/console-client/console-client_test.iml" group="console-client" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/graphic-client/graphic-client.iml" filepath="$PROJECT_DIR$/.idea/modules/graphic-client/graphic-client.iml" group="graphic-client" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/graphic-client/graphic-client_main.iml" filepath="$PROJECT_DIR$/.idea/modules/graphic-client/graphic-client_main.iml" group="graphic-client" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/graphic-client/graphic-client_test.iml" filepath="$PROJECT_DIR$/.idea/modules/graphic-client/graphic-client_test.iml" group="graphic-client" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/integration-tests/integration-tests.iml" filepath="$PROJECT_DIR$/.idea/modules/integration-tests/integration-tests.iml" group="integration-tests" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/integration-tests/integration-tests_main.iml" filepath="$PROJECT_DIR$/.idea/modules/integration-tests/integration-tests_main.iml" group="integration-tests" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/integration-tests/integration-tests_test.iml" filepath="$PROJECT_DIR$/.idea/modules/integration-tests/integration-tests_test.iml" group="integration-tests" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/messages/messages.iml" filepath="$PROJECT_DIR$/.idea/modules/messages/messages.iml" group="messages" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/messages/messages_main.iml" filepath="$PROJECT_DIR$/.idea/modules/messages/messages_main.iml" group="messages" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/messages/messages_test.iml" filepath="$PROJECT_DIR$/.idea/modules/messages/messages_test.iml" group="messages" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/server/server.iml" filepath="$PROJECT_DIR$/.idea/modules/server/server.iml" group="server" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/server/server_main.iml" filepath="$PROJECT_DIR$/.idea/modules/server/server_main.iml" group="server" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/server/server_test.iml" filepath="$PROJECT_DIR$/.idea/modules/server/server_test.iml" group="server" />
+    </modules>
+  </component>
+</project>
