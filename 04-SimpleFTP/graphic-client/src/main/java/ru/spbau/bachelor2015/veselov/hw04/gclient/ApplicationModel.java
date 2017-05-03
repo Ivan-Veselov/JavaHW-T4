@@ -77,6 +77,22 @@ public final class ApplicationModel {
         return currentFolderObservable;
     }
 
+    public void downloadFile(final @NotNull Path pathToSource,
+                             final @NotNull Path pathToDestination) throws ServerAddressIsNotSetException{
+        if (serverAddress == null) {
+            throw new ServerAddressIsNotSetException();
+        }
+
+        try {
+            Client.get(serverAddress, pathToSource, pathToDestination);
+        } catch (IOException |
+                 UnresolvedAddressException |
+                 UnsupportedAddressTypeException |
+                 ConnectionWasClosedException e) {
+            showFailureAlert();
+        }
+    }
+
     private @NotNull Optional<List<FileEntry>> loadFolderContent(final @NotNull InetSocketAddress serverAddress,
                                                                  final @NotNull Path folder) {
         try {
@@ -85,13 +101,17 @@ public final class ApplicationModel {
                 UnresolvedAddressException |
                 UnsupportedAddressTypeException |
                 ConnectionWasClosedException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("A connection failure");
-            alert.setContentText("Failed to download data from given server address.");
-            alert.showAndWait();
+            showFailureAlert();
 
             return Optional.empty();
         }
+    }
+
+    private void showFailureAlert() {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText("A connection failure");
+        alert.setContentText("Failed to download data from given server address.");
+        alert.showAndWait();
     }
 }

@@ -54,7 +54,11 @@ public final class FileTableProducer {
                         return;
                     }
 
-                    // download file
+                    try {
+                        model.downloadFile(row.getItem().getPath(), file.toPath());
+                    } catch (ServerAddressIsNotSetException e) {
+                        throw new RuntimeException(e);
+                    }
                 } else {
                     try {
                         model.setCurrentFolder(row.getItem().getPath());
