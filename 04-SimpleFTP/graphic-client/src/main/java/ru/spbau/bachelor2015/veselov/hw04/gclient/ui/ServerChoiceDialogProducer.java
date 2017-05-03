@@ -9,14 +9,19 @@ import org.jetbrains.annotations.NotNull;
 
 import java.net.InetSocketAddress;
 
-// TODO: change button text to OK
+/**
+ * Special class which has only one method to produce choice dialog widget.
+ */
 public final class ServerChoiceDialogProducer {
+    /**
+     * Returns initialized widget.
+     */
     public static @NotNull Dialog<InetSocketAddress> produce() {
         Dialog<InetSocketAddress> dialog = new Dialog<>();
         dialog.setTitle("Server Choice Dialog");
         dialog.setHeaderText("Enter address of a server");
 
-        ButtonType chooseButtonType = new ButtonType("Choose", ButtonBar.ButtonData.OK_DONE);
+        ButtonType chooseButtonType = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(chooseButtonType, ButtonType.CANCEL);
 
         GridPane grid = new GridPane();

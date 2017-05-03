@@ -21,6 +21,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * An application model class which represent a bare logic of a programme with minimum interface.
+ */
 public final class ApplicationModel {
     private @NotNull Stage mainStage;
 
@@ -36,22 +39,27 @@ public final class ApplicationModel {
         new FileEntryWrapper(new FileEntry(Paths.get("root/file3"), false))
     );
 
+    /**
+     * Creates an application model.
+     *
+     * @param mainStage a main stage of a programme.
+     */
     public ApplicationModel(final @NotNull Stage mainStage) {
         this.mainStage = mainStage;
     }
 
+    /**
+     * Returns main stage.
+     */
     public @NotNull Stage getMainStage() {
         return mainStage;
     }
 
-    public @Nullable InetSocketAddress getServerAddress() {
-        return serverAddress;
-    }
-
-    public @Nullable Path getCurrentFolder() {
-        return currentFolder;
-    }
-
+    /**
+     * Sets new server address.
+     *
+     * @param serverAddress a new server address.
+     */
     public void setServerAddress(final @NotNull InetSocketAddress serverAddress) {
         loadFolderContent(serverAddress, Paths.get("")).ifPresent(entries -> {
             this.serverAddress = serverAddress;
@@ -61,6 +69,12 @@ public final class ApplicationModel {
         });
     }
 
+    /**
+     * Sets new current folder which content will be displayed on the screen.
+     *
+     * @param path a path to new current folder.
+     * @throws ServerAddressIsNotSetException if server address is not set.
+     */
     public void setCurrentFolder(final @NotNull Path path) throws ServerAddressIsNotSetException {
         if (serverAddress == null) {
             throw new ServerAddressIsNotSetException();
@@ -84,10 +98,20 @@ public final class ApplicationModel {
         });
     }
 
+    /**
+     * Returns a special observable list which contains entries for current folder.
+     */
     public @NotNull ObservableList<FileEntryWrapper> getCurrentFolderObservable() {
         return currentFolderObservable;
     }
 
+    /**
+     * Downloads a file to a given destination.
+     *
+     * @param pathToSource a path to a source file on server.
+     * @param pathToDestination a local path to a destination where data will be written.
+     * @throws ServerAddressIsNotSetException if server address is not set.
+     */
     public void downloadFile(final @NotNull Path pathToSource,
                              final @NotNull Path pathToDestination) throws ServerAddressIsNotSetException{
         if (serverAddress == null) {

@@ -13,7 +13,15 @@ import ru.spbau.bachelor2015.veselov.hw04.messages.util.FileEntry;
 
 import java.io.File;
 
+/**
+ * Special class which has only one method to produce table widget for current folder entries.
+ */
 public final class FileTableProducer {
+    /**
+     * Returns initialized widget.
+     *
+     * @param model an application model.
+     */
     public static @NotNull TableView produce(final @NotNull ApplicationModel model) {
         TableView<FileEntryWrapper> table = new TableView<>();
 
