@@ -15,6 +15,6 @@ public class FailureReport implements TestReport {
 
     @Override
     public @NotNull String report() {
-        return "Test failed with " + cause;
+        return "Test failed with unexpected exception " + cause;
     }
 }
