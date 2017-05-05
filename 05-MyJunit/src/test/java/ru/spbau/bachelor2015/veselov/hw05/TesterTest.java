@@ -6,8 +6,13 @@ import org.hamcrest.Matcher;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import ru.spbau.bachelor2015.veselov.hw05.examples.*;
+import ru.spbau.bachelor2015.veselov.hw05.examples.invalid.AfterWithArgumentClass;
+import ru.spbau.bachelor2015.veselov.hw05.examples.invalid.BeforeWithArgumentClass;
+import ru.spbau.bachelor2015.veselov.hw05.examples.invalid.PrivateConstructorClass;
+import ru.spbau.bachelor2015.veselov.hw05.examples.invalid.TestWithArgumentClass;
 import ru.spbau.bachelor2015.veselov.hw05.exceptions.Exception1;
 import ru.spbau.bachelor2015.veselov.hw05.exceptions.Exception2;
+import ru.spbau.bachelor2015.veselov.hw05.exceptions.InvalidTestClassException;
 import ru.spbau.bachelor2015.veselov.hw05.reports.FailureReport;
 import ru.spbau.bachelor2015.veselov.hw05.reports.PassReport;
 import ru.spbau.bachelor2015.veselov.hw05.reports.TestReport;
@@ -17,8 +22,17 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 
-// TODO add tests with invalid testing classes
 public class TesterTest {
+    @Test(expected = InvalidTestClassException.class)
+    public void testPrivateConstructorClass() throws Exception {
+        testClass(PrivateConstructorClass.class);
+    }
+
+    @Test(expected = InvalidTestClassException.class)
+    public void testTestWithArgumentsClass() throws Exception {
+        testClass(TestWithArgumentClass.class);
+    }
+
     @Test
     public void testOnePassingTestClass() throws Exception {
         testClass(OnePassingTestClass.class, passReport());
@@ -43,9 +57,19 @@ public class TesterTest {
         testClass(FailingBeforeClass.class, failureReport(Exception.class));
     }
 
+    @Test(expected = InvalidTestClassException.class)
+    public void testBeforeWithArgumentClass() throws Exception {
+        testClass(BeforeWithArgumentClass.class);
+    }
+
     @Test
     public void testFailingAfterClass() throws Exception {
         testClass(FailingAfterClass.class, failureReport(Exception.class));
+    }
+
+    @Test(expected = InvalidTestClassException.class)
+    public void testAfterWithArgumentClass() throws Exception {
+        testClass(AfterWithArgumentClass.class);
     }
 
     @Test
@@ -56,7 +80,7 @@ public class TesterTest {
                                                         failureReport(Exception2.class));
     }
 
-    private void testClass(final @NotNull Class<?> clazz, final @NotNull Matcher<? super TestReport>... matchers)
+    private void testClass(final @NotNull Class<?> clazz, final @NotNull Matcher<TestReport>... matchers)
             throws Exception {
         List<TestReport> report = new Tester(clazz).test();
         assertThat(report, containsInAnyOrder(matchers));

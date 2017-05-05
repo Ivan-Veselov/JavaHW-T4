@@ -55,7 +55,7 @@ public class Tester {
                 runMethods(instance, beforeMethods);
                 method.invoke(instance);
                 runMethods(instance, afterMethods);
-            } catch (IllegalAccessException e) {
+            } catch (IllegalArgumentException | IllegalAccessException e) {
                 throw new InvalidTestClassException(e);
             } catch (InvocationTargetException e) {
                 reports.add(new FailureReport(e.getTargetException()));
