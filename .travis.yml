@@ -5,6 +5,7 @@ jdk:
 
 env:
   - PROJECT_DIR=01-Lazy
+  - PROJECT_DIR=05-MyJunit
 
 before_install: cd $PROJECT_DIR
 

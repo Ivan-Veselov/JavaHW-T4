@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module external.linked.project.id=":RunnableMain" external.linked.project.path="$MODULE_DIR$/../../../RunnableMain" external.root.project.path="$MODULE_DIR$/../../.." external.system.id="GRADLE" external.system.module.group="ru.spbau.bachelor2015.veselov.hw05" external.system.module.version="1.0-SNAPSHOT" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/../../../RunnableMain">
+      <excludeFolder url="file://$MODULE_DIR$/../../../RunnableMain/.gradle" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../RunnableMain/build" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="05-MyJUnit_main" />
+    <orderEntry type="module" module-name="05-MyJUnit_test" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../../../build/classes/test" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+  </component>
+</module>
