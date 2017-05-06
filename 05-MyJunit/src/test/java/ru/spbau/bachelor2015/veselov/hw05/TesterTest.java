@@ -22,27 +22,27 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 
 public class TesterTest {
     @Test(expected = InvalidTestClassException.class)
-    public void testPrivateConstructorClass() throws Exception {
-        testClass(PrivateConstructorClass.class, Collections.emptySet());
+    public void testPrivateConstructor() throws Exception {
+        testClass(PrivateConstructor.class, Collections.emptySet());
     }
 
     @Test(expected = InvalidTestClassException.class)
-    public void testTestWithArgumentsClass() throws Exception {
-        testClass(TestWithArgumentClass.class, Collections.emptySet());
+    public void testTestWithArguments() throws Exception {
+        testClass(TestWithArgument.class, Collections.emptySet());
     }
 
     @Test
-    public void testOnePassingTestClass() throws Exception {
-        testClass(OnePassingTestClass.class, Collections.singleton(passReport()));
+    public void testOnePassingTest() throws Exception {
+        testClass(OnePassingTest.class, Collections.singleton(passReport()));
     }
 
     @Test
-    public void testOneFailingTestClass() throws Exception {
-        testClass(OneFailingTestClass.class, Collections.singleton(failureReport(Exception.class)));
+    public void testOneFailingTest() throws Exception {
+        testClass(OneFailingTest.class, Collections.singleton(failureReport(Exception.class)));
     }
 
     @Test
-    public void testClassWithSimpleTests() throws Exception {
+    public void testClassWithSimple() throws Exception {
         testClass(ClassWithSimpleTests.class, Sets.newHashSet(passReport(),
                                                               passReport(),
                                                               failureReport(Exception.class),
@@ -50,50 +50,50 @@ public class TesterTest {
     }
 
     @Test
-    public void testFailingBeforeClass() throws Exception {
-        testClass(FailingBeforeClass.class, Collections.singleton(failureReport(Exception.class)));
+    public void testFailingBefore() throws Exception {
+        testClass(FailingBefore.class, Collections.singleton(failureReport(Exception.class)));
     }
 
     @Test(expected = InvalidTestClassException.class)
-    public void testBeforeWithArgumentClass() throws Exception {
-        testClass(BeforeWithArgumentClass.class, Collections.emptySet());
+    public void testBeforeWithArgument() throws Exception {
+        testClass(BeforeWithArgument.class, Collections.emptySet());
     }
 
     @Test
-    public void testFailingAfterClass() throws Exception {
-        testClass(FailingAfterClass.class, Collections.singleton(failureReport(Exception.class)));
+    public void testFailingAfter() throws Exception {
+        testClass(FailingAfter.class, Collections.singleton(failureReport(Exception.class)));
     }
 
     @Test(expected = InvalidTestClassException.class)
-    public void testAfterWithArgumentClass() throws Exception {
-        testClass(AfterWithArgumentClass.class, Collections.emptySet());
+    public void testAfterWithArgument() throws Exception {
+        testClass(AfterWithArgument.class, Collections.emptySet());
     }
 
     @Test
-    public void testBeforeAfterCombinationClass() throws Exception {
-        testClass(BeforeAfterCombinationClass.class, Sets.newHashSet(passReport(),
+    public void testBeforeAfterCombination() throws Exception {
+        testClass(BeforeAfterCombination.class, Sets.newHashSet(passReport(),
                                                                      failureReport(Exception1.class),
                                                                      failureReport(Exception2.class)));
     }
 
     @Test(expected = BeforeClassStageFailedException.class)
-    public void testFailingBeforeClassClass() throws Exception {
-        testClass(FailingBeforeClassClass.class, Collections.emptySet());
+    public void testFailingBeforeClass() throws Exception {
+        testClass(FailingBeforeClass.class, Collections.emptySet());
     }
 
     @Test(expected = NonStaticBeforeClassMethodException.class)
-    public void testNonStaticBeforeClassClass() throws Exception {
-        testClass(NonStaticBeforeClassClass.class, Collections.emptySet());
+    public void testNonStaticBeforeClass() throws Exception {
+        testClass(NonStaticBeforeClass.class, Collections.emptySet());
     }
 
     @Test(expected = AfterClassStageFailedException.class)
-    public void testFailingAfterClassClass() throws Exception {
-        testClass(FailingAfterClassClass.class, Collections.emptySet());
+    public void testFailingAfterClass() throws Exception {
+        testClass(FailingAfterClass.class, Collections.emptySet());
     }
 
     @Test(expected = NonStaticAfterClassMethodException.class)
-    public void testNonStaticAfterClassClass() throws Exception {
-        testClass(NonStaticAfterClassClass.class, Collections.emptySet());
+    public void testNonStaticAfterClass() throws Exception {
+        testClass(NonStaticAfterClass.class, Collections.emptySet());
     }
 
     @Test

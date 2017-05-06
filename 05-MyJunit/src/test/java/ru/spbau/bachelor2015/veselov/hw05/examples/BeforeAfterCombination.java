@@ -6,7 +6,7 @@ import ru.spbau.bachelor2015.veselov.hw05.annotations.Test;
 import ru.spbau.bachelor2015.veselov.hw05.exceptions.Exception1;
 import ru.spbau.bachelor2015.veselov.hw05.exceptions.Exception2;
 
-public class BeforeAfterCombinationClass {
+public class BeforeAfterCombination {
     private int variable = 0;
 
     @Before
