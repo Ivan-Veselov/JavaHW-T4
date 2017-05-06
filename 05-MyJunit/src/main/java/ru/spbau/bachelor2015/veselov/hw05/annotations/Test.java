@@ -13,4 +13,6 @@ public @interface Test {
     Class expected() default None.class;
 
     String ignore() default noIgnoranceDescription;
+
+    class None {}
 }
