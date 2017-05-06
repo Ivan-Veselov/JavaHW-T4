@@ -21,7 +21,6 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 
-// TODO: refactor matchers
 public class TesterTest {
     @Test(expected = InvalidTestClassException.class)
     public void testPrivateConstructor() throws Exception {
@@ -138,11 +137,7 @@ public class TesterTest {
     private final class PassReportMatcher extends TestReportMatcher {
         @Override
         public boolean matches(final @NotNull Object item) {
-            if (!(item instanceof PassReport)) {
-                return false;
-            }
-
-            return true;
+            return item instanceof PassReport;
         }
 
         @Override
