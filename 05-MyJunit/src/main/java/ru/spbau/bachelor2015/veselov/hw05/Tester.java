@@ -11,6 +11,9 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Object of this class represents a tester which can test one given class.
+ */
 public class Tester {
     private final Class<?> testClass;
 
@@ -24,6 +27,11 @@ public class Tester {
 
     private final List<Method> afterClassMethods;
 
+    /**
+     * Creates a tester for a given class.
+     *
+     * @param testClass a class which might be tested by returned tester.
+     */
     public Tester(final @NotNull Class<?> testClass) {
         this.testClass = testClass;
 
@@ -56,6 +64,14 @@ public class Tester {
         }
     }
 
+    /**
+     * Tests underlying class.
+     *
+     * @return a list of reports for each test-case in the underlying class.
+     * @throws InvalidTestClassException if tested class has some problems with it's structure.
+     * @throws BeforeClassStageFailedException if some of methods annotated with BeforeClass throws an exception.
+     * @throws AfterClassStageFailedException if some of methods annotated with AfterClass throws an exception.
+     */
     public @NotNull List<TestReport> test()
             throws InvalidTestClassException,
                    BeforeClassStageFailedException,
