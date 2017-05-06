@@ -9,10 +9,7 @@ import org.junit.Test;
 import ru.spbau.bachelor2015.veselov.hw05.examples.*;
 import ru.spbau.bachelor2015.veselov.hw05.examples.invalid.*;
 import ru.spbau.bachelor2015.veselov.hw05.exceptions.*;
-import ru.spbau.bachelor2015.veselov.hw05.reports.FailureReport;
-import ru.spbau.bachelor2015.veselov.hw05.reports.IgnoreReport;
-import ru.spbau.bachelor2015.veselov.hw05.reports.PassReport;
-import ru.spbau.bachelor2015.veselov.hw05.reports.TestReport;
+import ru.spbau.bachelor2015.veselov.hw05.reports.*;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -39,20 +36,20 @@ public class TesterTest {
 
     @Test
     public void testOneFailingTest() throws Exception {
-        testClass(OneFailingTest.class, Collections.singleton(failureReport(Exception.class)));
+        testClass(OneFailingTest.class, Collections.singleton(unexpectedExceptionFailureReport(Exception.class)));
     }
 
     @Test
     public void testClassWithSimple() throws Exception {
         testClass(ClassWithSimpleTests.class, Sets.newHashSet(passReport(),
                                                               passReport(),
-                                                              failureReport(Exception.class),
-                                                              failureReport(Exception.class)));
+                                                              unexpectedExceptionFailureReport(Exception.class),
+                                                              unexpectedExceptionFailureReport(Exception.class)));
     }
 
     @Test
     public void testFailingBefore() throws Exception {
-        testClass(FailingBefore.class, Collections.singleton(failureReport(Exception.class)));
+        testClass(FailingBefore.class, Collections.singleton(unexpectedExceptionFailureReport(Exception.class)));
     }
 
     @Test(expected = InvalidTestClassException.class)
@@ -62,7 +59,7 @@ public class TesterTest {
 
     @Test
     public void testFailingAfter() throws Exception {
-        testClass(FailingAfter.class, Collections.singleton(failureReport(Exception.class)));
+        testClass(FailingAfter.class, Collections.singleton(unexpectedExceptionFailureReport(Exception.class)));
     }
 
     @Test(expected = InvalidTestClassException.class)
@@ -73,8 +70,8 @@ public class TesterTest {
     @Test
     public void testBeforeAfterCombination() throws Exception {
         testClass(BeforeAfterCombination.class, Sets.newHashSet(passReport(),
-                                                                     failureReport(Exception1.class),
-                                                                     failureReport(Exception2.class)));
+                                                                unexpectedExceptionFailureReport(Exception1.class),
+                                                                unexpectedExceptionFailureReport(Exception2.class)));
     }
 
     @Test(expected = BeforeClassStageFailedException.class)
@@ -99,7 +96,7 @@ public class TesterTest {
 
     @Test
     public void testTestsWithExpected() throws Exception {
-        testClass(TestsWithExpected.class, Sets.newHashSet(failureReport(Exception2.class),
+        testClass(TestsWithExpected.class, Sets.newHashSet(unexpectedExceptionFailureReport(Exception2.class),
                                                            passReport()));
     }
 
@@ -107,6 +104,11 @@ public class TesterTest {
     public void testIgnoredTests() throws Exception {
         testClass(IgnoredTests.class, Sets.newHashSet(ignoreReport("Reason 1"),
                                                       ignoreReport("Reason 2")));
+    }
+
+    @Test
+    public void testNoExceptionWhileExpected() throws Exception {
+        testClass(NoExceptionWhileExpected.class, Collections.singleton(noExceptionFailureReport(Exception.class)));
     }
 
     /**
@@ -124,8 +126,14 @@ public class TesterTest {
         return new PassReportMatcher();
     }
 
-    private @NotNull FailureReportMatcher failureReport(final @NotNull Class<?> expectedCauseType) {
-        return new FailureReportMatcher(expectedCauseType);
+    private @NotNull UnexpectedExceptionFailureReportMatcher unexpectedExceptionFailureReport(
+            final @NotNull Class<?> expectedCauseType) {
+        return new UnexpectedExceptionFailureReportMatcher(expectedCauseType);
+    }
+
+    private @NotNull NoExceptionFailureReportMatcher noExceptionFailureReport(
+            final @NotNull Class<?> expectedExceptionType) {
+        return new NoExceptionFailureReportMatcher(expectedExceptionType);
     }
 
     private @NotNull IgnoreReportMatcher ignoreReport(final @NotNull String expectedReason) {
@@ -146,26 +154,49 @@ public class TesterTest {
         }
     }
 
-    private final class FailureReportMatcher extends TestReportMatcher {
+    private final class UnexpectedExceptionFailureReportMatcher extends TestReportMatcher {
         private final @NotNull Class<?> expectedCauseClass;
 
-        public FailureReportMatcher(final @NotNull Class<?> expectedCauseClass) {
+        public UnexpectedExceptionFailureReportMatcher(final @NotNull Class<?> expectedCauseClass) {
             this.expectedCauseClass = expectedCauseClass;
         }
 
         @Override
         public boolean matches(final @NotNull Object item) {
-            if (!(item instanceof FailureReport)) {
+            if (!(item instanceof UnexpectedExceptionFailureReport)) {
                 return false;
             }
 
-            FailureReport actual = (FailureReport) item;
+            UnexpectedExceptionFailureReport actual = (UnexpectedExceptionFailureReport) item;
             return expectedCauseClass.isInstance(actual.getCause());
         }
 
         @Override
         public void describeTo(final @NotNull Description description) {
-            description.appendText("Failure report caused by ").appendValue(expectedCauseClass);
+            description.appendText("Unexpected exception failure report caused by ").appendValue(expectedCauseClass);
+        }
+    }
+
+    private final class NoExceptionFailureReportMatcher extends TestReportMatcher {
+        private final @NotNull Class<?> expectedExceptionClass;
+
+        public NoExceptionFailureReportMatcher(final @NotNull Class<?> expectedExceptionClass) {
+            this.expectedExceptionClass = expectedExceptionClass;
+        }
+
+        @Override
+        public boolean matches(final @NotNull Object item) {
+            if (!(item instanceof NoExceptionFailureReport)) {
+                return false;
+            }
+
+            NoExceptionFailureReport actual = (NoExceptionFailureReport) item;
+            return expectedExceptionClass.equals(actual.getExpectedException());
+        }
+
+        @Override
+        public void describeTo(final @NotNull Description description) {
+            description.appendText("No exception failure report. Expected ").appendValue(expectedExceptionClass);
         }
     }
 

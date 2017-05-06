@@ -4,17 +4,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.spbau.bachelor2015.veselov.hw05.annotations.*;
 import ru.spbau.bachelor2015.veselov.hw05.exceptions.*;
-import ru.spbau.bachelor2015.veselov.hw05.reports.FailureReport;
-import ru.spbau.bachelor2015.veselov.hw05.reports.IgnoreReport;
-import ru.spbau.bachelor2015.veselov.hw05.reports.PassReport;
-import ru.spbau.bachelor2015.veselov.hw05.reports.TestReport;
+import ru.spbau.bachelor2015.veselov.hw05.reports.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO: add expected but not thrown case
 public class Tester {
     private final Class<?> testClass;
 
@@ -116,7 +112,17 @@ public class Tester {
         }
 
         if (exception != null && !testAnnotation.expected().isInstance(exception)) {
-            return new FailureReport(testClass.getName(), method.getName(), exception, estimatedTime);
+            return new UnexpectedExceptionFailureReport(testClass.getName(),
+                                                        method.getName(),
+                                                        exception,
+                                                        estimatedTime);
+        }
+
+        if (exception == null && !testAnnotation.expected().equals(Test.None.class)) {
+            return new NoExceptionFailureReport(testClass.getName(),
+                                                method.getName(),
+                                                testAnnotation.expected(),
+                                                estimatedTime);
         }
 
         return new PassReport(testClass.getName(), method.getName(), estimatedTime);
