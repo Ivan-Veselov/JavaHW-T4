@@ -14,7 +14,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO: specify invalidity exceptions, especially check invoke method exception reasons. Don't forget about tests.
 public class Tester {
     private final Class<?> testClass;
 
@@ -62,10 +61,8 @@ public class Tester {
 
     public @NotNull List<TestReport> test()
             throws InvalidTestClassException,
-            BeforeClassStageFailedException,
-            AfterClassStageFailedException,
-            NonStaticAfterClassMethodException,
-            NonStaticBeforeClassMethodException {
+                   BeforeClassStageFailedException,
+                   AfterClassStageFailedException {
         List<TestReport> reports = new ArrayList<>();
 
         try {
@@ -73,7 +70,7 @@ public class Tester {
         } catch (InvocationTargetException e) {
             throw new BeforeClassStageFailedException();
         } catch (NullPointerException e) {
-            throw new NonStaticBeforeClassMethodException();
+            throw new InvalidTestClassException(e);
         }
 
         for (Method method : testMethods) {
@@ -85,7 +82,7 @@ public class Tester {
         } catch (InvocationTargetException e) {
             throw new AfterClassStageFailedException();
         }  catch (NullPointerException e) {
-            throw new NonStaticAfterClassMethodException();
+            throw new InvalidTestClassException(e);
         }
 
         return reports;

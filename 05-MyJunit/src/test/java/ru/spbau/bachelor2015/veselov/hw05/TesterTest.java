@@ -82,7 +82,7 @@ public class TesterTest {
         testClass(FailingBeforeClass.class, Collections.emptySet());
     }
 
-    @Test(expected = NonStaticBeforeClassMethodException.class)
+    @Test(expected = InvalidTestClassException.class)
     public void testNonStaticBeforeClass() throws Exception {
         testClass(NonStaticBeforeClass.class, Collections.emptySet());
     }
@@ -92,7 +92,7 @@ public class TesterTest {
         testClass(FailingAfterClass.class, Collections.emptySet());
     }
 
-    @Test(expected = NonStaticAfterClassMethodException.class)
+    @Test(expected = InvalidTestClassException.class)
     public void testNonStaticAfterClass() throws Exception {
         testClass(NonStaticAfterClass.class, Collections.emptySet());
     }

@@ -9,9 +9,7 @@ public class Main {
     public static void main(final @NotNull String[] args)
             throws InvalidTestClassException,
                    BeforeClassStageFailedException,
-                   AfterClassStageFailedException,
-                   NonStaticAfterClassMethodException,
-                   NonStaticBeforeClassMethodException {
+                   AfterClassStageFailedException {
         if (args.length != 1) {
             System.out.println("Argument expected");
             return;
