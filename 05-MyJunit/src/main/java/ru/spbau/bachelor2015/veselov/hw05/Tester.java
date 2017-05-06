@@ -85,8 +85,11 @@ public class Tester {
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 throw new InvalidTestClassException(e);
             } catch (InvocationTargetException e) {
-                reports.add(new FailureReport(e.getTargetException()));
-                continue;
+                Throwable exception = e.getTargetException();
+                if (!method.getAnnotation(Test.class).expected().isInstance(exception)) {
+                    reports.add(new FailureReport(exception));
+                    continue;
+                }
             }
 
             reports.add(new PassReport());

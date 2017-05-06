@@ -96,6 +96,12 @@ public class TesterTest {
         testClass(NonStaticAfterClassClass.class, Collections.emptySet());
     }
 
+    @Test
+    public void testTestsWithExpected() throws Exception {
+        testClass(TestsWithExpected.class, Sets.newHashSet(failureReport(Exception2.class),
+                                                           passReport()));
+    }
+
     /**
      * Such strange collection matchers type because of issue.
      *
