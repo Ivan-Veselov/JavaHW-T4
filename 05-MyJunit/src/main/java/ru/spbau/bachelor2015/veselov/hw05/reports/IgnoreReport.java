@@ -2,10 +2,14 @@ package ru.spbau.bachelor2015.veselov.hw05.reports;
 
 import org.jetbrains.annotations.NotNull;
 
-public class IgnoreReport implements TestReport {
+public class IgnoreReport extends MyJunitReport {
     private final @NotNull String reason;
 
-    public IgnoreReport(final @NotNull String reason) {
+    public IgnoreReport(final @NotNull String className,
+                        final @NotNull String methodName,
+                        final @NotNull String reason) {
+        super(className, methodName);
+
         this.reason = reason;
     }
 
@@ -15,6 +19,6 @@ public class IgnoreReport implements TestReport {
 
     @Override
     public @NotNull String report() {
-        return "Test is ignored. " + reason;
+        return super.report() + " Test is ignored. " + reason;
     }
 }

@@ -14,7 +14,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO: add test name to a report
 // TODO: specify invalidity exceptions, especially check invoke method exception reasons. Don't forget about tests.
 public class Tester {
     private final Class<?> testClass;
@@ -97,7 +96,7 @@ public class Tester {
 
         String ignoreReason = testAnnotation.ignore();
         if (!ignoreReason.equals(Test.noIgnoranceDescription)) {
-            return new IgnoreReport(ignoreReason);
+            return new IgnoreReport(testClass.getName(), method.getName(), ignoreReason);
         }
 
         long startTime = System.nanoTime();
@@ -119,10 +118,10 @@ public class Tester {
         }
 
         if (exception != null && !testAnnotation.expected().isInstance(exception)) {
-            return new FailureReport(exception, estimatedTime);
+            return new FailureReport(testClass.getName(), method.getName(), exception, estimatedTime);
         }
 
-        return new PassReport(estimatedTime);
+        return new PassReport(testClass.getName(), method.getName(), estimatedTime);
     }
 
     private @NotNull Object instantiateObject() throws InvalidTestClassException {
