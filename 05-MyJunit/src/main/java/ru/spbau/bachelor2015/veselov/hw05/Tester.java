@@ -10,6 +10,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Object of this class represents a tester which can test one given class.
@@ -124,7 +125,7 @@ public class Tester {
         } catch (InvocationTargetException e) {
             exception = e.getTargetException();
         } finally {
-            estimatedTime = System.nanoTime() - startTime;
+            estimatedTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime);
         }
 
         if (exception != null && !testAnnotation.expected().isInstance(exception)) {

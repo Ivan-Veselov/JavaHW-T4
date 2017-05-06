@@ -4,6 +4,8 @@
     <bytecodeTargetLevel>
       <module name="05-MyJUnit_main" target="1.8" />
       <module name="05-MyJUnit_test" target="1.8" />
+      <module name="RunnableMain_main" target="1.5" />
+      <module name="RunnableMain_test" target="1.5" />
     </bytecodeTargetLevel>
   </component>
 </project>
