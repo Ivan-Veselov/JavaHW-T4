@@ -14,6 +14,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO: add test name to a report
 // TODO: specify invalidity exceptions, especially check invoke method exception reasons. Don't forget about tests.
 public class Tester {
     private final Class<?> testClass;
@@ -77,31 +78,7 @@ public class Tester {
         }
 
         for (Method method : testMethods) {
-            Test testAnnotation = method.getAnnotation(Test.class);
-
-            String ignoreReason = testAnnotation.ignore();
-            if (!ignoreReason.equals(Test.noIgnoranceDescription)) {
-                reports.add(new IgnoreReport(ignoreReason));
-                continue;
-            }
-
-            Object instance = instantiateObject();
-
-            try {
-                invokeMethods(instance, beforeMethods);
-                method.invoke(instance);
-                invokeMethods(instance, afterMethods);
-            } catch (IllegalArgumentException | IllegalAccessException e) {
-                throw new InvalidTestClassException(e);
-            } catch (InvocationTargetException e) {
-                Throwable exception = e.getTargetException();
-                if (!testAnnotation.expected().isInstance(exception)) {
-                    reports.add(new FailureReport(exception));
-                    continue;
-                }
-            }
-
-            reports.add(new PassReport());
+            reports.add(runTestMethod(method));
         }
 
         try {
@@ -113,6 +90,39 @@ public class Tester {
         }
 
         return reports;
+    }
+
+    private @NotNull TestReport runTestMethod(final @NotNull Method method) throws InvalidTestClassException {
+        Test testAnnotation = method.getAnnotation(Test.class);
+
+        String ignoreReason = testAnnotation.ignore();
+        if (!ignoreReason.equals(Test.noIgnoranceDescription)) {
+            return new IgnoreReport(ignoreReason);
+        }
+
+        long startTime = System.nanoTime();
+
+        Object instance = instantiateObject();
+
+        long estimatedTime;
+        Throwable exception = null;
+        try {
+            invokeMethods(instance, beforeMethods);
+            method.invoke(instance);
+            invokeMethods(instance, afterMethods);
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            throw new InvalidTestClassException(e);
+        } catch (InvocationTargetException e) {
+            exception = e.getTargetException();
+        } finally {
+            estimatedTime = System.nanoTime() - startTime;
+        }
+
+        if (exception != null && !testAnnotation.expected().isInstance(exception)) {
+            return new FailureReport(exception, estimatedTime);
+        }
+
+        return new PassReport(estimatedTime);
     }
 
     private @NotNull Object instantiateObject() throws InvalidTestClassException {

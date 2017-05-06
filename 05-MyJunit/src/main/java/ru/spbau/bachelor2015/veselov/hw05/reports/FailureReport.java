@@ -5,8 +5,11 @@ import org.jetbrains.annotations.NotNull;
 public class FailureReport implements TestReport {
     private final @NotNull Throwable cause;
 
-    public FailureReport(final @NotNull Throwable cause) {
+    private final long estimatedMillis;
+
+    public FailureReport(final @NotNull Throwable cause, final long estimatedMillis) {
         this.cause = cause;
+        this.estimatedMillis = estimatedMillis;
     }
 
     public @NotNull Throwable getCause() {
@@ -15,6 +18,6 @@ public class FailureReport implements TestReport {
 
     @Override
     public @NotNull String report() {
-        return "Test failed with unexpected exception " + cause;
+        return "Test failed with unexpected exception " + cause + " in " + estimatedMillis;
     }
 }
