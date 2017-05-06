@@ -8,5 +8,9 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Test {
+    String noIgnoranceDescription = "";
+
     Class expected() default None.class;
+
+    String ignore() default noIgnoranceDescription;
 }

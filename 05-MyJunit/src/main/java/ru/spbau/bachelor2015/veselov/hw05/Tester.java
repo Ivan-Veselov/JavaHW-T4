@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import ru.spbau.bachelor2015.veselov.hw05.annotations.*;
 import ru.spbau.bachelor2015.veselov.hw05.exceptions.*;
 import ru.spbau.bachelor2015.veselov.hw05.reports.FailureReport;
+import ru.spbau.bachelor2015.veselov.hw05.reports.IgnoreReport;
 import ru.spbau.bachelor2015.veselov.hw05.reports.PassReport;
 import ru.spbau.bachelor2015.veselov.hw05.reports.TestReport;
 
@@ -76,6 +77,14 @@ public class Tester {
         }
 
         for (Method method : testMethods) {
+            Test testAnnotation = method.getAnnotation(Test.class);
+
+            String ignoreReason = testAnnotation.ignore();
+            if (!ignoreReason.equals(Test.noIgnoranceDescription)) {
+                reports.add(new IgnoreReport(ignoreReason));
+                continue;
+            }
+
             Object instance = instantiateObject();
 
             try {
@@ -86,7 +95,7 @@ public class Tester {
                 throw new InvalidTestClassException(e);
             } catch (InvocationTargetException e) {
                 Throwable exception = e.getTargetException();
-                if (!method.getAnnotation(Test.class).expected().isInstance(exception)) {
+                if (!testAnnotation.expected().isInstance(exception)) {
                     reports.add(new FailureReport(exception));
                     continue;
                 }

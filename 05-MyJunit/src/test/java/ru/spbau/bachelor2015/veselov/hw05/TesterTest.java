@@ -10,6 +10,7 @@ import ru.spbau.bachelor2015.veselov.hw05.examples.*;
 import ru.spbau.bachelor2015.veselov.hw05.examples.invalid.*;
 import ru.spbau.bachelor2015.veselov.hw05.exceptions.*;
 import ru.spbau.bachelor2015.veselov.hw05.reports.FailureReport;
+import ru.spbau.bachelor2015.veselov.hw05.reports.IgnoreReport;
 import ru.spbau.bachelor2015.veselov.hw05.reports.PassReport;
 import ru.spbau.bachelor2015.veselov.hw05.reports.TestReport;
 
@@ -20,6 +21,7 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 
+// TODO: refactor matchers
 public class TesterTest {
     @Test(expected = InvalidTestClassException.class)
     public void testPrivateConstructor() throws Exception {
@@ -102,6 +104,12 @@ public class TesterTest {
                                                            passReport()));
     }
 
+    @Test
+    public void testIgnoredTests() throws Exception {
+        testClass(IgnoredTests.class, Sets.newHashSet(ignoreReport("Reason 1"),
+                                                      ignoreReport("Reason 2")));
+    }
+
     /**
      * Such strange collection matchers type because of issue.
      *
@@ -119,6 +127,10 @@ public class TesterTest {
 
     private @NotNull FailureReportMatcher failureReport(final @NotNull Class<?> expectedCauseType) {
         return new FailureReportMatcher(expectedCauseType);
+    }
+
+    private @NotNull IgnoreReportMatcher ignoreReport(final @NotNull String expectedReason) {
+        return new IgnoreReportMatcher(expectedReason);
     }
 
     private abstract class TestReportMatcher extends BaseMatcher<TestReport> {}
@@ -159,6 +171,29 @@ public class TesterTest {
         @Override
         public void describeTo(final @NotNull Description description) {
             description.appendText("Failure report caused by ").appendValue(expectedCauseClass);
+        }
+    }
+
+    private final class IgnoreReportMatcher extends TestReportMatcher {
+        private final @NotNull String expectedReason;
+
+        public IgnoreReportMatcher(final @NotNull String expectedReason) {
+            this.expectedReason = expectedReason;
+        }
+
+        @Override
+        public boolean matches(final @NotNull Object item) {
+            if (!(item instanceof IgnoreReport)) {
+                return false;
+            }
+
+            IgnoreReport actual = (IgnoreReport) item;
+            return expectedReason.equals(actual.getReason());
+        }
+
+        @Override
+        public void describeTo(final @NotNull Description description) {
+            description.appendText("Ignore report with reason ").appendText(expectedReason);
         }
     }
 }
