@@ -7,13 +7,8 @@ import org.hamcrest.Matcher;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import ru.spbau.bachelor2015.veselov.hw05.examples.*;
-import ru.spbau.bachelor2015.veselov.hw05.examples.invalid.AfterWithArgumentClass;
-import ru.spbau.bachelor2015.veselov.hw05.examples.invalid.BeforeWithArgumentClass;
-import ru.spbau.bachelor2015.veselov.hw05.examples.invalid.PrivateConstructorClass;
-import ru.spbau.bachelor2015.veselov.hw05.examples.invalid.TestWithArgumentClass;
-import ru.spbau.bachelor2015.veselov.hw05.exceptions.Exception1;
-import ru.spbau.bachelor2015.veselov.hw05.exceptions.Exception2;
-import ru.spbau.bachelor2015.veselov.hw05.exceptions.InvalidTestClassException;
+import ru.spbau.bachelor2015.veselov.hw05.examples.invalid.*;
+import ru.spbau.bachelor2015.veselov.hw05.exceptions.*;
 import ru.spbau.bachelor2015.veselov.hw05.reports.FailureReport;
 import ru.spbau.bachelor2015.veselov.hw05.reports.PassReport;
 import ru.spbau.bachelor2015.veselov.hw05.reports.TestReport;
@@ -81,14 +76,33 @@ public class TesterTest {
                                                                      failureReport(Exception2.class)));
     }
 
+    @Test(expected = BeforeClassStageFailedException.class)
+    public void testFailingBeforeClassClass() throws Exception {
+        testClass(FailingBeforeClassClass.class, Collections.emptySet());
+    }
+
+    @Test(expected = NonStaticBeforeClassMethodException.class)
+    public void testNonStaticBeforeClassClass() throws Exception {
+        testClass(NonStaticBeforeClassClass.class, Collections.emptySet());
+    }
+
+    @Test(expected = AfterClassStageFailedException.class)
+    public void testFailingAfterClassClass() throws Exception {
+        testClass(FailingAfterClassClass.class, Collections.emptySet());
+    }
+
+    @Test(expected = NonStaticAfterClassMethodException.class)
+    public void testNonStaticAfterClassClass() throws Exception {
+        testClass(NonStaticAfterClassClass.class, Collections.emptySet());
+    }
+
     /**
      * Such strange collection matchers type because of issue.
      *
      * https://github.com/hamcrest/JavaHamcrest/issues/156
      */
     private void testClass(final @NotNull Class<?> clazz,
-                           final @NotNull Collection<Matcher<? super TestReport>> matchers)
-            throws InvalidTestClassException {
+                           final @NotNull Collection<Matcher<? super TestReport>> matchers) throws Exception {
         List<TestReport> report = new Tester(clazz).test();
         assertThat(report, containsInAnyOrder(matchers));
     }

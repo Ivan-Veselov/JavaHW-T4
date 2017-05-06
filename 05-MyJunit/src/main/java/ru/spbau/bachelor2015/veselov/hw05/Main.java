@@ -1,11 +1,17 @@
 package ru.spbau.bachelor2015.veselov.hw05;
 
 import com.sun.istack.internal.NotNull;
-import ru.spbau.bachelor2015.veselov.hw05.exceptions.InvalidTestClassException;
+import ru.spbau.bachelor2015.veselov.hw05.exceptions.*;
 import ru.spbau.bachelor2015.veselov.hw05.reports.TestReport;
 
+// TODO: handle exceptions
 public class Main {
-    public static void main(final @NotNull String[] args) throws InvalidTestClassException {
+    public static void main(final @NotNull String[] args)
+            throws InvalidTestClassException,
+                   BeforeClassStageFailedException,
+                   AfterClassStageFailedException,
+                   NonStaticAfterClassMethodException,
+                   NonStaticBeforeClassMethodException {
         if (args.length != 1) {
             System.out.println("Argument expected");
             return;
