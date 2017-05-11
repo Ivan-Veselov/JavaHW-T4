@@ -1,6 +1,6 @@
 package ru.spbau.bachelor2015.veselov.pairs;
 
-import com.sun.istack.internal.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class Index2 {
     private final int x;

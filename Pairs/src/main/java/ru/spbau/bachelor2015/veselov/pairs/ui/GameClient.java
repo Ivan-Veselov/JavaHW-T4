@@ -1,10 +1,10 @@
-package ru.spbau.bachelor2015.veselov.pairs;
+package ru.spbau.bachelor2015.veselov.pairs.ui;
 
-import com.sun.istack.internal.NotNull;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import ru.spbau.bachelor2015.veselov.pairs.ui.GridPaneProducer;
+import org.jetbrains.annotations.NotNull;
+import ru.spbau.bachelor2015.veselov.pairs.ClientModel;
 
 public class GameClient extends Application {
     @Override

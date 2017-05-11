@@ -1,13 +1,11 @@
 package ru.spbau.bachelor2015.veselov.pairs;
 
-import com.sun.istack.internal.NotNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Collections;
 
-import static ru.spbau.bachelor2015.veselov.pairs.Game.ChoiceResult.FIRST_IN_PAIR;
-import static ru.spbau.bachelor2015.veselov.pairs.Game.ChoiceResult.MATCHED;
-import static ru.spbau.bachelor2015.veselov.pairs.Game.ChoiceResult.NOT_MATCHED;
+import static ru.spbau.bachelor2015.veselov.pairs.Game.ChoiceResult.*;
 
 public class Game {
     private final int fieldSize;
@@ -79,6 +77,14 @@ public class Game {
         chosenCell = null;
 
         return MATCHED;
+    }
+
+    public int getValue(final @NotNull Index2 index) {
+        if (!isValid(index)) {
+            throw new IllegalArgumentException();
+        }
+
+        return field[index.getX()][index.getY()];
     }
 
     private boolean isValid(final @NotNull Index2 cell) {
