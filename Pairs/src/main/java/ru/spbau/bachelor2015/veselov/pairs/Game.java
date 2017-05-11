@@ -87,6 +87,18 @@ public class Game {
         return field[index.getX()][index.getY()];
     }
 
+    public boolean isOver() {
+        for (int i = 0; i < fieldSize; i++) {
+            for (int j = 0; j < fieldSize; j++) {
+                if (!isMatched[i][j]) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
     private boolean isValid(final @NotNull Index2 cell) {
         return 0 <= cell.getX() && cell.getX() < fieldSize && 0 <= cell.getY() && cell.getY() < fieldSize;
     }
