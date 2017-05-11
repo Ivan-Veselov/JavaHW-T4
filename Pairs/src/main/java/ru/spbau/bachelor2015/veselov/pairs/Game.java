@@ -2,8 +2,10 @@ package ru.spbau.bachelor2015.veselov.pairs;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 import static ru.spbau.bachelor2015.veselov.pairs.Game.ChoiceResult.*;
 
@@ -26,19 +28,19 @@ public class Game {
         field = new int[fieldSize][fieldSize];
 
         final int numberOfPairs = fieldSize * fieldSize / 2;
-        int[] numbers = new int[2 * numberOfPairs];
-        int pointer = 0;
+
+        List<Integer> numbers = new ArrayList<>();
         for (int i = 0; i < numberOfPairs; i++) {
-            numbers[pointer++] = i;
-            numbers[pointer++] = i;
+            numbers.add(i);
+            numbers.add(i);
         }
 
-        Collections.shuffle(Arrays.asList(numbers));
+        Collections.shuffle(numbers);
 
-        pointer = 0;
+        Iterator<Integer> iterator = numbers.iterator();
         for (int i = 0; i < fieldSize; i++) {
             for (int j = 0; j < fieldSize; j++) {
-                field[i][j] = numbers[pointer++];
+                field[i][j] = iterator.next();
             }
         }
 
