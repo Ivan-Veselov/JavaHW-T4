@@ -8,7 +8,16 @@ import org.jetbrains.annotations.NotNull;
 import ru.spbau.bachelor2015.veselov.pairs.ClientModel;
 import ru.spbau.bachelor2015.veselov.pairs.Index2;
 
+/**
+ * A class which can produce a gridPane layout for game client.
+ */
 public class GridPaneProducer {
+    /**
+     * Produces a grid pane.
+     *
+     * @param model a model of a client.
+     * @return a new grid pane.
+     */
     public static @NotNull GridPane produce(final @NotNull ClientModel model) {
         GridPane gridPane = new GridPane();
 

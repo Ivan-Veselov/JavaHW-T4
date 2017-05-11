@@ -9,6 +9,10 @@ import ru.spbau.bachelor2015.veselov.pairs.ui.GameCell;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A model of a graphic client.
+ * TODO: possibly need to merge this class with Client.
+ */
 public class ClientModel {
     private final static int FIELD_SIZE = 4;
 
@@ -20,16 +24,29 @@ public class ClientModel {
 
     private final @NotNull List<GameCell> cellsToActivate = new ArrayList<>();
 
+    /**
+     * Creates a model.
+     *
+     * @param primaryStage a primary stage of an application.
+     */
     public ClientModel(final @NotNull Stage primaryStage) {
         this.primaryStage = primaryStage;
 
         game = new Game(FIELD_SIZE);
     }
 
+    /**
+     * Returns a size of a field.
+     */
     public int getFieldSize() {
         return FIELD_SIZE;
     }
 
+    /**
+     * Performs a click action on a given cell.
+     *
+     * @param cell a game cell which was clicked.
+     */
     public void clickCell(final @NotNull GameCell cell) {
         for (GameCell gameCell : cellsToActivate) {
             gameCell.setActive();
@@ -68,6 +85,12 @@ public class ClientModel {
         primaryStage.close();
     }
 
+    /**
+     * Returns a content of a particular cell.
+     *
+     * @param index an index of a cell.
+     * @return a string representation of cell content.
+     */
     public @NotNull String getContent(final @NotNull Index2 index) {
         return Integer.toString(game.getValue(index));
     }
